@@ -1,5 +1,5 @@
 {
-  "name": "admin",
+  "name": "createInstitution",
   "runtime": "nodejs4.3",
   "description": "Serverless Lambda function for project: serverless-starter",
   "customName": false,
@@ -13,7 +13,7 @@
   },
   "endpoints": [
     {
-      "path": "admin",
+      "path": "createInstitution",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",

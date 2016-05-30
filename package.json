@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "aws-sdk": "^2.3.11",
+    "co": "^4.6.0",
     "co-bcryptjs": "^0.2.0",
+    "jsonwebtoken": "^7.0.0",
     "serverless-offline": "^2.5.0",
     "serverless-optimizer-plugin": "^2.0.0",
     "vogels": "^2.2.0"

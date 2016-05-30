@@ -20,6 +20,7 @@ var createTables = function () {
 var getUser = function (email) {
     return new Promise(function (resolve, reject) {
         models.Users.get(email, function (err, user) {
+            console.log("err, user :: ",err, user);
             if (err) {
                 reject(err);
             } else {

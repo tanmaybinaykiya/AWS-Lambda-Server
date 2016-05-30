@@ -8,5 +8,29 @@
       "headerParamNames": "$input.params().header.keySet()",
       "contentTypeValue": "$input.params().header.get('Content-Type')"
     }
+  },
+  "responseTemplate": {
+    "401": {
+      "statusCode": "401",
+      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":401(.|\\n)*"
+    },
+    "400": {
+      "statusCode": "400",
+      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":400(.|\\n)*"
+    },
+    "500": {
+      "statusCode": "500",
+      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":400(.|\\n)*"
+    },
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {},
+      "responseModels": {
+        "application/json;charset=UTF-8": "Empty"
+      },
+      "responseTemplates": {
+        "application/json;charset=UTF-8": ""
+      }
+    }
   }
 }

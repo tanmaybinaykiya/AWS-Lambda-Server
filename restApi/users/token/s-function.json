@@ -1,12 +1,12 @@
 {
   "name": "token",
   "runtime": "nodejs4.3",
-  "description": "Serverless Lambda function for project: serverless-starter",
+  "description": "Get Access token request",
   "customName": false,
   "customRole": false,
   "handler": "handler.handler",
-  "timeout": 6,
-  "memorySize": 1024,
+  "timeout": 60,
+  "memorySize": 128,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
@@ -21,28 +21,15 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": "$${apiRequestTemplate}",
-      "responses": {
-        "400": {
-          "statusCode": "400"
-        },
-        "default": {
-          "statusCode": "200",
-          "responseParameters": {},
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
-          },
-          "responseTemplates": {
-            "application/json;charset=UTF-8": ""
-          }
-        }
-      }
+      "responses": "$${responseTemplate}"
     }
   ],
   "events": [],
   "environment": {
     "SERVERLESS_PROJECT": "${project}",
     "SERVERLESS_STAGE": "${stage}",
-    "SERVERLESS_REGION": "${region}"
+    "SERVERLESS_REGION": "${region}",
+    "jwtSecret": "${jwtSecret}"
   },
   "vpc": {
     "securityGroupIds": [],
