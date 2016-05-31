@@ -20,7 +20,7 @@
     },
     "500": {
       "statusCode": "500",
-      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":400(.|\\n)*"
+      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":500(.|\\n)*"
     },
     "default": {
       "statusCode": "200",

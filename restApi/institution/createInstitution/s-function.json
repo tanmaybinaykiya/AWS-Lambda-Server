@@ -1,43 +1,27 @@
 {
   "name": "createInstitution",
   "runtime": "nodejs4.3",
-  "description": "Serverless Lambda function for project: serverless-starter",
+  "description": "API to create a new institution",
   "customName": false,
   "customRole": false,
   "handler": "handler.handler",
-  "timeout": 6,
-  "memorySize": 1024,
+  "timeout": 60,
+  "memorySize": 128,
   "authorizer": {},
   "custom": {
     "excludePatterns": []
   },
   "endpoints": [
     {
-      "path": "createInstitution",
-      "method": "GET",
+      "path": "institution/create",
+      "method": "POST",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
       "apiKeyRequired": false,
       "requestParameters": {},
-      "requestTemplates": {
-        "application/json": ""
-      },
-      "responses": {
-        "400": {
-          "statusCode": "400"
-        },
-        "default": {
-          "statusCode": "200",
-          "responseParameters": {},
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
-          },
-          "responseTemplates": {
-            "application/json;charset=UTF-8": ""
-          }
-        }
-      }
+      "requestTemplates": "$${apiRequestTemplate}",
+      "responses": "$${responseTemplate}"
     }
   ],
   "events": [],

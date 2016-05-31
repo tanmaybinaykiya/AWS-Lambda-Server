@@ -2,9 +2,7 @@ var bcrypt = require("co-bcryptjs");
 var dao = require("./dao");
 var HttpError=require("./errors").HttpError;
 var validateAndGetUser = function* (email, password) {
-    console.log(" getting user for  :: ", email);
     var user = yield dao.getUser(email);
-    console.log(" user :: ", user);
     if (!user) {
         throw new HttpError(401 , "Invald username or password" );
     }
@@ -16,8 +14,8 @@ var validateAndGetUser = function* (email, password) {
 }
 
 var addUser = function* (user) {
-    var user = yield dao.getUser(user.email);
-    if (user) {
+    var existinguser = yield dao.getUser(user.email);
+    if (existinguser) {
         throw new HttpError(400 , "User with email already exist" );
     }
     user.role = "readonly";

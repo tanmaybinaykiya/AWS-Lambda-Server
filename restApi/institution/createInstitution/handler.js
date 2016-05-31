@@ -1,7 +1,8 @@
-'use strict';
-
+var institutionLib = require("../../lib/institution");
+var handleRequest = require("../../lib/handler");
 module.exports.handler = function(event, context, cb) {
-  return cb(null, {
-    message: 'Go Serverless! Your Lambda function executed successfully!'
-  });
+  handleRequest(function* () {
+    var institution = yield institutionLib.createInstitution(event.body);
+    return institution;
+  }, cb);
 };

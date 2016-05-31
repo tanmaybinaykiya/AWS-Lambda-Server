@@ -7,21 +7,26 @@ var Users = vogels.define('Users', {
     hashKey : 'email',
     timestamps : true,
     schema : {
-        email   : Joi.string().email(),
-        mobile     : Joi.number(),
-        name    : Joi.string(),
+        email   : Joi.string().email().required(),
+        mobile     : Joi.number().required(),
+        firstname    : Joi.string().required(),
+        lastname    : Joi.string().required(),
+        street    : Joi.string(),
+        city    : Joi.string(),
+        state    : Joi.string(),
+        zip    : Joi.number(),
         passwordHash     : Joi.string(),
         mobileVerified: Joi.boolean().default(false),
         mailVerified: Joi.boolean().default(false),
-        institutionId: Joi.string(),
-        role: Joi.string(),
-        customerId: Joi.string(),
+        institutionShortCode: Joi.string(),
+        role: Joi.string().required(),
+        familyCustomerId: Joi.string(),
         relation: Joi.string(),
         familyAccess: Joi.string()
     },
     tableName: getTableName("Users"),
     indexes : [{
-       hashKey : 'institutionId', rangeKey : 'role', name : 'UsersInstitutionIndex', type : 'global'
+       hashKey : 'institutionShortCode', rangeKey : 'role', name : 'UsersInstitutionIndex', type : 'global'
     },{
        hashKey : 'customerId',  name : 'UsersCustomerIndex', type : 'global'
     }]
@@ -31,9 +36,9 @@ var Institution = vogels.define('Institution', {
     hashKey : 'shortCode',
     timestamps : true,
     schema : {
-        shortCode   : Joi.string(),
-        customerId     : Joi.string(),
-        name    : Joi.string(),
+        shortCode   : Joi.string().required(),
+        customerId     : Joi.string().required(),
+        name    : Joi.string().required(),
         billing:{
             chargePerAccount:{
                 planId:Joi.string(),
@@ -53,51 +58,40 @@ var Institution = vogels.define('Institution', {
 });
 
 var School = vogels.define('School', {
-    hashKey : 'institutionId',
+    hashKey : 'institutionShortCode',
     rangeKey : "code",
     timestamps : true,
     schema : {
-        name   : Joi.string(),
-        code     : Joi.string(),
-        institutionId: vogels.types.uuid(),
-        billing:{
-            chargePerAccount:{
-                planId:Joi.string(),
-                subscriptionId:Joi.string()
-            },
-            chargePerTransaction:{
-                planId:Joi.string(),
-                subscriptionId:Joi.string()
-            },
-            chargePerSms:{
-                planId:Joi.string(),
-                subscriptionId:Joi.string()
-            }
-        }
+        name   : Joi.string().required(),
+        code     : Joi.string().required(),
+        institutionShortCode: Joi.string().required()
     },
-    tableName: getTableName("School")
+    tableName: getTableName("School"),
+    indexes : [{
+       hashKey : 'name', name : 'SchoolNameIndex', type : 'global'
+    }]
 });
 
 var Class = vogels.define('Class', {
-    hashKey : 'schoolId',
+    hashKey : 'schoolCode',
     rangeKey : "code",
     timestamps : true,
     schema : {
-        schoolId   : Joi.string(),
-        code     : Joi.string(),
-        institutionId     : Joi.string(),
+        schoolCode  : Joi.string().required(),
+        code     : Joi.string().required(),
+        institutionShortCode     : Joi.string().required(),
         teacherId: vogels.types.stringSet(),
-        startDate:  Joi.date(),
-        endDate:  Joi.date(),
-        fees:  Joi.number(),
-        feeType:  Joi.string(),
-        fullCapacity:  Joi.number(),
-        currentUsage:  Joi.number(),
-        planId:  Joi.string()
+        startDate:  Joi.date().required(),
+        endDate:  Joi.date().required(),
+        fees:  Joi.number().required(),
+        feeType:  Joi.string().required(),
+        fullCapacity:  Joi.number().required(),
+        currentUsage:  Joi.number().default(0),
+        planId:  Joi.string().required()
     },
     tableName: getTableName("Class"),
     indexes : [{
-       hashKey : 'institutionId', name : 'ClassInstitutionIndex', type : 'global'
+       hashKey : 'institutionShortCode', name : 'ClassInstitutionIndex', type : 'global'
     },{
        hashKey : 'planId',  name : 'ClassPlanIndex', type : 'global'
     }]
@@ -110,6 +104,19 @@ var Class = vogels.define('Class', {
 //     notifications:[""],
 //     customerId:"",//hash key
 //   }
+var Family = vogels.define('Family', {
+    hashKey : 'customerId',
+    timestamps : true,
+    schema : {
+        customerId   : Joi.string().required(),
+        institutionShortCode     : Joi.string().required()
+    },
+    tableName: getTableName("Family"),
+    indexes : [{
+       hashKey : 'institutionShortCode', name : 'FamilyInstitutionIndex', type : 'global'
+    }]
+});
+
 //   var student={
 //     name:"",
 //     clazzId:"",//This will be null when in requested, and added as admin selects a class in EnrollmentInfo, //GSI - to get all students in a class
@@ -145,5 +152,6 @@ module.exports={
     Users,
     Institution,
     School,
-    Class
+    Class,
+    Family
 }
