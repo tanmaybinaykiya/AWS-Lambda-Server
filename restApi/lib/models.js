@@ -28,7 +28,7 @@ var Users = vogels.define('Users', {
     indexes : [{
        hashKey : 'institutionShortCode', rangeKey : 'role', name : 'UsersInstitutionIndex', type : 'global'
     },{
-       hashKey : 'customerId',  name : 'UsersCustomerIndex', type : 'global'
+       hashKey : 'familyCustomerId',  name : 'UsersCustomerIndex', type : 'global'
     }]
 });
 

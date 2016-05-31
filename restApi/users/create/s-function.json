@@ -13,7 +13,7 @@
   },
   "endpoints": [
     {
-      "path": "users",
+      "path": "users/create",
       "method": "PUT",
       "type": "AWS",
       "authorizationType": "none",
@@ -21,21 +21,7 @@
       "apiKeyRequired": false,
       "requestParameters": {},
       "requestTemplates": "$${apiRequestTemplate}",
-      "responses": {
-        "400": {
-          "statusCode": "400"
-        },
-        "default": {
-          "statusCode": "200",
-          "responseParameters": {},
-          "responseModels": {
-            "application/json;charset=UTF-8": "Empty"
-          },
-          "responseTemplates": {
-            "application/json;charset=UTF-8": ""
-          }
-        }
-      }
+      "responses": "$${responseTemplate}"
     }
   ],
   "events": [],
