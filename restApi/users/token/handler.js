@@ -5,8 +5,7 @@ module.exports.handler = function (event, context, cb) {
   handleRequest(cb, function* (ctx) {
     var userObj = yield user.validateAndGetUser(event.body.email, event.body.password);
     var token = jwt.sign(userObj, process.env.jwtSecret, { expiresIn: "1d" });
-    ctx.body = {
-      access_token: token
-    };
+    userObj.access_token=token;
+    ctx.body = userObj;
   });
 };

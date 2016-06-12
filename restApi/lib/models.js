@@ -1,6 +1,7 @@
 var vogels=require("vogels");
 var Joi=require("joi");
 var getTableName=function(modelName) {
+    console.log("table name " , process.env.SERVERLESS_STAGE + "_" + modelName);
     return process.env.SERVERLESS_STAGE + "_" + modelName;
 }
 var Users = vogels.define('Users', {
@@ -155,3 +156,14 @@ module.exports={
     Class,
     Family
 }
+
+//For School
+//Family - Customer , Subscription  
+//Class --> Plan
+//Student --> Quantity
+
+//For SS
+//Institution --> Customer, Subscription
+//Student --> Quantity
+//SMS --> Quantity
+//

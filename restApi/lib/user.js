@@ -7,7 +7,7 @@ var validateAndGetUser = function* (email, password) {
         throw new HttpError(401 , "Invald username or password" );
     }
     if (yield bcrypt.compare(password, user.get("passwordHash"))) {
-        return user;
+        return user.toJSON();
     } else {
         throw new HttpError(401 , "Invald username or password" );
     }
@@ -18,12 +18,15 @@ var addUser = function* (user) {
     if (existinguser) {
         throw new HttpError(400 , "User with email already exist" );
     }
-    user.role = "readonly";
+    if(!user.role){
+        user.role = "readonly";    
+    }
     var salt = yield bcrypt.genSalt(10);
     var passwordHash = yield bcrypt.hash(user.password, salt);
     user.passwordHash = passwordHash;
     delete user.password;
     var user = yield dao.createUser(user);
+    
     if (!user) {
         throw new HttpError(400 , "Bad request" );
     }
