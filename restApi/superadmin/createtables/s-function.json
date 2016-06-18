@@ -1,10 +1,10 @@
 {
-  "name": "token",
+  "name": "createTables",
   "runtime": "nodejs4.3",
-  "description": "Get Access token request",
+  "description": "Tables Create API",
   "customName": false,
   "customRole": false,
-  "handler": "restApi/users/token/handler.handler",
+  "handler": "restApi/superadmin/createtables/handler.handler",
   "timeout": 60,
   "memorySize": 128,
   "authorizer": {},
@@ -13,8 +13,8 @@
   },
   "endpoints": [
     {
-      "path": "users/token",
-      "method": "POST",
+      "path": "superadmin/createtables",
+      "method": "PUT",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,

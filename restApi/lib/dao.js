@@ -4,6 +4,8 @@ var AWS = require("aws-sdk");
 if (process.env.SERVERLESS_STAGE === 'dev') {
     var opts = { endpoint: 'http://localhost:8000', apiVersion: '2012-08-10', region: "us-east-1" };
     vogels.dynamoDriver(new AWS.DynamoDB(opts));
+}else{
+    vogels.dynamoDriver(new AWS.DynamoDB());
 }
 var createTables = function () {
     return new Promise(function (resolve, reject) {

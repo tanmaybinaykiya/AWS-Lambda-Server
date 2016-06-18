@@ -11,13 +11,13 @@
     }
   },
   "responseTemplate": {
-    "401": {
-      "statusCode": "401",
-      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":401(.|\\n)*"
-    },
     "400": {
       "statusCode": "400",
       "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":400(.|\\n)*"
+    },
+    "401": {
+      "statusCode": "401",
+      "selectionPattern": "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":401(.|\\n)*"
     },
     "500": {
       "statusCode": "500",

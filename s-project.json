@@ -1,9 +1,25 @@
 {
   "name": "serverless-starter",
-  "custom": {},
+  "custom": {
+    "cors": {
+      "allowOrigin": "*",
+      "allowHeaders": ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key"]
+    },
+    "optimize": {
+      "browserify": {
+        "babelify": true,
+        "exclude" : [
+          "aws-sdk"
+        ]
+      },
+      "minify": true
+    }
+  },
   "plugins": [
     "serverless-optimizer-plugin",
-    "serverless-offline"
+    "serverless-offline",
+    "serverless-lambda-prune-plugin",
+    "serverless-cors-plugin"
   ],
   "version": "0.2.0",
   "profile": "serverless-v0.5.0",

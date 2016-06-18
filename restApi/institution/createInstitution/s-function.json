@@ -4,7 +4,7 @@
   "description": "API to create a new institution",
   "customName": false,
   "customRole": false,
-  "handler": "handler.handler",
+  "handler": "restApi/institution/createInstitution/handler.handler",
   "timeout": 60,
   "memorySize": 128,
   "authorizer": {},

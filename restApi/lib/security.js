@@ -31,7 +31,27 @@ var ssAdminSecurity = function (authHeader) {
         
     }
 }
-
+var internalSecurity = function (authHeader) {
+    return function* (ctx){
+        var token = getToken(authHeader);  
+        console.log(token,process.env.jwtSecret); 
+        if(!token){
+            throw new HttpError(401 , "Authorization header not passed");
+        } 
+        try{
+            var decoded = jwt.verify(token, process.env.jwtSecret);
+            if(decoded.role !== "internal"){
+                throw new HttpError(401 , "UnAuthorized");
+            }
+            ctx.user=decoded;    
+        }catch(err){
+            console.error(err);
+            throw new HttpError(401 , "UnAuthorized");
+        }
+        
+    }
+}
 module.exports = {
-    ssAdminSecurity
+    ssAdminSecurity,
+    internalSecurity
 } 

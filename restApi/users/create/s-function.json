@@ -4,7 +4,7 @@
   "description": "User Create API",
   "customName": false,
   "customRole": false,
-  "handler": "handler.handler",
+  "handler": "restApi/users/create/handler.handler",
   "timeout": 60,
   "memorySize": 128,
   "authorizer": {},
