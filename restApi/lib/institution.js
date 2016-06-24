@@ -1,6 +1,8 @@
 var dao = require("./dao");
 var HttpError = require("./errors").HttpError;
 var chargebee = require('./chargebee');
+var emailHelper = require('./emailhelper');
+var restrictedCodes=["app-beta","app","api","secureslice"];
 var createInstitution = function* (institution) {
     if (!institution.shortCode) {
         throw new HttpError(400, "institution shortcode is mandatory");
@@ -20,20 +22,25 @@ var createInstitution = function* (institution) {
     if (!institution.zip) {
         throw new HttpError(400, "institution state is mandatory");
     }
+    if(restrictedCodes.indexOf(restrictedCodes)>=0){
+        throw new HttpError(400, "institution shortcode is not valid");
+    }
     if (!institution.country) {
         institution.country="US";
     }
+    
     var existingInstitution = yield dao.getInstitutionByShortcode(institution.shortCode);
     if (existingInstitution) {
         throw new HttpError(400, "institution with shortcode already exist");
     }
     var customer = yield chargebee.createInstitutionCustomer(institution.shortCode, institution.adminemail, institution.addressLine1, institution.city, institution.state, institution.zip, institution.country);
     institution.customerId = customer.id;
-    institution = yield dao.createInstitution(institution);
-    if (!institution) {
+    var newinstitution = yield dao.createInstitution(institution);
+    if (!newinstitution) {
         throw new HttpError(400, "Bad request");
     }
-    return institution;
+    emailHelper.sendAdminInviteEmail(institution.adminemail,institution.shortCode);
+    return newinstitution;
 }
 
 module.exports = {

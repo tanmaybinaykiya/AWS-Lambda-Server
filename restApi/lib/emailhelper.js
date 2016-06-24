@@ -17,11 +17,11 @@ var sendJoinEmail = function (email,familyId, institutionId, role) {
         var registerEmail = {
             "email":email,
             "familyId":familyId,
-            "institutionId":institutionId,
+            "institutionCode":institutionCode,
             "role":role
         };
         var token = jwt.sign(registerEmail, process.env.jwtSecret,{ expiresIn: 60*60*48 });
-        var registrationLink=util.format("%s/register?token=%s", process.env.uihost, token);
+        var registrationLink=util.format("%s/#/parent/register?token=%s", process.env.uihost, token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");
         registrationEmailTemplate.render({
@@ -52,6 +52,48 @@ var sendJoinEmail = function (email,familyId, institutionId, role) {
     });
 }
 
+
+var sendAdminInviteEmail = function (email,institutionCode) {
+    return new Promise(function(resolve,reject){
+        var registerEmail = {
+            "email":email,
+            "institutionCode":institutionCode,
+            "role":"admin"
+        };
+        var token = jwt.sign(registerEmail, process.env.jwtSecret,{ expiresIn: 60*60*48 });
+        var registrationLink=util.format("%s/#/admin/register?token=%s", process.env.uihost, token);
+        console.debug("registrationLink Link " + registrationLink);
+        var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");
+        registrationEmailTemplate.render({
+            registrationLink: registrationLink,
+            email: email,
+        },function (err, result) {
+            console.info(result);
+            
+        });
+        var registrationEmail = transporter.templateSender(registrationEmailTemplate , {
+            from: "no-reply@secureslice.com"
+        });
+        verificationEmail({
+            to: email,
+            subject: "Administrator Account Invitation"
+        }, {
+            registrationLink: registrationLink,
+            email: email
+        }, function(err, info){
+            if (err){
+                console.error("Error sending email ", err);
+                reject(err);
+            }
+            else {
+                console.debug("Message sent: ", info);
+                resolve(info);
+            }
+        });
+    });
+}
+
 module.exports = {
-    sendJoinEmail
+    sendJoinEmail,
+    sendAdminInviteEmail
 }
