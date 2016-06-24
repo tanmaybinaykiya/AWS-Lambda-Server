@@ -39,7 +39,12 @@ var createInstitution = function* (institution) {
     if (!newinstitution) {
         throw new HttpError(400, "Bad request");
     }
-    emailHelper.sendAdminInviteEmail(institution.adminemail,institution.shortCode);
+    try{
+        yield emailHelper.sendAdminInviteEmail(institution.adminemail,institution.shortCode);
+    }catch(err){
+        console.error("unable to send admin invite email",err);
+    }
+    
     return newinstitution;
 }
 
