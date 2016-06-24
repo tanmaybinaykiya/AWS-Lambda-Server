@@ -1,14 +1,5 @@
 {
-  "_npmOperationalInternal": {
-    "host": "packages-13-west.internal.npmjs.com",
-    "tmp": "tmp/serverless-starter-0.2.1.tgz_1458892667270_0.7738919164985418"
-  },
-  "author": {
-    "name": "Serverless.com"
-  },
-  "bugs": {
-    "url": "https://github.com/serverless/serverless-starter/issues"
-  },
+  "description": "A bare bones Serverless Framework project with examples for common use cases.",
   "dependencies": {
     "chargebee": "^2.0.5",
     "co": "^4.6.0",
@@ -21,7 +12,6 @@
     "nodemailer-sendgrid-transport": "^0.2.0",
     "vogels": "^2.2.0"
   },
-  "description": "A bare bones Serverless Framework project with examples for common use cases.",
   "devDependencies": {
     "aws-sdk": "^2.3.11",
     "serverless-cors-plugin": "^0.4.1",
@@ -33,11 +23,6 @@
   "license": "MIT",
   "name": "serverless-starter",
   "optionalDependencies": {},
-  "private": false,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/serverless/serverless-starter.git"
-  },
   "scripts": {
     "prune": "AWS_PROFILE=beta serverless function prune -n 1 -s beta -r us-east-1"
   },

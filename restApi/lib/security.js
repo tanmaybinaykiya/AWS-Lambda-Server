@@ -20,7 +20,7 @@ var ssAdminSecurity = function (authHeader) {
         } 
         try{
             var decoded = jwt.verify(token, process.env.jwtSecret);
-            if(decoded.role !== "ssadmin"){
+            if(decoded.role !== "superadmin"){
                 throw new HttpError(401 , "UnAuthorized");
             }
             ctx.user=decoded;    

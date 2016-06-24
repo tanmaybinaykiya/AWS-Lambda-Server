@@ -9,7 +9,7 @@
   "memorySize": 128,
   "authorizer": {},
   "custom": {
-    "excludePatterns": []
+    "excludePatterns": ["restApi/../node_modules/"]
   },
   "endpoints": [
     {

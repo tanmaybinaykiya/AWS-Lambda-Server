@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "chargebee": "^2.0.5",
+    "co": "^4.6.0",
+    "co-bcryptjs": "^0.2.0",
+    "easynexmo": "^0.8.5",
+    "email-templates": "^2.3.0",
+    "jsonwebtoken": "^7.0.0",
+    "node-uuid": "^1.4.7",
+    "nodemailer": "^2.4.2",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "vogels": "^2.2.0"
+  },
+  "description": "A bare bones Serverless Framework project with examples for common use cases.",
+  "license": "MIT",
+  "name": "serverless-starter",
+  "optionalDependencies": {},
+  "version": "0.2.1"
+}

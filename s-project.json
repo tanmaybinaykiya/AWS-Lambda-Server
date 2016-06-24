@@ -7,11 +7,12 @@
     },
     "optimize": {
       "browserify": {
-        "babelify": true,
-        "exclude" : [
-          "aws-sdk"
-        ]
+        "babelify": true
       },
+      "exclude" : [
+        "aws-sdk",
+        "node_modules/*"
+      ],
       "minify": true
     }
   },

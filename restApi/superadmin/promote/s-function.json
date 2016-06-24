@@ -1,11 +1,11 @@
 {
-  "name": "createTables",
+  "name": "promoteToSuperAdmin",
   "runtime": "nodejs4.3",
-  "description": "Tables Create API",
+  "description": "User Promote to superadmin API",
   "customName": false,
   "customRole": false,
-  "handler": "restApi/superadmin/createtables/handler.handler",
-  "timeout": 240,
+  "handler": "restApi/superadmin/promote/handler.handler",
+  "timeout": 60,
   "memorySize": 128,
   "authorizer": {},
   "custom": {
@@ -13,7 +13,7 @@
   },
   "endpoints": [
     {
-      "path": "superadmin/createtables",
+      "path": "superadmin/promote",
       "method": "PUT",
       "type": "AWS",
       "authorizationType": "none",

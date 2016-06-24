@@ -1,18 +1,37 @@
 var dao = require("./dao");
-var HttpError=require("./errors").HttpError;
+var HttpError = require("./errors").HttpError;
+var chargebee = require('./chargebee');
 var createInstitution = function* (institution) {
-    if(!institution.shortCode){
-        throw new HttpError(400 , "institution shortcode is mandatory");
+    if (!institution.shortCode) {
+        throw new HttpError(400, "institution shortcode is mandatory");
+    }
+    if (!institution.adminemail) {
+        throw new HttpError(400, "institution adminemail is mandatory");
+    }
+    if (!institution.addressline1) {
+        throw new HttpError(400, "institution addressLine1 is mandatory");
+    }
+    if (!institution.city) {
+        throw new HttpError(400, "institution city is mandatory");
+    }
+    if (!institution.state) {
+        throw new HttpError(400, "institution state is mandatory");
+    }
+    if (!institution.zip) {
+        throw new HttpError(400, "institution state is mandatory");
+    }
+    if (!institution.country) {
+        institution.country="US";
     }
     var existingInstitution = yield dao.getInstitutionByShortcode(institution.shortCode);
     if (existingInstitution) {
-        throw new HttpError(400 , "institution with shortcode already exist" );
+        throw new HttpError(400, "institution with shortcode already exist");
     }
-    //TODO: Create a billing customer id
-    institution.customerId="absceweferfre";
+    var customer = yield chargebee.createInstitutionCustomer(institution.shortCode, institution.adminemail, institution.addressLine1, institution.city, institution.state, institution.zip, institution.country);
+    institution.customerId = customer.id;
     institution = yield dao.createInstitution(institution);
     if (!institution) {
-        throw new HttpError(400 , "Bad request" );
+        throw new HttpError(400, "Bad request");
     }
     return institution;
 }

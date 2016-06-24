@@ -1,7 +1,6 @@
 var vogels=require("vogels");
 var Joi=require("joi");
 var getTableName=function(modelName) {
-    console.log("table name " , process.env.SERVERLESS_STAGE + "_" + modelName);
     return process.env.SERVERLESS_STAGE + "_" + modelName;
 }
 var Users = vogels.define('Users', {
@@ -40,6 +39,12 @@ var Institution = vogels.define('Institution', {
         shortCode   : Joi.string().required(),
         customerId     : Joi.string().required(),
         name    : Joi.string().required(),
+        adminemail: Joi.string().email().required(),
+        addressline1: Joi.string().required(),
+        city: Joi.string().required(),
+        state: Joi.string().required(),
+        zip: Joi.number().required(),
+        country: Joi.string().required(),
         billing:{
             chargePerAccount:{
                 planId:Joi.string(),

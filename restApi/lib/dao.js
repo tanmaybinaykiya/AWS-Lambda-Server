@@ -44,6 +44,18 @@ var createUser = function (user) {
     });
 }
 
+var updateUser = function (user) {
+    return new Promise(function (resolve, reject) {
+        models.Users.update(user, function (err, user) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(user);
+            }
+        });
+    });
+}
+
 var createInstitution = function (institution) {
     return new Promise(function (resolve, reject) {
         models.Institution.create(institution, function (err, institution) {
