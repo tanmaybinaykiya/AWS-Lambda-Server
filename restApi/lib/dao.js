@@ -124,6 +124,48 @@ var getSchoolByShortCode = function (institutionCode, shortCode) {
     });
 }
 
+
+var createClass = function (clazz) {
+    return new Promise(function (resolve, reject) {
+        models.Class.create(clazz, function (err, clazz) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(clazz);
+            }
+        });
+    });
+}
+
+
+var getClassByShortCode = function (schoolCode, classCode) {
+    return new Promise(function (resolve, reject) {
+        models.Class.get(schoolCode,classCode, function (err, clazz) {
+            if (err) {
+                console.error("err, clazz :: ", err, clazz);
+                reject(err);
+            } else {
+                resolve(clazz);
+            }
+        });
+    });
+}
+
+var getClassesBySchoolCode = function (schoolCode) {
+    return new Promise(function (resolve, reject) {
+        models.Class.query(schoolCode)
+            .loadAll()
+            .exec(function (err, classes) {
+                if (err) {
+                    console.error("err, classes :: ", err, classes);
+                    reject(err);
+                } else {
+                    resolve(classes);
+                }
+            });
+    });
+}
+
 module.exports = {
     createTables,
     getUser,
@@ -132,5 +174,7 @@ module.exports = {
     getInstitutionByShortcode,
     createSchool,
     getSchoolsByInstitutionCode,
-    getSchoolByShortCode
+    getSchoolByShortCode,
+    createClass,
+    getClassByShortCode
 }
