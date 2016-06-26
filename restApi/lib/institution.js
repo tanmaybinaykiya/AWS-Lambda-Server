@@ -2,7 +2,7 @@ var dao = require("./dao");
 var HttpError = require("./errors").HttpError;
 var chargebee = require('./chargebee');
 var emailHelper = require('./emailhelper');
-var restrictedCodes=["app-beta","app","api","secureslice"];
+var restrictedCodes = ["app-beta", "app", "api", "secureslice"];
 var createInstitution = function* (institution) {
     if (!institution.shortCode) {
         throw new HttpError(400, "institution shortcode is mandatory");
@@ -22,13 +22,13 @@ var createInstitution = function* (institution) {
     if (!institution.zip) {
         throw new HttpError(400, "institution state is mandatory");
     }
-    if(restrictedCodes.indexOf(restrictedCodes)>=0){
+    if (restrictedCodes.indexOf(institution.shortCode) >= 0) {
         throw new HttpError(400, "institution shortcode is not valid");
     }
     if (!institution.country) {
-        institution.country="US";
+        institution.country = "US";
     }
-    
+
     var existingInstitution = yield dao.getInstitutionByShortcode(institution.shortCode);
     if (existingInstitution) {
         throw new HttpError(400, "institution with shortcode already exist");
@@ -39,15 +39,26 @@ var createInstitution = function* (institution) {
     if (!newinstitution) {
         throw new HttpError(400, "Bad request");
     }
-    try{
-        yield emailHelper.sendAdminInviteEmail(institution.adminemail,institution.shortCode);
-    }catch(err){
-        console.error("unable to send admin invite email",err);
+    try {
+        yield emailHelper.sendAdminInviteEmail(institution.adminemail, institution.shortCode);
+    } catch (err) {
+        console.error("unable to send admin invite email", err);
     }
-    
+
     return newinstitution;
 }
 
+var getInstitution = function* (institutionShortCode) {
+    if (institutionShortCode.indexOf(restrictedCodes) >= 0) {
+        return {
+            name: "secureslice",
+            type: "app"
+        }
+    }
+    return yield dao.getInstitutionByShortcode(institutionShortCode);
+}
+
 module.exports = {
-    createInstitution
+    createInstitution,
+    getInstitution
 } 

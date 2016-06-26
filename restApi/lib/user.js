@@ -33,7 +33,12 @@ var addUser = function* (user) {
     return user;
 }
 
+var getUser = function* (email) {
+    return yield dao.getUser(email);
+}
+
 module.exports = {
     validateAndGetUser,
-    addUser
+    addUser,
+    getUser
 } 
