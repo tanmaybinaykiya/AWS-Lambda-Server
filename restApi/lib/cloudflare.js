@@ -18,12 +18,16 @@ var createSubdomain = function (institutionShortCode) {
         "type": "CNAME",
         "name": institutionShortCode,
         "content": process.env.s3dns,
-        "proxied": true,
-        "proxiable": true,
-        "leakedOrigin": false,
         "zone_id": "66221526cbd9df3d231698f5c085a73a"
     });
-    return client.addDNS(DNSRecord);
+    return client.addDNS(DNSRecord).then(function (dnsRecord) {
+        var jsonRecord = dnsRecord.toJSON();
+        jsonRecord.leakedOrigin = false;
+        jsonRecord.proxiable = true;
+        jsonRecord.proxied = true;
+        var DNSRecord = CFClient.DNSRecord.create(jsonRecord);
+        return client.editDNS(DNSRecord);
+    });
 }
 
 module.exports = {

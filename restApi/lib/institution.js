@@ -40,11 +40,11 @@ var createInstitution = function* (institution) {
     if (!newinstitution) {
         throw new HttpError(400, "Bad request");
     }
-    try {
-        yield cloudflare.createSubdomain(institution.shortCode);
-    } catch (err) {
-        console.error("unable to create subdomain ", err);
-    }
+    // try {
+    //     yield cloudflare.createSubdomain(institution.shortCode);
+    // } catch (err) {
+    //     console.error("unable to create subdomain ", err);
+    // }
     try {
         yield emailHelper.sendAdminInviteEmail(institution.adminemail, institution.shortCode);
     } catch (err) {
