@@ -19,8 +19,8 @@ var addClass = function* (clazz) {
     return newclass
 }
 
-var getClassesBySchool = function* (shortCode) {
-    return yield dao.getClassesBySchoolCode(shortCode);
+var getClassesBySchool = function* (schoolCode, institutionShortCode) {
+    return yield dao.getClassesBySchoolCode(schoolCode,institutionShortCode);
 }
 
 module.exports = {

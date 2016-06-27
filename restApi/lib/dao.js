@@ -151,10 +151,11 @@ var getClassByShortCode = function (schoolCode, classCode) {
     });
 }
 
-var getClassesBySchoolCode = function (schoolCode) {
+var getClassesBySchoolCode = function (schoolCode,institutionCode) {
     return new Promise(function (resolve, reject) {
         models.Class.query(schoolCode)
             .loadAll()
+            .where('institutionShortCode').equals(institutionCode)
             .exec(function (err, classes) {
                 if (err) {
                     console.error("err, classes :: ", err, classes);
