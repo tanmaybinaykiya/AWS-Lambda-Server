@@ -2,6 +2,7 @@
   "description": "A bare bones Serverless Framework project with examples for common use cases.",
   "dependencies": {
     "chargebee": "^2.0.5",
+    "cloudflare": "^1.0.3",
     "co": "^4.6.0",
     "co-bcryptjs": "^0.2.0",
     "easynexmo": "^0.8.5",

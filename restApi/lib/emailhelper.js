@@ -12,7 +12,7 @@ var EmailTemplate = require("email-templates").EmailTemplate;
 var transporter = nodemailer.createTransport(sgTransport(options));
 var templateDir = path.join(__dirname, "./", "templates");
 console.info("email templates Dir ", templateDir);
-var sendJoinEmail = function (email,familyId, institutionId, role) {
+var sendJoinEmail = function (email,familyId, institutionCode, role) {
     return new Promise(function(resolve,reject){
         var registerEmail = {
             "email":email,
@@ -21,7 +21,7 @@ var sendJoinEmail = function (email,familyId, institutionId, role) {
             "role":role
         };
         var token = jwt.sign(registerEmail, process.env.jwtSecret,{ expiresIn: 60*60*48 });
-        var registrationLink=util.format("%s/#/parent/register?token=%s", process.env.uihost, token);
+        var registrationLink=util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");
         registrationEmailTemplate.render({
@@ -51,7 +51,16 @@ var sendJoinEmail = function (email,familyId, institutionId, role) {
         });
     });
 }
-
+var getDomain=function(institutionCode){
+    switch (process.env.SERVERLESS_STAGE) {
+        case "beta":
+            return "https://"+institutionCode+"-beta.secureslice.com"
+        case "prod":
+            return "https://"+institutionCode+".secureslice.com"
+        default:
+            return "http://localhost:8080"
+    }
+}
 
 var sendAdminInviteEmail = function (email,institutionCode) {
     return new Promise(function(resolve,reject){
@@ -61,7 +70,7 @@ var sendAdminInviteEmail = function (email,institutionCode) {
             "role":"admin"
         };
         var token = jwt.sign(registerEmail, process.env.jwtSecret,{ expiresIn: 60*60*48 });
-        var registrationLink=util.format("%s/#/admin/register?token=%s", process.env.uihost, token);
+        var registrationLink=util.format("%s/#/admin/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");
         registrationEmailTemplate.render({

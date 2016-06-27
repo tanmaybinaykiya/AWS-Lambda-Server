@@ -31,7 +31,9 @@
     "SERVERLESS_REGION": "${region}",
     "jwtSecret": "${jwtSecret}",
     "chargebeeKey":"${chargebeeKey}",
-    "chargebeeSite":"${chargebeeSite}"
+    "chargebeeSite":"${chargebeeSite}",
+    "cloudflareEmail":"${cloudflareEmail}",
+    "cloudflareKey":"${cloudflareKey}"
   },
   "vpc": {
     "securityGroupIds": [],

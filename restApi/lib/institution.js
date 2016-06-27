@@ -1,6 +1,7 @@
 var dao = require("./dao");
 var HttpError = require("./errors").HttpError;
 var chargebee = require('./chargebee');
+var cloudflare = require('./cloudflare');
 var emailHelper = require('./emailhelper');
 var restrictedCodes = ["app-beta", "app", "api", "secureslice"];
 var createInstitution = function* (institution) {
@@ -40,6 +41,11 @@ var createInstitution = function* (institution) {
         throw new HttpError(400, "Bad request");
     }
     try {
+        yield cloudflare.createSubdomain(institution.shortCode);
+    } catch (err) {
+        console.error("unable to create subdomain ", err);
+    }
+    try {
         yield emailHelper.sendAdminInviteEmail(institution.adminemail, institution.shortCode);
     } catch (err) {
         console.error("unable to send admin invite email", err);
@@ -49,16 +55,11 @@ var createInstitution = function* (institution) {
 }
 
 var getInstitution = function* (institutionShortCode) {
-    if (institutionShortCode.indexOf(restrictedCodes) >= 0) {
-        return {
-            name: "secureslice",
-            type: "app"
-        }
-    }
     return yield dao.getInstitutionByShortcode(institutionShortCode);
 }
 
 module.exports = {
     createInstitution,
-    getInstitution
+    getInstitution,
+    restrictedCodes
 } 
