@@ -5,7 +5,7 @@ var client = new CFClient({
 });
 
 var createSubdomain = function (institutionShortCode) {
-    if (process.env.SERVERLESS_STAGE !== "prod" || process.env.SERVERLESS_STAGE !== "beta") {
+    if (process.env.SERVERLESS_STAGE !== "prod" && process.env.SERVERLESS_STAGE !== "beta") {
         return new Promise(function (resolve, reject) {
             resolve();
         });
