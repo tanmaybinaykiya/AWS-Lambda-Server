@@ -1,0 +1,30 @@
+---
+  apiRequestTemplate: 
+    application/json: 
+      httpMethod: "$context.httpMethod"
+      body: "$input.json('$')"
+      queryParams: |
+        {#foreach($queryParam in $input.params().querystring.keySet())
+        "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+        #end}
+      headerParams: "$input.params().header"
+      headerParamNames: "$input.params().header.keySet()"
+      contentTypeValue: "$input.params().header.get('Content-Type')"
+      AuthorizationValue: "$input.params().header.get('Authorization')"
+  responseTemplate: 
+    400: 
+      statusCode: "400"
+      selectionPattern: "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":400(.|\\n)*"
+    401: 
+      statusCode: "401"
+      selectionPattern: "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":401(.|\\n)*"
+    500: 
+      statusCode: "500"
+      selectionPattern: "(.|\\n)*\\\"apiStatus\\\"\\:\\\"Error\\\",\\\"code\\\":500(.|\\n)*"
+    default: 
+      statusCode: "200"
+      responseParameters: {}
+      responseModels: 
+        application/json;charset=UTF-8: "Empty"
+      responseTemplates: 
+        application/json;charset=UTF-8: ""

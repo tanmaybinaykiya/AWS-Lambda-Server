@@ -4,7 +4,7 @@
   "description": "API to get schools By institution shortcode",
   "customName": false,
   "customRole": false,
-  "handler": "restApi/institution/getSchoolsByInstitution/handler.handler",
+  "handler": "restApi/school/getSchoolsByInstitution/handler.handler",
   "timeout": 60,
   "memorySize": 128,
   "authorizer": {},
