@@ -72,8 +72,8 @@ functions:
           authorizationType: none
           authorizerFunction: false
           apiKeyRequired: false
-          requestTemplates: ${apiRequestTemplate}
-          responses: ${responseTemplate}
+          requestTemplates: ${self:custom.apiRequestTemplate}
+          responses: ${self:custom.responseTemplate}
     events:
       - http:
           integration: ${self:custom.integration}
@@ -175,11 +175,13 @@ functions:
     description: Get Access token request
     events:
       - http:
-          integration: ${self:custom.integration}
+          # integration: ${self:custom.integration}
           path: users/token
           method: post
           # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
           cors: ${self:custom.cors}
+          requestTemplates: "$${apiRequestTemplate}"
+          responses: "$${responseTemplate}"
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -210,10 +212,11 @@ functions:
 #       Value: "Some output value"
 
 plugins:
-    - serverless-offline
-#   - serverless-plugin-write-env-vars
-#   - serverless-optimizer-plugin
-#   - serverless-lambda-prune-plugin
-#   - serverless-cors-plugin
+  - serverless-offline
+  - serverless-plugin-write-env-vars
+  # - serverless-optimizer-plugin
+  # - serverless-lambda-prune-plugin
+  # - serverless-cors-plugin
 
 # resources: ${file(./components/resources.yml)}
+

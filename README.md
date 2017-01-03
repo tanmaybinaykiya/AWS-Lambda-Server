@@ -14,9 +14,8 @@ npm install
 
 Start Local Dynamo using:
 ```
-docker run -i -t -p 7777:7777 tray/dynamodb-local -port 7777
+docker run -i -t -p 7777:7777 tray/dynamodb-local -port 7777  -sharedDb
 ```
-
 
 Start Dev server using:
 ```

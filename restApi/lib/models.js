@@ -1,21 +1,22 @@
-var vogels=require("vogels");
-var Joi=require("joi");
-var getTableName=function(modelName) {
+var dynogels = require("dynogels");
+dynogels.log.level("info");
+var Joi = require("joi");
+var getTableName = function (modelName) {
     return process.env.SERVERLESS_STAGE + "_" + modelName;
 }
-var Users = vogels.define('Users', {
-    hashKey : 'email',
-    timestamps : true,
-    schema : {
-        email   : Joi.string().email().required(),
-        mobile     : Joi.number().required(),
-        firstname    : Joi.string().required(),
-        lastname    : Joi.string().required(),
-        street    : Joi.string(),
-        city    : Joi.string(),
-        state    : Joi.string(),
-        zip    : Joi.number(),
-        passwordHash     : Joi.string(),
+var Users = dynogels.define('Users', {
+    hashKey: 'email',
+    timestamps: true,
+    schema: {
+        email: Joi.string().email().required(),
+        mobile: Joi.number().required(),
+        firstname: Joi.string().required(),
+        lastname: Joi.string().required(),
+        street: Joi.string(),
+        city: Joi.string(),
+        state: Joi.string(),
+        zip: Joi.number(),
+        passwordHash: Joi.string(),
         mobileVerified: Joi.boolean().default(false),
         mailVerified: Joi.boolean().default(false),
         institutionShortCode: Joi.string(),
@@ -25,81 +26,81 @@ var Users = vogels.define('Users', {
         familyAccess: Joi.string()
     },
     tableName: getTableName("Users"),
-    indexes : [{
-       hashKey : 'institutionShortCode', rangeKey : 'role', name : 'UsersInstitutionIndex', type : 'global'
-    },{
-       hashKey : 'familyCustomerId',  name : 'UsersCustomerIndex', type : 'global'
+    indexes: [{
+        hashKey: 'institutionShortCode', rangeKey: 'role', name: 'UsersInstitutionIndex', type: 'global'
+    }, {
+        hashKey: 'familyCustomerId', name: 'UsersCustomerIndex', type: 'global'
     }]
 });
 
-var Institution = vogels.define('Institution', {
-    hashKey : 'shortCode',
-    timestamps : true,
-    schema : {
-        shortCode   : Joi.string().required(),
-        customerId     : Joi.string().required(),
-        name    : Joi.string().required(),
+var Institution = dynogels.define('Institution', {
+    hashKey: 'shortCode',
+    timestamps: true,
+    schema: {
+        shortCode: Joi.string().required(),
+        customerId: Joi.string().required(),
+        name: Joi.string().required(),
         adminemail: Joi.string().email().required(),
         addressline1: Joi.string().required(),
         city: Joi.string().required(),
         state: Joi.string().required(),
         zip: Joi.number().required(),
         country: Joi.string().required(),
-        billing:{
-            chargePerAccount:{
-                planId:Joi.string(),
-                subscriptionId:Joi.string()
+        billing: {
+            chargePerAccount: {
+                planId: Joi.string(),
+                subscriptionId: Joi.string()
             },
-            chargePerTransaction:{
-                planId:Joi.string(),
-                subscriptionId:Joi.string()
+            chargePerTransaction: {
+                planId: Joi.string(),
+                subscriptionId: Joi.string()
             },
-            chargePerSms:{
-                planId:Joi.string(),
-                subscriptionId:Joi.string()
+            chargePerSms: {
+                planId: Joi.string(),
+                subscriptionId: Joi.string()
             }
         }
     },
     tableName: getTableName("Institution")
 });
 
-var School = vogels.define('School', {
-    hashKey : 'institutionShortCode',
-    rangeKey : "code",
-    timestamps : true,
-    schema : {
-        name   : Joi.string().required(),
-        code     : Joi.string().required(),
+var School = dynogels.define('School', {
+    hashKey: 'institutionShortCode',
+    rangeKey: "code",
+    timestamps: true,
+    schema: {
+        name: Joi.string().required(),
+        code: Joi.string().required(),
         institutionShortCode: Joi.string().required()
     },
     tableName: getTableName("School"),
-    indexes : [{
-       hashKey : 'name', name : 'SchoolNameIndex', type : 'global'
+    indexes: [{
+        hashKey: 'name', name: 'SchoolNameIndex', type: 'global'
     }]
 });
 
-var Class = vogels.define('Class', {
-    hashKey : 'schoolCode',
-    rangeKey : "code",
-    timestamps : true,
-    schema : {
-        schoolCode  : Joi.string().required(),
-        code     : Joi.string().required(),
-        institutionShortCode     : Joi.string().required(),
-        teacherId: vogels.types.stringSet(),
-        startDate:  Joi.date().required(),
-        endDate:  Joi.date().required(),
-        fees:  Joi.number().required(),
-        feeType:  Joi.string().required(),
-        fullCapacity:  Joi.number().required(),
-        currentUsage:  Joi.number().default(0),
-        planId:  Joi.string().required()
+var Class = dynogels.define('Class', {
+    hashKey: 'schoolCode',
+    rangeKey: "code",
+    timestamps: true,
+    schema: {
+        schoolCode: Joi.string().required(),
+        code: Joi.string().required(),
+        institutionShortCode: Joi.string().required(),
+        teacherId: dynogels.types.stringSet(),
+        startDate: Joi.date().required(),
+        endDate: Joi.date().required(),
+        fees: Joi.number().required(),
+        feeType: Joi.string().required(),
+        fullCapacity: Joi.number().required(),
+        currentUsage: Joi.number().default(0),
+        planId: Joi.string().required()
     },
     tableName: getTableName("Class"),
-    indexes : [{
-       hashKey : 'institutionShortCode', name : 'ClassInstitutionIndex', type : 'global'
-    },{
-       hashKey : 'planId',  name : 'ClassPlanIndex', type : 'global'
+    indexes: [{
+        hashKey: 'institutionShortCode', name: 'ClassInstitutionIndex', type: 'global'
+    }, {
+        hashKey: 'planId', name: 'ClassPlanIndex', type: 'global'
     }]
 });
 //   var family ={
@@ -110,16 +111,16 @@ var Class = vogels.define('Class', {
 //     notifications:[""],
 //     customerId:"",//hash key
 //   }
-var Family = vogels.define('Family', {
-    hashKey : 'customerId',
-    timestamps : true,
-    schema : {
-        customerId   : Joi.string().required(),
-        institutionShortCode     : Joi.string().required()
+var Family = dynogels.define('Family', {
+    hashKey: 'customerId',
+    timestamps: true,
+    schema: {
+        customerId: Joi.string().required(),
+        institutionShortCode: Joi.string().required()
     },
     tableName: getTableName("Family"),
-    indexes : [{
-       hashKey : 'institutionShortCode', name : 'FamilyInstitutionIndex', type : 'global'
+    indexes: [{
+        hashKey: 'institutionShortCode', name: 'FamilyInstitutionIndex', type: 'global'
     }]
 });
 
@@ -154,7 +155,7 @@ var Family = vogels.define('Family', {
 //     userId:"",//Sent to whom?
 //     institutionId:""//Hash key
 //   }
-module.exports={
+module.exports = {
     Users,
     Institution,
     School,
