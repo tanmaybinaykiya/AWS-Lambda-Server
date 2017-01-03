@@ -3,6 +3,7 @@
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+process.env.JWT_SECRET = "12345678";
 process.env.IS_LOCAL = true;
 process.env.AWS_PROFILE = "aws-profile-name";
 process.env.NODE_DEBUG = "request";
@@ -14,6 +15,7 @@ process.env.LOCAL_DYNAMO = "http://127.0.0.1:8000"
 //module dependencies.
 var apps = [];
 apps.push(require("../src/services/class-service/app").app);
+apps.push(require("../src/services/user-service/app").app);
 
 var http = require("http");
 
@@ -78,7 +80,7 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 function onListening(server) {
-    return function() {
+    return function () {
         var addr = server.address();
         var bind = typeof addr === "string"
             ? "pipe " + addr

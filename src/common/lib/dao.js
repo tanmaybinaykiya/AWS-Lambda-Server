@@ -1,14 +1,22 @@
 var dynogels = require("dynogels");
+dynogels.log.level("info");
 var models = require("./models");
-var AWS = require("aws-sdk");
+// var AWS = require("aws-sdk");
 
 if (process.env.SERVERLESS_STAGE === 'dev') {
-    var opts = { endpoint: 'http://localhost:8000', apiVersion: '2012-08-10', region: "us-east-1" };
-    dynogels.dynamoDriver(new AWS.DynamoDB(opts));
+    console.log("IS DEV");
+    dynogels.AWS.config.update({ region: 'us-east-1' });
+    var opts = {
+        apiVersion: "2012-08-10",
+        credentials: new dynogels.AWS.Credentials("DummyAccessKeyId", "DummySecretAccessKey"),
+        region: "us-east-1",
+        endpoint: "http://localhost:7777"
+    };
+    dynogels.log.level("info");
+    dynogels.dynamoDriver(new dynogels.AWS.DynamoDB(opts));
 } else {
     dynogels.dynamoDriver(new AWS.DynamoDB());
 }
-
 var createTables = function () {
     return new Promise(function (resolve, reject) {
         dynogels.createTables(function (err) {
@@ -23,6 +31,7 @@ var createTables = function () {
 
 var getUser = function (email) {
     return new Promise(function (resolve, reject) {
+        console.log("EMail: ", email);
         models.Users.get(email, function (err, user) {
             if (err) {
                 console.error("err, user :: ", err, user);
@@ -142,7 +151,7 @@ var createClass = function (clazz) {
 
 var getClassByShortCode = function (schoolCode, classCode) {
     return new Promise(function (resolve, reject) {
-        models.Class.get(schoolCode,classCode, function (err, clazz) {
+        models.Class.get(schoolCode, classCode, function (err, clazz) {
             if (err) {
                 console.error("err, clazz :: ", err, clazz);
                 reject(err);
@@ -153,7 +162,7 @@ var getClassByShortCode = function (schoolCode, classCode) {
     });
 }
 
-var getClassesBySchoolCode = function (schoolCode,institutionCode) {
+var getClassesBySchoolCode = function (schoolCode, institutionCode) {
     return new Promise(function (resolve, reject) {
         models.Class.query(schoolCode)
             .loadAll()
