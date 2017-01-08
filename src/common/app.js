@@ -6,7 +6,7 @@ var path = require("path");
 var eventContext = require("./koa-proxy/middleware");
 var HttpError = require("./lib/errors").HttpError;
 
-var ISSUER = "secs";
+var ISSUER = "https://www.secureslice.com/issuer";
 
 module.exports = function () {
     var self = this;
@@ -17,7 +17,7 @@ module.exports = function () {
         console.log("Configuring server....", app);
 
         // x-response-time
-        app.use(function* (next) {
+        app.use(function* responseTimeHeader(next) {
             var start = new Date().getTime();
             yield next;
             var ms = new Date().getTime() - start;
@@ -25,7 +25,7 @@ module.exports = function () {
         });
 
         // logger
-        app.use(function* (next) {
+        app.use(function* responseTimeComputer(next) {
             console.log("Request Start: %s %s", this.method, this.url);
             var start = new Date().getTime();
             yield next;
@@ -33,7 +33,7 @@ module.exports = function () {
             console.log("Request End: %s %s %d - %s ms", this.method, this.url, this.status, ms);
         });
 
-        app.use(function* (next) {
+        app.use(function* errorHandler(next) {
             try {
                 yield next;
             } catch (err) {
@@ -51,35 +51,51 @@ module.exports = function () {
         app.on("error", function (err) {
             console.log("server error", err);
         });
-        app.use(koaBody());
+        app.use(function* koaBody() {
+            return koaBody();
+        });
         app.use(cors());
         app.use(eventContext());
     }
 
     self.loadJWTDecryption = function () {
-        app.use(jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER }));
+        // console.log("Function: ", jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER, debug: true }));
+        app.use(jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER, debug: true }));
     }
 
-    self.decodeToken = function () {
-        return jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER });
-    }
+    // self.decodeToken = function () {
+    //     return function* (req, next) {
+    //         console.log("decoding: ", req.header.authorization);
+    //         jsonwebtoken.verify(req.header.authorization, { secret: process.env.JWT_SECRET, issuer: ISSUER }, function (err, decoded) {
+    //             console.log("err:", err, "decoded:", decoded);
+    //             yield next();
+    //         });
+    //     };
+    // }
 
     self.roleBasedAuth = function (allowedRoles) {
         return function* (next) {
-            if (allowedRoles.findIndex(entry => entry === "INTERNAL") < 0) {
-                allowedRoles.push("INTERNAL");
+            var reqRole = this.state.user.role;
+            // try {
+            if (allowedRoles.findIndex(entry => entry === "SECS") < 0) {
+                allowedRoles.push("SECS");
             }
-            if (this.state.user.role && allowedRoles.some(allowedRole => allowedRole === this.state.user.role)) {
+            if (reqRole && allowedRoles.some(allowedRole => allowedRole === reqRole)) {
+                console.log("NEXT: ", next);
                 yield next;
             } else {
-                console.log("Invalid role for API: ", this.state.user.role, ". Allowed roles are: ", allowedRoles);
+                console.log("Invalid role for API: ", reqRole, ". Allowed roles are: ", allowedRoles);
                 this.throw(403);
             }
+            // } catch (err) {
+            //     console.log("Error occured in authz", err);
+            //     this.throw(403);
+            // }
+
         };
     }
 
     self.getApp = function () {
-        console.log("RETURNING, ", self.app, app)
         return app;
     }
 };

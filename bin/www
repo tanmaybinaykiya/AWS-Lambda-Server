@@ -11,11 +11,13 @@ process.env.SERVERLESS_REGION = "us-west-2";
 process.env.SERVERLESS_STAGE = "dev";
 process.env.SERVERLESS_SERVICE_NAME = "localRun";
 process.env.LOCAL_DYNAMO = "http://127.0.0.1:8000"
+process.env.DEBUG = "koa*"
 
 //module dependencies.
 var apps = [];
-apps.push(require("../src/services/class-service/app").app);
-apps.push(require("../src/services/user-service/app").app);
+// apps.push(require("../src/services/class-service/app").app);
+// apps.push(require("../src/services/user-service/app").app);
+apps.push(require("../src/services/auth-service/app").app);
 
 var http = require("http");
 

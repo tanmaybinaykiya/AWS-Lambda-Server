@@ -1,24 +1,17 @@
 var koa = require('koa');
-var koaProxy = require('koa-proxy');
+var koaProxy = require('./koa-proxy/index');
 
 var server;
 
-var Starter = function(){
-    var proxy: Proxy;
-
-    function init(callback, serviceName) {
-        proxy = new koaProxy(serviceName);
-        server = Starter.proxy.createServer(callback(), null);
-        proxy.startServer(server);
-    }
-
-    function handle(event: any, context: any) {
-        if (event.headers) {
-            proxy.proxy(server, event, context, null);
-        } else {
-            context.succeed();
-        }
-    }
+module.exports.init = function (callback, serviceName) {
+    server = koaProxy.createServer(serviceName, callback(), null);
+    koaProxy.startServer(server);
 }
 
-module.exports = new Starter();
+module.exports.handle = function (event, context) {
+    if (event.headers) {
+        koaProxy.proxy(server, event, context, null);
+    } else {
+        context.succeed();
+    }
+}

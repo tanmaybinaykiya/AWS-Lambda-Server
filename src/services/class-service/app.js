@@ -5,13 +5,12 @@ var superServer = require("../../common/app");
 
 var service = require("./service");
 
-var serverz = function() {
+var serverz = function () {
 
     var app;
     var self = this;
 
     self.init = function () {
-        console.log(superServer);
         superz = new superServer();
         superz.init();
         superz.loadJWTDecryption();
@@ -20,13 +19,15 @@ var serverz = function() {
     }
 
     self.routes = function (app, superz) {
-        router.get("/", superz.roleBasedAuth(["admin"]), service.getClasses );
+        router.get("/", superz.roleBasedAuth(["admin"]), service.getClasses);
         router.post("/", superz.roleBasedAuth(["admin"]), service.createClass);
         restAPI.extend(router);
-        app.use(restAPI.legacyMiddleware());
+        app.use(function* restAPILegacyMiddleware() {
+            return restAPI.legacyMiddleware();
+        });
     }
 
-    self.getApp = function(){
+    self.getApp = function () {
         return self.app;
     }
 

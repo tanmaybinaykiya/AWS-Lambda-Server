@@ -1,6 +1,6 @@
 var routerClass = require("koa-better-router");
 var router = routerClass().loadMethods();
-var restAPI = routerClass({ prefix: "/tanmay" });
+var restAPI = routerClass({ prefix: "/token" });
 var superServer = require("../../common/app");
 
 var service = require("./service");
@@ -13,13 +13,12 @@ var serverz = function () {
     self.init = function () {
         superz = new superServer();
         superz.init();
-        superz.loadJWTDecryption();
         self.app = superz.getApp();
         self.routes(self.app, superz);
     }
 
     self.routes = function (app, superz) {
-        router.post("/bina", service.createUser);
+        router.post("/", service.getToken);
         restAPI.extend(router);
         app.use(function* restAPILegacyMiddleware() {
             return restAPI.legacyMiddleware();
