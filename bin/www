@@ -15,8 +15,8 @@ process.env.DEBUG = "koa*"
 
 //module dependencies.
 var apps = [];
-// apps.push(require("../src/services/class-service/app").app);
-// apps.push(require("../src/services/user-service/app").app);
+apps.push(require("../src/services/class-service/app").app);
+apps.push(require("../src/services/user-service/app").app);
 apps.push(require("../src/services/auth-service/app").app);
 
 var http = require("http");

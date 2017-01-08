@@ -20,9 +20,7 @@ var serverz = function () {
     self.routes = function (app, superz) {
         router.post("/", service.getToken);
         restAPI.extend(router);
-        app.use(function* restAPILegacyMiddleware() {
-            return restAPI.legacyMiddleware();
-        });
+        app.use(restAPI.legacyMiddleware());
     }
 
     self.getApp = function () {

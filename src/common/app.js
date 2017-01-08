@@ -51,46 +51,34 @@ module.exports = function () {
         app.on("error", function (err) {
             console.log("server error", err);
         });
-        app.use(function* koaBody() {
-            return koaBody();
-        });
+        app.use(koaBody());
         app.use(cors());
         app.use(eventContext());
     }
 
     self.loadJWTDecryption = function () {
-        // console.log("Function: ", jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER, debug: true }));
         app.use(jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER, debug: true }));
     }
 
-    // self.decodeToken = function () {
-    //     return function* (req, next) {
-    //         console.log("decoding: ", req.header.authorization);
-    //         jsonwebtoken.verify(req.header.authorization, { secret: process.env.JWT_SECRET, issuer: ISSUER }, function (err, decoded) {
-    //             console.log("err:", err, "decoded:", decoded);
-    //             yield next();
-    //         });
-    //     };
-    // }
-
     self.roleBasedAuth = function (allowedRoles) {
+        if (!allowedRoles) allowedRoles = [];
+        if (allowedRoles.findIndex(entry => entry === "SECS") < 0) {
+            allowedRoles.push("SECS");
+        }
         return function* (next) {
             var reqRole = this.state.user.role;
-            // try {
-            if (allowedRoles.findIndex(entry => entry === "SECS") < 0) {
-                allowedRoles.push("SECS");
-            }
-            if (reqRole && allowedRoles.some(allowedRole => allowedRole === reqRole)) {
-                console.log("NEXT: ", next);
-                yield next;
-            } else {
-                console.log("Invalid role for API: ", reqRole, ". Allowed roles are: ", allowedRoles);
+            try {
+                if (reqRole && allowedRoles.some(allowedRole => allowedRole === reqRole)) {
+                    console.log("NEXT: ", next);
+                    yield next;
+                } else {
+                    console.log("Invalid role for API: ", reqRole, ". Allowed roles are: ", allowedRoles);
+                    this.throw(403);
+                }
+            } catch (err) {
+                console.log("Error occured in authz", err);
                 this.throw(403);
             }
-            // } catch (err) {
-            //     console.log("Error occured in authz", err);
-            //     this.throw(403);
-            // }
 
         };
     }

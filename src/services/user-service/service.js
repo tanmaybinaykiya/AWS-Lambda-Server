@@ -2,8 +2,8 @@ var AWS = require('aws-sdk');
 var jwt = require('jsonwebtoken');
 var user = require("../../common/lib/user");
 
-module.exports.createUser = function* createUser() {
-    console.log("createUser: ", createUser);
+module.exports.createUser = function* createUser(req, send) {
+    console.log("createUser: ", "this: ", this, "req: ", req, "send: ", send);
     var requestBody = this.request.body;
     var newUser = {
         "email": requestBody.email,
