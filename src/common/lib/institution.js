@@ -34,8 +34,8 @@ var createInstitution = function* (institution) {
     if (existingInstitution) {
         throw new HttpError(400, "institution with shortcode already exist");
     }
-    var customer = yield chargebee.createInstitutionCustomer(institution.shortCode, institution.adminemail, institution.addressLine1, institution.city, institution.state, institution.zip, institution.country);
-    institution.customerId = customer.id;
+    // var customer = yield chargebee.createInstitutionCustomer(institution.shortCode, institution.adminemail, institution.addressLine1, institution.city, institution.state, institution.zip, institution.country);
+    // institution.customerId = customer.id;
     var newinstitution = yield dao.createInstitution(institution);
     if (!newinstitution) {
         throw new HttpError(400, "Bad request");

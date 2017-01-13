@@ -66,17 +66,18 @@ module.exports = function () {
             allowedRoles.push("SECS");
         }
         return function* (next) {
-            var reqRole = this.state.user.role;
-            try {
+            if (this.state && this.state.user && this.state.user.role) {
+                var reqRole = this.state.user.role;
                 if (reqRole && allowedRoles.some(allowedRole => allowedRole === reqRole)) {
                     console.log("NEXT: ", next);
                     yield next;
                 } else {
                     console.log("Invalid role for API: ", reqRole, ". Allowed roles are: ", allowedRoles);
+                    throw new HttpError(404, "institution shortcode is not valid");
                     this.throw(403);
                 }
-            } catch (err) {
-                console.log("Error occured in authz", err);
+            } else {
+                console.log("No role in token, that's weird!");
                 this.throw(403);
             }
 

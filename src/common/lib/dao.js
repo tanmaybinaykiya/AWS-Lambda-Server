@@ -188,5 +188,5 @@ module.exports = {
     getSchoolsByInstitutionCode,
     getSchoolByShortCode,
     createClass,
-    getClassByShortCode
+    getClassesBySchoolCode
 }

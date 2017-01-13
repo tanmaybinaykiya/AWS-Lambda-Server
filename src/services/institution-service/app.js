@@ -1,5 +1,5 @@
 var routerClass = require("koa-better-router");
-var router = routerClass({ prefix: "/class" }).loadMethods();
+var router = routerClass({ prefix: "/institution" }).loadMethods();
 var superServer = require("../../common/app");
 
 var service = require("./service");
@@ -18,8 +18,9 @@ var serverz = function () {
     }
 
     self.routes = function (app, superz) {
-        router.get("/", superz.roleBasedAuth(["admin"]), service.getClasses);
-        router.post("/", superz.roleBasedAuth(["admin"]), service.createClass);
+        // TODO change authz to superadmin
+        router.get("/", superz.roleBasedAuth(["admin"]), service.getInstitution);
+        router.post("/", superz.roleBasedAuth(["admin"]), service.createInstitution);
         app.use(router.legacyMiddleware());
     }
 

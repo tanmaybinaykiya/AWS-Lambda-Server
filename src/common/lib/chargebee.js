@@ -11,6 +11,7 @@ function monthDiff(d1, d2) {
     months += d2.getMonth();
     return months <= 0 ? 0 : months;
 }
+
 var createInstitutionCustomer = function (institutionName, email, addressLine1, city, state, zip, country) {
     return new Promise(function (resolve, reject) {
         chargebee.customer.create({
@@ -75,7 +76,7 @@ var createCustomer = function (user) {
             first_name: user.firstname,
             last_name: user.lastname,
             email: user.email,
-            allow_direct_debit:true,
+            allow_direct_debit: true,
             billing_address: {
                 first_name: user.firstname,
                 last_name: user.lastname,
