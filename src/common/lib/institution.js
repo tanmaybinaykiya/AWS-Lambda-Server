@@ -4,6 +4,7 @@ var chargebee = require('./chargebee');
 var cloudflare = require('./cloudflare');
 var emailHelper = require('./emailhelper');
 var restrictedCodes = ["app-beta", "app", "api", "secureslice"];
+
 var createInstitution = function* (institution) {
     if (!institution.shortCode) {
         throw new HttpError(400, "institution shortcode is mandatory");

@@ -17,6 +17,7 @@ if (process.env.SERVERLESS_STAGE === 'dev') {
 } else {
     dynogels.dynamoDriver(new AWS.DynamoDB());
 }
+
 var createTables = function () {
     return new Promise(function (resolve, reject) {
         dynogels.createTables(function (err) {
@@ -148,6 +149,17 @@ var createClass = function (clazz) {
     });
 }
 
+var createStudent = function (clazz) {
+    return new Promise(function (resolve, reject) {
+        models.Student.create(clazz, function (err, clazz) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(clazz);
+            }
+        });
+    });
+}
 
 var getClassByShortCode = function (schoolCode, classCode) {
     return new Promise(function (resolve, reject) {
@@ -162,7 +174,7 @@ var getClassByShortCode = function (schoolCode, classCode) {
     });
 }
 
-var getClassesBySchoolCode = function (schoolCode, institutionCode) {
+var getClassesBySchoolCodeAndInstitutionCode = function (schoolCode, institutionCode) {
     return new Promise(function (resolve, reject) {
         models.Class.query(schoolCode)
             .loadAll()
@@ -178,15 +190,164 @@ var getClassesBySchoolCode = function (schoolCode, institutionCode) {
     });
 }
 
+var getStudentByBirthDateAndFirstName = function (dateOfBirth, firstName) {
+    return new Promise(function (resolve, reject) {
+        models.Student.query(dateOfBirth)
+            .usingIndex('StudentsBirthDateNameIndex')
+            .where('firstName').eq(firstName)
+            .exec(function (err, students) {
+                if (err) {
+                    console.error("err, students :: ", err, students);
+                    reject(err);
+                } else {
+                    resolve(students);
+                }
+            });
+    });
+}
+
+var getStudentByStudentId = function (studentId) {
+    return new Promise(function (resolve, reject) {
+        models.Student.get(studentId, function (err, student) {
+            if (err) {
+                console.error("err, student :: ", err, student);
+                reject(err);
+            } else {
+                resolve(student);
+            }
+        });
+    });
+}
+
+var getUsersByFamilyCustomerId = function (familyId) {
+    return new Promise(function (resolve, reject) {
+        models.Users.query(familyId)
+            .usingIndex('UsersFamilyIndex')
+            .loadAll()
+            .exec((err, mgrs) => {
+                if (err) {
+                    console.error("err, mgrs :: ", err, mgrs);
+                    reject(err);
+                } else {
+                    resolve(mgrs);
+                }
+            });
+    });
+}
+
+var getUsersBySchoolCodeAndRole = function (code, role) {
+    return new Promise((resolve, reject) => {
+        models.Users.query(code)
+            .usingIndex('UsersSchoolRoleIndex')
+            .where("role").eq(role)
+            .exec((err, users) => {
+                if (err) {
+                    console.log("Error occured: ", err, users);
+                    reject(err);
+                } else {
+                    resolve(users);
+                }
+            });
+    });
+}
+
+var getUsersByInstitutionCodeAndRole = function (code, role) {
+    return new Promise((resolve, reject) => {
+        models.Users.query(code)
+            .usingIndex('UsersInstitutionIndex')
+            .where("role").eq(role)
+            .exec((err, users) => {
+                if (err) {
+                    console.log("Error occured: ", err, users);
+                    reject(err);
+                } else {
+                    resolve(users);
+                }
+            });
+    });
+}
+
+var getClassesBySchoolCodeAndGrade = function (schoolCode, gradeCode) {
+    return new Promise((resolve, reject) => {
+        models.Class.query(schoolCode, code)
+            .exec((err, classes) => {
+                if (err) {
+                    console.log("Error occured: ", err, classes);
+                    reject(err);
+                } else {
+                    resolve(classes);
+                }
+            });
+    });
+}
+
+var createGrade = function (grade) {
+    return new Promise(function (resolve, reject) {
+        models.Grade.create(clazz, function (err, clazz) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(clazz);
+            }
+        });
+    });
+}
+
+var getGradesBySchoolCodeAndInstitution = function (schoolCode, institutionShortCode) {
+    return new Promise((resolve, reject) => {
+        models.Grade.query(schoolCode)
+            .usingIndex('GradeInstitutionIndex')
+            .where("institutionShortCode").eq(institutionShortCode)
+            .exec((err, result) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+    });
+}
+
+var getGradesBySchoolCodeAndName = function (schoolCode, gradeName) {
+    return new Promise((resolve, reject) => {
+        models.Grade.get(schoolCode, gradeName)
+            .exec((err, result) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+    });
+}
+
 module.exports = {
     createTables,
+
     getUser,
     createUser,
+
     createInstitution,
     getInstitutionByShortcode,
+
     createSchool,
     getSchoolsByInstitutionCode,
     getSchoolByShortCode,
+
+    createStudent,
+    getStudentByBirthDateAndFirstName,
+    getStudentByStudentId,
+
+    getUsersByFamilyCustomerId,
+    getUsersBySchoolCodeAndRole,
+    getUserByInstitutionCodeAndRole,
+
     createClass,
-    getClassesBySchoolCode
+    getClassesBySchoolCodeAndInstitutionCode,
+    getClassesBySchoolCodeAndGrade,
+
+    getGradesBySchoolCodeAndInstitution,
+    getGradesBySchoolCodeAndName
 }

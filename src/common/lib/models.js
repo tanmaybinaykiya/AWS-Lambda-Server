@@ -3,6 +3,50 @@ var Joi = require("joi");
 var getTableName = function (modelName) {
     return process.env.SERVERLESS_STAGE + "_" + modelName;
 }
+
+var Student = dynogels.define("Students", {
+    hashKey: 'studentId',
+    timestamps: true,
+    schema: {
+        studentId: dynogels.types.uuid(),
+        institutionShortCode: Joi.string().required(),
+        schoolCode: Joi.string().required(),
+        firstname: Joi.string().required(),
+        middlename: Joi.string(),
+        lastname: Joi.string().required(),
+        nickname: Joi.string(),
+        dateOfBirth: Joi.date().required(),
+        cityOfBirth: Joi.string(),
+        countryOfBirth: Joi.string(),
+        stateOfBirth: Joi.string(),
+        zip: Joi.number(),
+        race: Joi.string(),
+        gender: Joi.string().required(),
+        extraInfo: Joi.string(),
+        paymentInfo: {
+            paymentMethod: Joi.string(),
+            paymentStatus: Joi.string().required()
+        },
+        documents: {
+            medicalForm: Joi.string().required(),
+            tuitionForm: Joi.string().required()
+        },
+        enrollmentInfo: {
+            isEnrolled: Joi.boolean().default(false),
+            pastClassesEnrolled: Joi.array(Joi.string()),
+            classesEnrolled: Joi.array(Joi.string()),
+        }
+    },
+    tableName: getTableName("Students"),
+    indexes: [{
+        hashKey: 'institutionShortCode', rangeKey: 'studentId', name: 'StudentsInstitutionIndex', type: 'global'
+    }, {
+        hashKey: 'schoolCode', rangeKey: 'studentId', name: 'StudentsSchoolRoleIndex', type: 'global'
+    }, {
+        hashKey: 'dateOfBirth', rangeKey: 'firstname', name: 'StudentsBirthDateNameIndex', type: 'global'
+    }]
+});
+
 var Users = dynogels.define('Users', {
     hashKey: 'email',
     timestamps: true,
@@ -19,6 +63,7 @@ var Users = dynogels.define('Users', {
         mobileVerified: Joi.boolean().default(false),
         mailVerified: Joi.boolean().default(false),
         institutionShortCode: Joi.string(),
+        schoolCode: Joi.string(),
         role: Joi.string().required(),
         familyCustomerId: Joi.string(),
         relation: Joi.string(),
@@ -28,7 +73,9 @@ var Users = dynogels.define('Users', {
     indexes: [{
         hashKey: 'institutionShortCode', rangeKey: 'role', name: 'UsersInstitutionIndex', type: 'global'
     }, {
-        hashKey: 'familyCustomerId', name: 'UsersCustomerIndex', type: 'global'
+        hashKey: 'schoolCode', rangeKey: 'role', name: 'UsersSchoolRoleIndex', type: 'global'
+    }, {
+        hashKey: 'familyCustomerId', name: 'UsersFamilyIndex', type: 'global'
     }]
 });
 
@@ -78,14 +125,41 @@ var School = dynogels.define('School', {
     }]
 });
 
+var Grade = dynogels.define('Grade', {
+    hashKey: 'schoolCode',
+    rangeKey: "name",
+    timestamps: true,
+    schema: {
+        schoolCode: Joi.string().required(),
+        name: Joi.string().required(),
+        institutionShortCode: Joi.string().required(),
+        tuitionFee: Joi.number().required(),
+        duration: {
+            days: Joi.string().regex(/^[01]{7}$/).required(),
+            from: Joi.number().required(),
+            to: Joi.number().required(),
+        },
+        minimumAgeCriterion: {
+            age: Joi.number().required(),
+            validationDate: Joi.number().required(),
+        }
+    },
+    tableName: getTableName("Grade"),
+    indexes: [{
+        hashKey: 'schoolCode', rangeKey: 'institutionShortCode', name: 'GradeInstitutionIndex', type: 'global'
+    }]
+
+});
+
 var Class = dynogels.define('Class', {
     hashKey: 'schoolCode',
     rangeKey: "code",
     timestamps: true,
     schema: {
         schoolCode: Joi.string().required(),
-        code: Joi.string().required(),
+        code: Joi.string().required(), //classId
         institutionShortCode: Joi.string().required(),
+        gradeId: Joi.string().required(),
         teacherId: dynogels.types.stringSet(),
         startDate: Joi.date().required(),
         endDate: Joi.date().required(),
@@ -98,8 +172,8 @@ var Class = dynogels.define('Class', {
     tableName: getTableName("Class"),
     indexes: [{
         hashKey: 'institutionShortCode', name: 'ClassInstitutionIndex', type: 'global'
-    }, {
-        hashKey: 'planId', name: 'ClassPlanIndex', type: 'global'
+        // }, {
+        // hashKey: 'planId', name: 'ClassPlanIndex', type: 'global'
     }]
 });
 //   var family ={
@@ -110,18 +184,19 @@ var Class = dynogels.define('Class', {
 //     notifications:[""],
 //     customerId:"",//hash key
 //   }
-var Family = dynogels.define('Family', {
-    hashKey: 'customerId',
-    timestamps: true,
-    schema: {
-        customerId: Joi.string().required(),
-        institutionShortCode: Joi.string().required()
-    },
-    tableName: getTableName("Family"),
-    indexes: [{
-        hashKey: 'institutionShortCode', name: 'FamilyInstitutionIndex', type: 'global'
-    }]
-});
+
+// var Family = dynogels.define('Family', {
+//     hashKey: 'customerId',
+//     timestamps: true,
+//     schema: {
+//         customerId: Joi.string().required(),
+//         institutionShortCode: Joi.string().required()
+//     },
+//     tableName: getTableName("Family"),
+//     indexes: [{
+//         hashKey: 'institutionShortCode', name: 'FamilyInstitutionIndex', type: 'global'
+//     }]
+// });
 
 //   var student={
 //     name:"",
@@ -159,6 +234,7 @@ module.exports = {
     Institution,
     School,
     Class,
+    Student,
     Family
 }
 

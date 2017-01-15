@@ -1,104 +1,106 @@
 var nodemailer = require("nodemailer");
 var sgTransport = require("nodemailer-sendgrid-transport");
-var jwt         = require("jsonwebtoken");
-var util        = require("util");
-var path        = require("path");
+var jwt = require("jsonwebtoken");
+var util = require("util");
+var path = require("path");
 var options = {
     auth: {
-        api_key: process.env.sendgridKey 
+        api_key: process.env.sendgridKey
     }
 }
 var EmailTemplate = require("email-templates").EmailTemplate;
 var transporter = nodemailer.createTransport(sgTransport(options));
 var templateDir = path.join(__dirname, "./", "templates");
+
 console.info("email templates Dir ", templateDir);
-var sendJoinEmail = function (email,familyId, institutionCode, role) {
-    return new Promise(function(resolve,reject){
+
+var sendJoinEmail = function (email, familyId, institutionCode, role) {
+    return new Promise(function (resolve, reject) {
         var registerEmail = {
-            "email":email,
-            "familyId":familyId,
-            "institutionCode":institutionCode,
-            "role":role
+            "email": email,
+            "familyId": familyId,
+            "institutionCode": institutionCode,
+            "role": role
         };
-        var token = jwt.sign(registerEmail, process.env.jwtSecret,{ expiresIn: 60*60*48 });
-        var registrationLink=util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
+        var token = jwt.sign(registerEmail, process.env.jwtSecret, { expiresIn: 60 * 60 * 48 });
+        var registrationLink = util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");
         registrationEmailTemplate.render({
             registrationLink: registrationLink
-        },function (err, result) {
+        }, function (err, result) {
             console.info(result);
-            
+
         });
-        var registrationEmail = transporter.templateSender(registrationEmailTemplate , {
+        var registrationEmail = transporter.templateSender(registrationEmailTemplate, {
             from: "no-reply@secureslice.com"
         });
         verificationEmail({
             to: email,
             subject: "Parent Registration Invitation"
         }, {
-            registrationLink: registrationLink,
-            email: email
-        }, function(err, info){
-            if (err){
-                console.error("Error sending email ", err);
-                reject(err);
-            }
-            else {
-                console.debug("Message sent: ", info);
-                resolve(info);
-            }
-        });
+                registrationLink: registrationLink,
+                email: email
+            }, function (err, info) {
+                if (err) {
+                    console.error("Error sending email ", err);
+                    reject(err);
+                }
+                else {
+                    console.debug("Message sent: ", info);
+                    resolve(info);
+                }
+            });
     });
 }
-var getDomain=function(institutionCode){
+var getDomain = function (institutionCode) {
     switch (process.env.SERVERLESS_STAGE) {
         case "beta":
-            return "https://"+institutionCode+"-beta.secureslice.com"
+            return "https://" + institutionCode + "-beta.secureslice.com"
         case "prod":
-            return "https://"+institutionCode+".secureslice.com"
+            return "https://" + institutionCode + ".secureslice.com"
         default:
             return "http://localhost:8080"
     }
 }
 
-var sendAdminInviteEmail = function (email,institutionCode) {
-    return new Promise(function(resolve,reject){
+var sendAdminInviteEmail = function (email, institutionCode) {
+    return new Promise(function (resolve, reject) {
         var registerEmail = {
-            "email":email,
-            "institutionCode":institutionCode,
-            "role":"admin"
+            "email": email,
+            "institutionCode": institutionCode,
+            "role": "admin"
         };
-        var token = jwt.sign(registerEmail, process.env.jwtSecret,{ expiresIn: 60*60*48 });
-        var registrationLink=util.format("%s/#/admin/register?token=%s", getDomain(institutionCode), token);
+        var token = jwt.sign(registerEmail, process.env.jwtSecret, { expiresIn: 60 * 60 * 48 });
+        var registrationLink = util.format("%s/#/admin/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");
         registrationEmailTemplate.render({
             registrationLink: registrationLink,
             email: email,
-        },function (err, result) {
+        }, function (err, result) {
             console.info(result);
-            
+
         });
-        var registrationEmail = transporter.templateSender(registrationEmailTemplate , {
+        var registrationEmail = transporter.templateSender(registrationEmailTemplate, {
             from: "no-reply@secureslice.com"
         });
         verificationEmail({
             to: email,
             subject: "Administrator Account Invitation"
         }, {
-            registrationLink: registrationLink,
-            email: email
-        }, function(err, info){
-            if (err){
-                console.error("Error sending email ", err);
-                reject(err);
-            }
-            else {
-                console.debug("Message sent: ", info);
-                resolve(info);
-            }
-        });
+                registrationLink: registrationLink,
+                email: email
+            }, function (err, info) {
+                if (err) {
+                    console.error("Error sending email ", err);
+                    reject(err);
+                }
+                else {
+                    console.debug("Message sent: ", info);
+                    resolve(info);
+                }
+            });
     });
 }
 
