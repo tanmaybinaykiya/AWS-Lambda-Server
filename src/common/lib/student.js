@@ -116,7 +116,7 @@ var approvePaymentDetails = function* (studentId) {
 }
 
 //token to contain institutionShortCode and schoolCode
-var getStudents = function* (schoolCode) {
+var getStudentsBySchoolCode = function* (schoolCode) {
     if (schoolCode) {
         var existingStudents = yield dao.getStudentsBySchoolCode(schoolCode);
         return existingStudents;
@@ -129,6 +129,6 @@ module.exports = {
     enrollStudent,
     updatePaymentDetails,
     approvePaymentDetails,
-    getStudents,
+    getStudentsBySchoolCode,
     enrollStudent
 }

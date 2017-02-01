@@ -328,12 +328,12 @@ var getStudentsBySchoolCode = function (schoolCode) {
         models.Student
             .query(schoolCode)
             .usingIndex('StudentsSchoolRoleIndex')
-            .exec((err, result) => {
+            .exec((err, results) => {
                 if (err) {
                     console.log("Error: ", err);
                     reject(err);
                 } else {
-                    resolve(result);
+                    resolve(results.Items.map(item => item.attrs));
                 }
             });
     });
@@ -354,6 +354,7 @@ module.exports = {
 
     createStudent,
     getStudentsByBirthDateAndFirstName,
+    getStudentsBySchoolCode,
     getStudentByStudentId,
 
     getUsersByFamilyCustomerId,
