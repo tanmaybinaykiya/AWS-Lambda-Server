@@ -3,17 +3,31 @@ var HttpError = require("./errors").HttpError;
 
 var enrollStudent = function* (student) {
 
-    if (student.institutionShortCode && student.schoolId && student.firstName &&
+    if (student.institutionShortCode && student.schoolCode && student.firstName &&
         student.lastName && student.dateOfBirth && student.gender && student.documents && student.documents.medicalForm
         && student.documents.tuitionForm) {
         delete student.studentId;
-        var existingStudent = yield dao.getStudentByBirthDateAndFirstName(student.dateOfBirth, student.firstName);
-        if (existingStudent) {
-            throw new HttpError(400, "student with birthdate and firstname already exists");
+        var existingStudents = null;
+        try {
+            existingStudents = yield dao.getStudentsByBirthDateAndFirstName(new Date(student.dateOfBirth), student.firstName);
+        } catch (err) {
+            console.log("Error in getStudentByBirthDateAndFirstName", err);
+            throw err;
         }
-        var existingSchool = yield dao.getSchoolByShortCode(student.institutionShortCode, student.schoolId);
+        if (existingStudents && existingStudents.length > 0) {
+            console.log("Student with Birthdate and Firstname already exists", existingStudents.map(item => item.attrs));
+            throw new HttpError(400, { err: "Student with Birthdate and Firstname already exists" });
+        }
+        var existingSchool = null;
+        try {
+            existingSchool = yield dao.getSchoolByShortCode(student.institutionShortCode, student.schoolCode);
+        } catch (err) {
+            console.log("Error in getSchoolByShortCode", err);
+            throw err;
+        }
         if (!existingSchool) {
-            throw new HttpError(400, "school with shortcode does not exist");
+            console.log("School with provided shortcode does not exist");
+            throw new HttpError(400, { err: "School with provided shortcode does not exist" });
         }
         student.paymentInfo = {
             paymentStatus: "NOT_PAID"
@@ -23,7 +37,13 @@ var enrollStudent = function* (student) {
             pastClassesEnrolled: [],
             classesEnrolled: []
         }
-        var newStudent = yield dao.createStudent(student);
+        var newStudent = null;
+        try {
+            var newStudent = yield dao.createStudent(student);
+        } catch (err) {
+            console.log("Error in createStudent", err);
+            throw err;
+        }
         if (!newStudent) {
             throw new HttpError(400, "Bad request");
         }
@@ -67,7 +87,7 @@ var unenrollStudent = function* (student) {
             throw new HttpError(400, "Student does not exist");
         }
         existingStudent.enrollmentInfo.isEnrolled = false;
-        yield dao.updatedStudent(updatedStudent);
+        yield dao.updateStudent(updatedStudent);
     } else {
         throw new HttpError(400, "Bad request");
     }
@@ -95,8 +115,20 @@ var approvePaymentDetails = function* (studentId) {
     }
 }
 
+//token to contain institutionShortCode and schoolCode
+var getStudents = function* (schoolCode) {
+    if (schoolCode) {
+        var existingStudents = yield dao.getStudentsBySchoolCode(schoolCode);
+        return existingStudents;
+    } else {
+        throw new HttpError(400, "Bad request");
+    }
+}
+
 module.exports = {
     enrollStudent,
     updatePaymentDetails,
-    approvePaymentDetails
+    approvePaymentDetails,
+    getStudents,
+    enrollStudent
 }

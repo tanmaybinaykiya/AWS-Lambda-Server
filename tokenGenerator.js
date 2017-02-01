@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 process.env.JWT_SECRET = "12345678";
 
-var tokenObj = {"role":"superadmin",};
+var tokenObj = {"role":"SECS",};
 
 
-jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "1d" });
+console.log(jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "1d", issuer:"https://www.secureslice.com/issuer" }));

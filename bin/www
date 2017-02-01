@@ -19,6 +19,7 @@ apps.push(require("../src/services/auth-service/app").app);
 apps.push(require("../src/services/class-service/app").app);
 apps.push(require("../src/services/institution-service/app").app);
 apps.push(require("../src/services/school-service/app").app);
+apps.push(require("../src/services/student-service/app").app);
 apps.push(require("../src/services/user-service/app").app);
 
 var http = require("http");

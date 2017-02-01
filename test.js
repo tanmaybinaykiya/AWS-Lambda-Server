@@ -1,4 +1,6 @@
+
 process.env.SERVERLESS_STAGE = "dev";
+
 var bcrypt = require("co-bcryptjs");
 var co = require("co");
 var user = require("./src/common/lib/user");
@@ -12,8 +14,8 @@ function* setup() {
     console.log("Creating SuperAdmin");
     var returnUser = yield user.addUser({
         password: "password",
-        role: "superadmin",
-        email: "superadmin@secureslice.com",
+        role: "SECS",
+        email: "superadmin3@secureslice.com",
         mobile: 9823012345,
         firstname: "Super",
         lastname: "Admin",

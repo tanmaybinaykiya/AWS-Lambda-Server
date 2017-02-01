@@ -10,7 +10,7 @@ if (process.env.SERVERLESS_STAGE === 'dev') {
         apiVersion: "2012-08-10",
         credentials: new dynogels.AWS.Credentials("DummyAccessKeyId", "DummySecretAccessKey"),
         region: "us-east-1",
-        endpoint: "http://localhost:7777"
+        endpoint: "http://localhost:8000"
     };
     dynogels.log.level("info");
     dynogels.dynamoDriver(new dynogels.AWS.DynamoDB(opts));
@@ -38,7 +38,7 @@ var getUser = function (email) {
                 console.error("err, user :: ", err, user);
                 reject(err);
             } else {
-                resolve(user);
+                resolve(user.attrs);
             }
         });
     });
@@ -50,7 +50,7 @@ var createUser = function (user) {
             if (err) {
                 reject(err);
             } else {
-                resolve(user);
+                resolve(user.attrs);
             }
         });
     });
@@ -62,7 +62,7 @@ var updateUser = function (user) {
             if (err) {
                 reject(err);
             } else {
-                resolve(user);
+                resolve(user.attrs);
             }
         });
     });
@@ -74,7 +74,7 @@ var createInstitution = function (institution) {
             if (err) {
                 reject(err);
             } else {
-                resolve(institution);
+                resolve(institution.attrs);
             }
         });
     });
@@ -88,7 +88,7 @@ var getInstitutionByShortcode = function (shortCode) {
                 console.error("err, institution :: ", err, institution);
                 reject(err);
             } else {
-                resolve(institution);
+                resolve(institution.attrs);
             }
         });
     });
@@ -101,7 +101,7 @@ var createSchool = function (school) {
             if (err) {
                 reject(err);
             } else {
-                resolve(school);
+                resolve(school.attrs);
             }
         });
     });
@@ -117,7 +117,7 @@ var getSchoolsByInstitutionCode = function (institutionCode) {
                     console.error("err, schools :: ", err, schools);
                     reject(err);
                 } else {
-                    resolve(schools);
+                    resolve(schools.Items);
                 }
             });
     });
@@ -130,7 +130,7 @@ var getSchoolByShortCode = function (institutionCode, shortCode) {
                 console.error("err, school :: ", err, school);
                 reject(err);
             } else {
-                resolve(school);
+                resolve(school.attrs);
             }
         });
     });
@@ -143,7 +143,7 @@ var createClass = function (clazz) {
             if (err) {
                 reject(err);
             } else {
-                resolve(clazz);
+                resolve(clazz.attrs);
             }
         });
     });
@@ -151,11 +151,11 @@ var createClass = function (clazz) {
 
 var createStudent = function (clazz) {
     return new Promise(function (resolve, reject) {
-        models.Student.create(clazz, function (err, clazz) {
+        models.Student.create(clazz, function (err, resp) {
             if (err) {
                 reject(err);
             } else {
-                resolve(clazz);
+                resolve(resp.attrs);
             }
         });
     });
@@ -168,7 +168,7 @@ var getClassByShortCode = function (schoolCode, classCode) {
                 console.error("err, clazz :: ", err, clazz);
                 reject(err);
             } else {
-                resolve(clazz);
+                resolve(clazz.attrs);
             }
         });
     });
@@ -184,23 +184,23 @@ var getClassesBySchoolCodeAndInstitutionCode = function (schoolCode, institution
                     console.error("err, classes :: ", err, classes);
                     reject(err);
                 } else {
-                    resolve(classes);
+                    resolve(classes.Items);
                 }
             });
     });
 }
 
-var getStudentByBirthDateAndFirstName = function (dateOfBirth, firstName) {
+var getStudentsByBirthDateAndFirstName = function (dateOfBirth, firstName) {
     return new Promise(function (resolve, reject) {
         models.Student.query(dateOfBirth)
-            .usingIndex('StudentsBirthDateNameIndex')
             .where('firstName').eq(firstName)
+            .usingIndex('StudentsBirthDateNameIndex')
             .exec(function (err, students) {
                 if (err) {
                     console.error("err, students :: ", err, students);
                     reject(err);
                 } else {
-                    resolve(students);
+                    resolve(students.Items);
                 }
             });
     });
@@ -213,7 +213,7 @@ var getStudentByStudentId = function (studentId) {
                 console.error("err, student :: ", err, student);
                 reject(err);
             } else {
-                resolve(student);
+                resolve(student.attrs);
             }
         });
     });
@@ -323,6 +323,22 @@ var getGradesBySchoolCodeAndName = function (schoolCode, gradeName) {
     });
 }
 
+var getStudentsBySchoolCode = function (schoolCode) {
+    return new Promise((resolve, reject) => {
+        models.Student
+            .query(schoolCode)
+            .usingIndex('StudentsSchoolRoleIndex')
+            .exec((err, result) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+    });
+}
+
 module.exports = {
     createTables,
 
@@ -337,12 +353,12 @@ module.exports = {
     getSchoolByShortCode,
 
     createStudent,
-    getStudentByBirthDateAndFirstName,
+    getStudentsByBirthDateAndFirstName,
     getStudentByStudentId,
 
     getUsersByFamilyCustomerId,
     getUsersBySchoolCodeAndRole,
-    getUserByInstitutionCodeAndRole,
+    getUsersByInstitutionCodeAndRole,
 
     createClass,
     getClassesBySchoolCodeAndInstitutionCode,

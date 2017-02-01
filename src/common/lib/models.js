@@ -11,9 +11,9 @@ var Student = dynogels.define("Students", {
         studentId: dynogels.types.uuid(),
         institutionShortCode: Joi.string().required(),
         schoolCode: Joi.string().required(),
-        firstname: Joi.string().required(),
-        middlename: Joi.string(),
-        lastname: Joi.string().required(),
+        firstName: Joi.string().required(),
+        middleName: Joi.string(),
+        lastName: Joi.string().required(),
         nickname: Joi.string(),
         dateOfBirth: Joi.date().required(),
         cityOfBirth: Joi.string(),
@@ -33,8 +33,8 @@ var Student = dynogels.define("Students", {
         },
         enrollmentInfo: {
             isEnrolled: Joi.boolean().default(false),
-            pastClassesEnrolled: Joi.array(Joi.string()),
-            classesEnrolled: Joi.array(Joi.string()),
+            pastClassesEnrolled: Joi.array(),
+            classesEnrolled: Joi.array(),
         }
     },
     tableName: getTableName("Students"),
@@ -43,7 +43,7 @@ var Student = dynogels.define("Students", {
     }, {
         hashKey: 'schoolCode', rangeKey: 'studentId', name: 'StudentsSchoolRoleIndex', type: 'global'
     }, {
-        hashKey: 'dateOfBirth', rangeKey: 'firstname', name: 'StudentsBirthDateNameIndex', type: 'global'
+        hashKey: 'dateOfBirth', rangeKey: 'firstName', name: 'StudentsBirthDateNameIndex', type: 'global'
     }]
 });
 
@@ -235,7 +235,7 @@ module.exports = {
     School,
     Class,
     Student,
-    Family
+    // Family
 }
 
 //For School
