@@ -1,6 +1,11 @@
 module.exports = function (options) {
 
     return function* eventContext(next) {
+        console.log("********************* eventContext *********************");
+        console.log("state: ", this.state);
+        console.log("req: ", this.request);
+        console.log("options: ", options);
+        console.log("********************* eventContext *********************");
         options = options || {}; // defaults: {reqPropKey: "apiGateway", deleteHeaders: true}
         this.state = this.state || {};
         const reqPropKey = options.reqPropKey || "apiGateway";

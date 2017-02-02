@@ -1,5 +1,5 @@
 var routerClass = require("koa-better-router");
-var router = routerClass({ prefix: "/token" }).loadMethods();
+var router = routerClass({ prefix: "/auth" }).loadMethods();
 var superServer = require("../../common/app");
 
 var service = require("./service");
@@ -17,7 +17,7 @@ var serverz = function () {
     }
 
     self.routes = function (app, superz) {
-        router.post("/", service.getToken);
+        router.post("/token", service.getToken);
         app.use(router.legacyMiddleware());
     }
 

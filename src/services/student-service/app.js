@@ -1,5 +1,5 @@
 var routerClass = require("koa-better-router");
-var router = routerClass().loadMethods();
+var router = routerClass({ prefix: "student" }).loadMethods();
 var superServer = require("../../common/app");
 
 var service = require("./service");
@@ -18,7 +18,7 @@ var serverz = function () {
     }
 
     self.routes = function (app, superz) {
-        //TODO authz -> super admin creates admin
+        //TODO authz -> super admin creates admin ; admin token contains insticode and schoolCode; match that with token scope
         router.get("/institution/:institutionCode/school/:schoolCode/", superz.roleBasedAuth(["admin"]), service.getStudents);
         router.post("/institution/:institutionCode/school/:schoolCode/", superz.roleBasedAuth(["admin"]), service.enrollStudent);
         app.use(router.legacyMiddleware());

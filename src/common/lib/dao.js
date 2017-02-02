@@ -1,7 +1,6 @@
 var dynogels = require("dynogels");
 dynogels.log.level("info");
 var models = require("./models");
-// var AWS = require("aws-sdk");
 
 if (process.env.SERVERLESS_STAGE === 'dev') {
     console.log("IS DEV");
@@ -15,7 +14,7 @@ if (process.env.SERVERLESS_STAGE === 'dev') {
     dynogels.log.level("info");
     dynogels.dynamoDriver(new dynogels.AWS.DynamoDB(opts));
 } else {
-    dynogels.dynamoDriver(new AWS.DynamoDB());
+    dynogels.dynamoDriver(new dynogels.AWS.DynamoDB());
 }
 
 var createTables = function () {
@@ -32,13 +31,13 @@ var createTables = function () {
 
 var getUser = function (email) {
     return new Promise(function (resolve, reject) {
-        console.log("EMail: ", email);
+        console.log("Email: ", email);
         models.Users.get(email, function (err, user) {
             if (err) {
                 console.error("err, user :: ", err, user);
                 reject(err);
             } else {
-                resolve(user.attrs);
+                resolve(user);
             }
         });
     });
@@ -50,7 +49,7 @@ var createUser = function (user) {
             if (err) {
                 reject(err);
             } else {
-                resolve(user.attrs);
+                resolve(user);
             }
         });
     });
@@ -62,7 +61,7 @@ var updateUser = function (user) {
             if (err) {
                 reject(err);
             } else {
-                resolve(user.attrs);
+                resolve(user);
             }
         });
     });
@@ -74,7 +73,7 @@ var createInstitution = function (institution) {
             if (err) {
                 reject(err);
             } else {
-                resolve(institution.attrs);
+                resolve(institution);
             }
         });
     });
@@ -88,7 +87,7 @@ var getInstitutionByShortcode = function (shortCode) {
                 console.error("err, institution :: ", err, institution);
                 reject(err);
             } else {
-                resolve(institution.attrs);
+                resolve(institution);
             }
         });
     });
@@ -101,7 +100,7 @@ var createSchool = function (school) {
             if (err) {
                 reject(err);
             } else {
-                resolve(school.attrs);
+                resolve(school);
             }
         });
     });
@@ -130,7 +129,7 @@ var getSchoolByShortCode = function (institutionCode, shortCode) {
                 console.error("err, school :: ", err, school);
                 reject(err);
             } else {
-                resolve(school.attrs);
+                resolve(school);
             }
         });
     });
@@ -143,7 +142,7 @@ var createClass = function (clazz) {
             if (err) {
                 reject(err);
             } else {
-                resolve(clazz.attrs);
+                resolve(clazz);
             }
         });
     });
@@ -155,7 +154,7 @@ var createStudent = function (clazz) {
             if (err) {
                 reject(err);
             } else {
-                resolve(resp.attrs);
+                resolve(resp);
             }
         });
     });
@@ -168,7 +167,7 @@ var getClassByShortCode = function (schoolCode, classCode) {
                 console.error("err, clazz :: ", err, clazz);
                 reject(err);
             } else {
-                resolve(clazz.attrs);
+                resolve(clazz);
             }
         });
     });
@@ -213,7 +212,7 @@ var getStudentByStudentId = function (studentId) {
                 console.error("err, student :: ", err, student);
                 reject(err);
             } else {
-                resolve(student.attrs);
+                resolve(student);
             }
         });
     });

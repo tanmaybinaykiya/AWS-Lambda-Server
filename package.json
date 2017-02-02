@@ -1,23 +1,21 @@
 {
   "name": "secure-slice-backend",
   "version": "0.0.1",
-  "description": "Service description goes here...",
+  "description": "REST API server for secure slice app",
   "author": "Tanmay Binaykiya",
   "scripts": {
     "start": "node bin/www",
     "grunt": "./node_modules/grunt/bin/grunt ",
     "prepareForDeploy": "npm install && ./node_modules/grunt/bin/grunt cleanDeploy && cd functions && npm install --production",
     "prepareForDeployNoInstall": "./node_modules/grunt/bin/grunt cleanDeploy && cd functions && npm install --production",
-    "deployToAws": "cd functions && ../node_modules/serverless/bin/serverless"
+    "deployToAws": "cd functions && AWS_CLIENT_TIMEOUT=1200000 SLS_DEBUG=\"asd\" ../node_modules/serverless/bin/serverless"
   },
   "dependencies": {
-    "chargebee": "^2.0.5",
     "cloudflare": "^1.1.1",
     "co": "^4.6.0",
     "co-bcryptjs": "^0.2.0",
     "dotenv": "^2.0.0",
     "dynogels": "^6.1.0",
-    "easynexmo": "^0.8.5",
     "email-templates": "^2.3.0",
     "joi": "^10.1.0",
     "jsonwebtoken": "7.1.9",

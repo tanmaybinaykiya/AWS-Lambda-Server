@@ -1,14 +1,211 @@
-# Resources:
-#   SomeTable:
-#       Type: AWS::DynamoDB::Table
-#       Properties:
-#         AttributeDefinitions:
-#           - AttributeName: name
-#             AttributeType: S
-#         KeySchema:
-#           - AttributeName: name
-#             KeyType: HASH
-#         ProvisionedThroughput:
-#             ReadCapacityUnits: 5
-#             WriteCapacityUnits: 5
-#         TableName: DUMMY_${self:custom.currentStage}_DummyTableName
+Resources:
+  StudentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: studentId
+            AttributeType: S
+          - AttributeName: institutionShortCode
+            AttributeType: S
+          - AttributeName: schoolCode
+            AttributeType: S
+          - AttributeName: dateOfBirth
+            AttributeType: S
+          - AttributeName: firstName
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: StudentsInstitutionIndex
+            KeySchema:
+              - AttributeName: institutionShortCode
+                KeyType: HASH
+              - AttributeName: studentId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: StudentsSchoolRoleIndex
+            KeySchema:
+              - AttributeName: schoolCode
+                KeyType: HASH
+              - AttributeName: studentId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: StudentsBirthDateNameIndex
+            KeySchema:
+              - AttributeName: dateOfBirth
+                KeyType: HASH
+              - AttributeName: firstName
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        KeySchema:
+          - AttributeName: studentId
+            KeyType: HASH
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_Students
+  UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+          - AttributeName: institutionShortCode
+            AttributeType: S
+          - AttributeName: schoolCode
+            AttributeType: S
+          - AttributeName: role
+            AttributeType: S
+          - AttributeName: familyCustomerId
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: UsersInstitutionIndex
+            KeySchema:
+              - AttributeName: institutionShortCode
+                KeyType: HASH
+              - AttributeName: role
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: UsersSchoolRoleIndex
+            KeySchema:
+              - AttributeName: schoolCode
+                KeyType: HASH
+              - AttributeName: role
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: UsersFamilyIndex
+            KeySchema:
+              - AttributeName: familyCustomerId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_Users
+  InstitutionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: shortCode
+            AttributeType: S
+        KeySchema:
+          - AttributeName: shortCode
+            KeyType: HASH
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_Institution
+  SchoolTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: institutionShortCode
+            AttributeType: S
+          - AttributeName: code
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: SchoolNameIndex
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        KeySchema:
+          - AttributeName: institutionShortCode
+            KeyType: HASH
+          - AttributeName: code
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_School
+  GradeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: schoolCode
+            AttributeType: S
+          - AttributeName: institutionShortCode
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: GradeInstitutionIndex
+            KeySchema:
+              - AttributeName: schoolCode
+                KeyType: HASH
+              - AttributeName: institutionShortCode
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        KeySchema:
+          - AttributeName: schoolCode
+            KeyType: HASH
+          - AttributeName: name
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_Grade
+  ClassTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: schoolCode
+            AttributeType: S
+          - AttributeName: institutionShortCode
+            AttributeType: S
+          - AttributeName: code
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: ClassInstitutionIndex
+            KeySchema:
+              - AttributeName: institutionShortCode
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        KeySchema:
+          - AttributeName: schoolCode
+            KeyType: HASH
+          - AttributeName: code
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_Class

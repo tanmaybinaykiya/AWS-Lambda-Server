@@ -5,7 +5,7 @@ var HttpError = require("./errors").HttpError;
 var validateAndGetUser = function* (email, password) {
     var user = yield dao.getUser(email);
     if (!user) {
-        throw new HttpError(401, "Invald username or password");
+        throw new HttpError(401, "Invalid username or password");
     }
     if (yield bcrypt.compare(password, user.get("passwordHash"))) {
         return user.toJSON();

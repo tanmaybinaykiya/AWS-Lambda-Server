@@ -8,6 +8,12 @@ cors:
     - "Authorization,X-CSRFToken,Content-Type,Origin"
 currentStage: ${opt:stage, self:provider.stage}
 currentRegion: ${opt:region}
+dev:
+  ignoreSSLValidation: true
+stage:
+  ignoreSSLValidation: false
+prod:
+  ignoreSSLValidation: false
 writeEnvVars:
     SERVERLESS_STAGE: ${self:custom.currentStage}
     SERVERLESS_REGION: ${self:custom.currentRegion}

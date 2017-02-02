@@ -1,5 +1,5 @@
 var routerClass = require("koa-better-router");
-var router = routerClass().loadMethods();
+var router = routerClass({ prefix: "/school" }).loadMethods();
 var superServer = require("../../common/app");
 
 var service = require("./service");
