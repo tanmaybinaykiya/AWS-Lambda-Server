@@ -41,6 +41,156 @@ functions:
           method: delete
           # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
           cors: ${self:custom.cors}
+  classService:
+    handler: class-service/src/services/class-service/starter/index.handle
+    name: ${self:custom.currentStage}-classService
+    description: Class Service
+    environment: ${self:custom.writeEnvVars}
+    events:
+      - http:
+          integration: ${self:custom.integration}
+          path: class/{proxy+}
+          method: get
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: class/{proxy+}
+          method: put
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: class/{proxy+}
+          method: post
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: class/{proxy+}
+          method: delete
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+  institutionService:
+    handler: institution-service/src/services/institution-service/starter/index.handle
+    name: ${self:custom.currentStage}-institutionService
+    description: Institution Service
+    environment: ${self:custom.writeEnvVars}
+    events:
+      - http:
+          integration: ${self:custom.integration}
+          path: institution/{proxy+}
+          method: get
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: institution/{proxy+}
+          method: put
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: institution/{proxy+}
+          method: post
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: institution/{proxy+}
+          method: delete
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+  schoolService:
+    handler: school-service/src/services/school-service/starter/index.handle
+    name: ${self:custom.currentStage}-schoolService
+    description: School Service
+    environment: ${self:custom.writeEnvVars}
+    events:
+      - http:
+          integration: ${self:custom.integration}
+          path: school/{proxy+}
+          method: get
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: school/{proxy+}
+          method: put
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: school/{proxy+}
+          method: post
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: school/{proxy+}
+          method: delete
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+  studentService:
+    handler: student-service/src/services/student-service/starter/index.handle
+    name: ${self:custom.currentStage}-studentService
+    description: Student Service
+    environment: ${self:custom.writeEnvVars}
+    events:
+      - http:
+          integration: ${self:custom.integration}
+          path: student/{proxy+}
+          method: get
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: student/{proxy+}
+          method: put
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: student/{proxy+}
+          method: post
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: student/{proxy+}
+          method: delete
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+  userService:
+    handler: user-service/src/services/user-service/starter/index.handle
+    name: ${self:custom.currentStage}-userService
+    description: User Service
+    environment: ${self:custom.writeEnvVars}
+    events:
+      - http:
+          integration: ${self:custom.integration}
+          path: user/{proxy+}
+          method: get
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: user/{proxy+}
+          method: put
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: user/{proxy+}
+          method: post
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
+      - http:
+          integration: ${self:custom.integration}
+          path: user/{proxy+}
+          method: delete
+          # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
+          cors: ${self:custom.cors}
 plugins:
   - serverless-plugin-write-env-vars
   - serverless-plugin-stage-variables
