@@ -38,22 +38,22 @@ module.exports.getStudents = function* (req, send) {
         var userObjs = yield student.getStudentsBySchoolCode(this.params.schoolCode);
         this.status = 200;
         this.body = userObjs.map(userObj => ({
-            studentId: userObj.get("studentId"),
-            firstName: userObj.get("firstName"),
-            middleName: userObj.get("middleName"),
-            lastName: userObj.get("lastName"),
-            nickname: userObj.get("nickname"),
-            dateOfBirth: userObj.get("dateOfBirth"),
-            cityOfBirth: userObj.get("cityOfBirth"),
-            countryOfBirth: userObj.get("countryOfBirth"),
-            stateOfBirth: userObj.get("stateOfBirth"),
-            zip: userObj.get("zip"),
-            race: userObj.get("race"),
-            gender: userObj.get("gender"),
-            extraInfo: userObj.get("extraInfo"),
-            paymentInfo: userObj.get("paymentInfo"),
-            enrollmentInfo: userObj.get("enrollmentInfo"),
-            documents: userObj.get("documents")
+            studentId: userObj.studentId,
+            firstName: userObj.firstName,
+            middleName: userObj.middleName,
+            lastName: userObj.lastName,
+            nickname: userObj.nickname,
+            dateOfBirth: userObj.dateOfBirth,
+            cityOfBirth: userObj.cityOfBirth,
+            countryOfBirth: userObj.countryOfBirth,
+            stateOfBirth: userObj.stateOfBirth,
+            zip: userObj.zip,
+            race: userObj.race,
+            gender: userObj.gender,
+            extraInfo: userObj.extraInfo,
+            paymentInfo: userObj.paymentInfo,
+            enrollmentInfo: userObj.enrollmentInfo,
+            documents: userObj.documents
         }));
     }
 };
