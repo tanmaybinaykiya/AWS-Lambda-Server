@@ -336,6 +336,21 @@ var getStudentsBySchoolCode = function (schoolCode) {
             });
     });
 }
+var getStudentsByParentEmailAndSchoolCode = function (email, code) {
+    return new Promise((resolve, reject) => {
+        models.Student
+            .query(email)
+            .usingIndex('StudentsParentEmailIndex')
+            .exec((err, results) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve(results.Items.map(item => item.attrs));
+                }
+            });
+    });
+}
 
 module.exports = {
     createTables,
@@ -352,6 +367,7 @@ module.exports = {
 
     createStudent,
     getStudentsByBirthDateAndFirstName,
+    getStudentsByParentEmailAndSchoolCode,
     getStudentsBySchoolCode,
     getStudentByStudentId,
 

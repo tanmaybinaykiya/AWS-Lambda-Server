@@ -5,7 +5,7 @@ var enrollStudent = function* (student) {
 
     if (student.institutionShortCode && student.schoolCode && student.firstName &&
         student.lastName && student.dateOfBirth && student.gender && student.documents && student.documents.medicalForm
-        && student.documents.tuitionForm) {
+        && student.documents.tuitionForm && student.parentEmail) {
         delete student.studentId;
         var existingStudents = null;
         try {
@@ -125,10 +125,20 @@ var getStudentsBySchoolCode = function* (schoolCode) {
     }
 }
 
+var getStudentsByParentEmailAndSchoolCode = function* (parentEmail, schoolCode) {
+    if (schoolCode) {
+        var existingStudents = yield dao.getStudentsByParentEmailAndSchoolCode(parentEmail, schoolCode);
+        return existingStudents;
+    } else {
+        throw new HttpError(400, "Bad request");
+    }
+}
+
 module.exports = {
     enrollStudent,
     updatePaymentDetails,
     approvePaymentDetails,
     getStudentsBySchoolCode,
-    enrollStudent
+    enrollStudent,
+    getStudentsByParentEmailAndSchoolCode
 }

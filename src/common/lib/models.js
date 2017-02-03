@@ -9,6 +9,7 @@ var Student = dynogels.define("Students", {
     timestamps: true,
     schema: {
         studentId: dynogels.types.uuid(),
+        parentEmail: Joi.string().email().required(),
         institutionShortCode: Joi.string().required(),
         schoolCode: Joi.string().required(),
         firstName: Joi.string().required(),
@@ -44,6 +45,8 @@ var Student = dynogels.define("Students", {
         hashKey: 'schoolCode', rangeKey: 'studentId', name: 'StudentsSchoolRoleIndex', type: 'global'
     }, {
         hashKey: 'dateOfBirth', rangeKey: 'firstName', name: 'StudentsBirthDateNameIndex', type: 'global'
+    }, {
+        hashKey: 'parentEmail', rangeKey: 'studentId', name: 'StudentsParentEmailIndex', type: 'global'
     }]
 });
 

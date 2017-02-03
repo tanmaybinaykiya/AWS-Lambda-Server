@@ -4,10 +4,40 @@ var student = require("../../common/lib/student");
 
 module.exports.getStudents = function* (req, send) {
     console.log("getStudents: ", "this.state: ", this.state, "req: ", req, "send: ", send);
-    var userObjs = yield student.getStudentsBySchoolCode(this.params.schoolCode);
-
-    this.body = userObjs.map(userObj => {
-        return {
+    if (this.state.user.role === 'parent') {
+        var queryParams = this.request.query;
+        if (!queryParams.parentEmail) {
+            this.status = 400;
+        } else {
+            var userObjs = yield student.getStudentsByParentEmailAndSchoolCode(queryParams.parentEmail, this.params.schoolCode);
+            console.log("userObjs: ", userObjs);
+            if (!userObjs || userObjs.length < 1) {
+                this.status = 204;
+            } else {
+                this.status = 200;
+                this.body = userObjs.map(userObj => {
+                    return {
+                        studentId: userObj.studentId,
+                        firstName: userObj.firstName,
+                        middleName: userObj.middleName,
+                        lastName: userObj.lastName,
+                        nickname: userObj.nickname,
+                        dateOfBirth: userObj.dateOfBirth,
+                        cityOfBirth: userObj.cityOfBirth,
+                        countryOfBirth: userObj.countryOfBirth,
+                        stateOfBirth: userObj.stateOfBirth,
+                        zip: userObj.zip,
+                        race: userObj.race,
+                        gender: userObj.gender,
+                        extraInfo: userObj.extraInfo
+                    }
+                });
+            }
+        }
+    } else {
+        var userObjs = yield student.getStudentsBySchoolCode(this.params.schoolCode);
+        this.status = 200;
+        this.body = userObjs.map(userObj => ({
             studentId: userObj.get("studentId"),
             firstName: userObj.get("firstName"),
             middleName: userObj.get("middleName"),
@@ -24,9 +54,8 @@ module.exports.getStudents = function* (req, send) {
             paymentInfo: userObj.get("paymentInfo"),
             enrollmentInfo: userObj.get("enrollmentInfo"),
             documents: userObj.get("documents")
-        }
-    });
-    this.status = 200;
+        }));
+    }
 };
 
 module.exports.enrollStudent = function* (req, send) {
