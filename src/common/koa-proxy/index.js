@@ -66,13 +66,6 @@ class Proxy {
         return `${transformedPath}?${queryStringParams}`;
     }
     mapApiGatewayEventToHttpRequest(event, context, socketPath) {
-        console.log("*********************** mapApiGatewayEventToHttpRequest *****************************");
-        console.log("event", event);
-        console.log("httpMethod", event.httpMethod);
-        console.log("headers", event.headers);
-        console.log("event", context);
-        console.log("event", socketPath);
-        console.log("*********************** mapApiGatewayEventToHttpRequest *****************************");
         event.headers["x-apigateway-event"] = JSON.stringify(event);
         event.headers["x-apigateway-context"] = JSON.stringify(context);
         return {
@@ -118,11 +111,6 @@ class Proxy {
         }
     }
     forwardRequestToNodeServer(server, event, context, callback) {
-        console.log("********************* forwardRequestToNodeServer *********************");
-        console.log("server: ", server);
-        console.log("event: ", event);
-        console.log("context: ", context);
-        console.log("********************* forwardRequestToNodeServer *********************");
         const requestOptions = this.mapApiGatewayEventToHttpRequest(event, context, this.getSocketPath(server._socketPathSuffix));
         const req = http.request(requestOptions, (response) => this.forwardResponseToApiGateway(server, response, context, callback));
         if (event.body) {

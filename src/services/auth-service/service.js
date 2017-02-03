@@ -10,10 +10,10 @@ module.exports.getToken = function* getToken() {
     var tokenObj = {
         role: userObj.role,
         email: userObj.email,
-        institutionShortCode: userObj.institutionShortCode
+        institutionShortCode: userObj.institutionShortCode,
+        schoolCode: userObj.schoolCode
     }
     var token = jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "1d", issuer: ISSUER });
-    userObj.accessToken = token;
-    this.body = { token: token, expiresIn: 86400000 };
+    this.body = { token: token, expiresIn: 86400000, name: userObj.firstname, role: userObj.role, institutionShortCode: userObj.institutionShortCode, schoolCode: userObj.schoolCode };
     this.status = 200;
 };

@@ -10,15 +10,19 @@ currentStage: ${opt:stage, self:provider.stage}
 currentRegion: ${opt:region}
 dev:
   ignoreSSLValidation: true
+  secret: secureslice
 stage:
   ignoreSSLValidation: false
+  secret: s1e1c2u3r5e8s13l21i34ce
 prod:
   ignoreSSLValidation: false
+  secret: s1c2e5r13u34l21s8c3i1e
 writeEnvVars:
     SERVERLESS_STAGE: ${self:custom.currentStage}
     SERVERLESS_REGION: ${self:custom.currentRegion}
     SERVERLESS_SERVICE_NAME: ${self:service}
     NODE_TLS_REJECT_UNAUTHORIZED: ${self:custom.${self:custom.currentStage}.ignoreSSLValidation}
+    JWT_SECRET: ${self:custom.${self:custom.currentStage}.secret}
 stageVariables:
     APIGatewayUrl: {"Fn::Join": [
           "",

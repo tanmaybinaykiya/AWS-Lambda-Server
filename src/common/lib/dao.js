@@ -2,8 +2,8 @@ var dynogels = require("dynogels");
 dynogels.log.level("info");
 var models = require("./models");
 
-if (process.env.SERVERLESS_STAGE === 'dev') {
-    console.log("IS DEV");
+if (process.env.IS_LOCAL) {
+    console.log("IS LOCAL");
     dynogels.AWS.config.update({ region: 'us-east-1' });
     var opts = {
         apiVersion: "2012-08-10",
@@ -11,7 +11,6 @@ if (process.env.SERVERLESS_STAGE === 'dev') {
         region: "us-east-1",
         endpoint: "http://localhost:8000"
     };
-    dynogels.log.level("info");
     dynogels.dynamoDriver(new dynogels.AWS.DynamoDB(opts));
 } else {
     dynogels.dynamoDriver(new dynogels.AWS.DynamoDB());
