@@ -376,7 +376,6 @@ var getPaymentMethodsForParentEmail = function (parentEmail) {
                     console.log("Error: ", err);
                     reject(err);
                 } else {
-                    console.log("Result: ", result);
                     resolve(result);
                 }
             });
