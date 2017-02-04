@@ -7,9 +7,9 @@ if (process.env.IS_LOCAL) {
     dynogels.AWS.config.update({ region: 'us-east-1' });
     var opts = {
         apiVersion: "2012-08-10",
-        credentials: new dynogels.AWS.Credentials("DummyAccessKeyId", "DummySecretAccessKey"),
+        credentials: new dynogels.AWS.Credentials(process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY),
         region: "us-east-1",
-        endpoint: "http://localhost:8000"
+        // endpoint: "http://localhost:8000"
     };
     dynogels.dynamoDriver(new dynogels.AWS.DynamoDB(opts));
 } else {

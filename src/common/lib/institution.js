@@ -1,6 +1,5 @@
 var dao = require("./dao");
 var HttpError = require("./errors").HttpError;
-var chargebee = require('./chargebee');
 var cloudflare = require('./cloudflare');
 var emailHelper = require('./emailhelper');
 var restrictedCodes = ["app-beta", "app", "api", "secureslice"];

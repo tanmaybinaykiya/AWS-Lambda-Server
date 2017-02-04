@@ -1,5 +1,6 @@
-
-process.env.SERVERLESS_STAGE = "dev";
+process.env.SERVERLESS_STAGE = "stage";
+process.env.AWS_ACCESS_KEY_ID = "blahAKIAJPCJUTYCLYKYMLYA";
+process.env.AWS_SECRET_ACCESS_KEY = "blahu3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
 process.env.IS_LOCAL = true;
 
 var bcrypt = require("co-bcryptjs");
@@ -17,12 +18,10 @@ function* createSuperAdmin() {
     var returnUser = yield user.addUser({
         password: "password",
         role: "SECS",
-        email: "superadmin3@secureslice.com",
+        email: "superadmin@secureslice.com",
         mobile: 9823012345,
-        firstname: "Super",
-        lastname: "Admin",
-        // institutionShortCode: "ISS",
-        // familyCustomerId: 124567
+        firstname: "SuperLorem",
+        lastname: "IpsumAdmin",
     })
     console.log(returnUser);
 }
@@ -30,28 +29,28 @@ function* createSuperAdmin() {
 function* createAdmin() {
     console.log("Creating Admin");
     var returnUser = yield user.addUser({
+        firstname: "Lorem",
+        lastname: "Admin",
         password: "password",
+        email: "admin@usc.com",
         role: "admin",
-        email: "admin@secureslice.com",
         mobile: 9823054321,
-        firstname: "Dumbledore",
-        lastname: " ",
-        institutionShortCode: "ISS",
-        // familyCustomerId: 124567
+        institutionShortCode: "USC",
+        schoolCode: "CSE",
     })
     console.log(returnUser);
 }
 
 function* createInstitution() {
     yield institution.createInstitution({
-        "name": "Arkhum Asylum",
-        "shortCode": "ISS",
-        "adminemail": "whyso@serious.com",
-        "addressline1": "UNKNOWN",
-        "city": "Gotham",
-        "state": "NEW YORK",
-        "zip": 1234567,
-        "country": "USA"
+        name: "University of Southern California",
+        shortCode: "USC",
+        adminemail: "admin@usc.com",
+        addressline1: "UNKNOWN",
+        city: "New York",
+        state: "California",
+        zip: 1234567,
+        country: "USA"
     });
 }
 
@@ -64,13 +63,13 @@ function* createParent() {
     var returnUser = yield user.addUser({
         password: "password",
         role: "parent",
-        email: "parent@secureslice.com",
+        email: "parent@gmail.com",
         mobile: 9823054321,
-        firstname: "Sirius",
-        lastname: "Black",
-        institutionShortCode: "ISS",
-        schoolCode: "LHS2",
-        familyCustomerId: "124567"
+        firstname: "Lorem",
+        lastname: "Parent",
+        institutionShortCode: "USC",
+        schoolCode: "CSE",
+        // familyCustomerId: "124567"
     })
     console.log(returnUser);
 }
@@ -82,13 +81,13 @@ function* createStudent() {
 function genSalt() {
     co(function* () {
         try {
-            yield createTables();
-            yield createSuperAdmin();
-            yield createAdmin();
-            yield createInstitution();
-            yield createSchool();
-            yield createParent();
-            yield createStudent();
+            // yield createTables();
+            // yield createSuperAdmin();
+            // yield createAdmin();
+            // yield createInstitution();
+            // yield createSchool();
+            // yield createParent();
+            // yield createStudent();
 
 
             // var result = yield dao.getUser("superadmin@secureslice.com");

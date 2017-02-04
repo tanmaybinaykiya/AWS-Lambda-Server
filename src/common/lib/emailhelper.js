@@ -5,7 +5,7 @@ var util = require("util");
 var path = require("path");
 var options = {
     auth: {
-        api_key: process.env.sendgridKey
+        api_key: process.env.SENDGRIDKEY
     }
 }
 var EmailTemplate = require("email-templates").EmailTemplate;
@@ -65,13 +65,15 @@ var getDomain = function (institutionCode) {
 }
 
 var sendAdminInviteEmail = function (email, institutionCode) {
+
+    // TODO Fix this.
     return new Promise(function (resolve, reject) {
         var registerEmail = {
             "email": email,
             "institutionCode": institutionCode,
             "role": "admin"
         };
-        var token = jwt.sign(registerEmail, process.env.jwtSecret, { expiresIn: 60 * 60 * 48 });
+        var token = jwt.sign(registerEmail, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 48 });
         var registrationLink = util.format("%s/#/admin/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");

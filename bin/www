@@ -4,7 +4,6 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 process.env.JWT_SECRET = "12345678";
-process.env.IS_LOCAL = true;
 process.env.AWS_PROFILE = "aws-profile-name";
 process.env.NODE_DEBUG = "request";
 process.env.SERVERLESS_REGION = "us-west-2";
@@ -13,14 +12,20 @@ process.env.SERVERLESS_SERVICE_NAME = "localRun";
 process.env.LOCAL_DYNAMO = "http://127.0.0.1:8000"
 process.env.DEBUG = "koa*"
 
+process.env.SENDGRIDKEY = "Blah"
+
+process.env.IS_LOCAL = true;
+process.env.AWS_ACCESS_KEY_ID = "DUMMYVALUE";
+process.env.AWS_SECRET_ACCESS_KEY = "DUMMYVALUE";
+
 //module dependencies.
 var apps = [];
-apps.push(require("../src/services/auth-service/app").app);
-apps.push(require("../src/services/class-service/app").app);
-apps.push(require("../src/services/institution-service/app").app);
-apps.push(require("../src/services/school-service/app").app);
-apps.push(require("../src/services/student-service/app").app);
-apps.push(require("../src/services/user-service/app").app);
+apps.push(require("../functions/auth-service/src/services/auth-service/app").app);
+apps.push(require("../functions/class-service/src/services/class-service/app").app);
+apps.push(require("../functions/institution-service/src/services/institution-service/app").app);
+apps.push(require("../functions/school-service/src/services/school-service/app").app);
+apps.push(require("../functions/student-service/src/services/student-service/app").app);
+apps.push(require("../functions/user-service/src/services/user-service/app").app);
 
 var http = require("http");
 

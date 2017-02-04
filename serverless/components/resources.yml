@@ -13,6 +13,8 @@ Resources:
             AttributeType: S
           - AttributeName: firstName
             AttributeType: S
+          - AttributeName: parentEmail
+            AttributeType: S
         GlobalSecondaryIndexes:
           - IndexName: StudentsInstitutionIndex
             KeySchema:
@@ -41,6 +43,17 @@ Resources:
               - AttributeName: dateOfBirth
                 KeyType: HASH
               - AttributeName: firstName
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          - IndexName: StudentsParentEmailIndex
+            KeySchema:
+              - AttributeName: parentEmail
+                KeyType: HASH
+              - AttributeName: studentId
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
