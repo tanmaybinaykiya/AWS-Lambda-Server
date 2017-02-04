@@ -1,4 +1,4 @@
-process.env.SERVERLESS_STAGE = "stage";
+process.env.SERVERLESS_STAGE = "dev";
 process.env.AWS_ACCESS_KEY_ID = "blahAKIAJPCJUTYCLYKYMLYA";
 process.env.AWS_SECRET_ACCESS_KEY = "blahu3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
 process.env.IS_LOCAL = true;
@@ -81,7 +81,7 @@ function* createStudent() {
 function genSalt() {
     co(function* () {
         try {
-            // yield createTables();
+            yield createTables();
             // yield createSuperAdmin();
             // yield createAdmin();
             // yield createInstitution();

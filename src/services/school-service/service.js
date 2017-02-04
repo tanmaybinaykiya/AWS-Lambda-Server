@@ -18,7 +18,8 @@ module.exports.getSchoolsByInstitution = function* () {
     console.log("getSchoolsByInstitution: ", this.params.institutionCode);
     if (this.params && this.params.institutionCode) {
         var schools = yield schoolLib.getSchoolsByInstitution(this.params.institutionCode);
-        var response = schools.Items
+        console.log("schools found: ", schools);
+        var response = schools
             .map(school => (school.toJSON()))
             .map(school => ({ name: school.name, code: school.code }));
         this.body = response;
@@ -27,3 +28,15 @@ module.exports.getSchoolsByInstitution = function* () {
         this.status = 400;
     }
 };
+
+module.exports.getSchoolsByInstitutionAndSchoolCode = function* () {
+    console.log("getSchoolsByInstitutionAndSchoolCode: ", this.params.institutionCode, this.params.schoolCode);
+    if (this.params && this.params.institutionCode && this.params.schoolCode) {
+        var school = yield schoolLib.getSchoolByInstitutionCodeAndSchoolCode(this.params.institutionCode, this.params.schoolCode);
+        this.body = { name: school.get("name"), code: school.get("code") };
+        this.status = 200;
+    } else {
+        this.status = 400;
+    }
+};
+

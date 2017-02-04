@@ -22,7 +22,12 @@ var getSchoolsByInstitution = function* (shortCode) {
     return yield dao.getSchoolsByInstitutionCode(shortCode);
 }
 
+var getSchoolByInstitutionCodeAndSchoolCode = function* (instCode, schoolCode) {
+    return yield dao.getSchoolByInstitutionCodeAndSchoolCode(instCode, schoolCode);
+}
+
 module.exports = {
     addSchool,
-    getSchoolsByInstitution
+    getSchoolsByInstitution,
+    getSchoolByInstitutionCodeAndSchoolCode
 } 

@@ -12,8 +12,16 @@ module.exports.getToken = function* getToken() {
         email: userObj.email,
         institutionShortCode: userObj.institutionShortCode,
         schoolCode: userObj.schoolCode
-    }
+    };
     var token = jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "1d", issuer: ISSUER });
-    this.body = { token: token, expiresIn: 86400000, name: userObj.firstname, email: userObj.email, role: userObj.role, institutionShortCode: userObj.institutionShortCode, schoolCode: userObj.schoolCode };
+    this.body = {
+        token: token,
+        expiresIn: 86400000,
+        name: userObj.firstname,
+        email: userObj.email,
+        role: userObj.role,
+        institutionShortCode: userObj.institutionShortCode,
+        schoolCode: userObj.schoolCode
+    };
     this.status = 200;
 };

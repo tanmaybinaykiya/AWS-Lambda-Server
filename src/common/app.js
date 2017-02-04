@@ -5,6 +5,7 @@ var koa = require("koa");
 var path = require("path");
 var eventContext = require("./koa-proxy/middleware");
 var HttpError = require("./lib/errors").HttpError;
+var util = require("util");
 
 var ISSUER = "https://www.secureslice.com/issuer";
 
@@ -40,16 +41,22 @@ module.exports = function () {
                 if (err instanceof HttpError) {
                     this.status = err.status;
                     this.body = err.message;
+                } else if (err.statusCode === 401) {
+                    this.status = err.statusCode;
+                    this.body = { error: "Authentication Error" }
+                } else if (err.statusCode === 403) {
+                    this.status = err.statusCode;
+                    this.body = { error: "Authorization Error" }
                 } else {
                     this.status = err.statusCode || 500;
-                    this.body = err.responseBody || "Unexpected Server error";
+                    this.body = err.responseBody || { error: "Unexpected Server error" };
                     this.app.emit("error", err, this);
                 }
             }
         });
 
         app.on("error", function (err) {
-            console.log("server error", err);
+            console.log("Unhandled Server error", err);
         });
         app.use(koaBody());
         app.use(cors());
@@ -73,14 +80,12 @@ module.exports = function () {
                     yield next;
                 } else {
                     console.log("Invalid role for API: ", reqRole, ". Allowed roles are: ", allowedRoles);
-                    throw new HttpError(404, "institution shortcode is not valid");
                     this.throw(403);
                 }
             } else {
                 console.log("No role in token, that's weird!");
                 this.throw(403);
             }
-
         };
     }
 

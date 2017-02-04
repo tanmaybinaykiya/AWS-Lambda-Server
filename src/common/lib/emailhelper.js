@@ -22,7 +22,7 @@ var sendJoinEmail = function (email, familyId, institutionCode, role) {
             "institutionCode": institutionCode,
             "role": role
         };
-        var token = jwt.sign(registerEmail, process.env.jwtSecret, { expiresIn: 60 * 60 * 48 });
+        var token = jwt.sign(registerEmail, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 48 });
         var registrationLink = util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");
@@ -53,12 +53,12 @@ var sendJoinEmail = function (email, familyId, institutionCode, role) {
             });
     });
 }
-var getDomain = function (institutionCode) {
+var getDomain = function () {
     switch (process.env.SERVERLESS_STAGE) {
         case "beta":
-            return "https://" + institutionCode + "-beta.secureslice.com"
+            return "https://app-beta.secureslice.com"
         case "prod":
-            return "https://" + institutionCode + ".secureslice.com"
+            return "https://secureslice.com"
         default:
             return "http://localhost:8080"
     }
@@ -74,7 +74,7 @@ var sendAdminInviteEmail = function (email, institutionCode) {
             "role": "admin"
         };
         var token = jwt.sign(registerEmail, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 48 });
-        var registrationLink = util.format("%s/#/admin/register?token=%s", getDomain(institutionCode), token);
+        var registrationLink = util.format("%s/#/admin/register?token=%s", getDomain(), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");
         registrationEmailTemplate.render({

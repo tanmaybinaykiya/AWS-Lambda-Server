@@ -11,7 +11,7 @@ module.exports.createInstitution = function* () {
 module.exports.getInstitution = function* () {
     console.log("getInstitution: ", this.request.query);
     var queryParams = this.request.query;
-    var institutionShortCode = queryParams.shortCode;
+    var institutionShortCode = queryParams.institutionCode;
     if (institutionShortCode.indexOf(institutionLib.restrictedCodes) >= 0) {
         this.body = {
             name: "secureslice",

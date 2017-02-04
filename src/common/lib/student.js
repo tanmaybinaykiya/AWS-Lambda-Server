@@ -3,9 +3,7 @@ var HttpError = require("./errors").HttpError;
 
 var enrollStudent = function* (student) {
 
-    if (student.institutionShortCode && student.schoolCode && student.firstName &&
-        student.lastName && student.dateOfBirth && student.gender && student.documents && student.documents.medicalForm
-        && student.documents.tuitionForm && student.parentEmail) {
+    if (isValidStudentEnrollRequest(student)) {
         delete student.studentId;
         var existingStudents = null;
         try {
@@ -20,7 +18,7 @@ var enrollStudent = function* (student) {
         }
         var existingSchool = null;
         try {
-            existingSchool = yield dao.getSchoolByShortCode(student.institutionShortCode, student.schoolCode);
+            existingSchool = yield dao.getSchoolByInstitutionCodeAndSchoolCode(student.institutionShortCode, student.schoolCode);
         } catch (err) {
             console.log("Error in getSchoolByShortCode", err);
             throw err;
@@ -52,6 +50,21 @@ var enrollStudent = function* (student) {
         throw new HttpError(400, "Bad request");
     }
 
+}
+
+function isValidStudentEnrollRequest(student) {
+    console.log("isValidStudentEnrollRequest:  ", student);
+    return student.institutionShortCode &&
+        student.schoolCode &&
+        student.firstName &&
+        student.lastName &&
+        student.dateOfBirth &&
+        student.gender &&
+        student.documents &&
+        student.documents.medicalForm &&
+        student.documents.tuitionForm &&
+        student.parentEmail &&
+        student.paymentMethodId;
 }
 
 var updateStudentDetails = function* (student) {
@@ -115,7 +128,7 @@ var approvePaymentDetails = function* (studentId) {
     }
 }
 
-//token to contain institutionShortCode and schoolCode
+//token should contain institutionShortCode and schoolCode
 var getStudentsBySchoolCode = function* (schoolCode) {
     if (schoolCode) {
         var existingStudents = yield dao.getStudentsBySchoolCode(schoolCode);

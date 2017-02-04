@@ -26,6 +26,7 @@ apps.push(require("../functions/institution-service/src/services/institution-ser
 apps.push(require("../functions/school-service/src/services/school-service/app").app);
 apps.push(require("../functions/student-service/src/services/student-service/app").app);
 apps.push(require("../functions/user-service/src/services/user-service/app").app);
+apps.push(require("../functions/billing-service/src/services/billing-service/app").app);
 
 var http = require("http");
 

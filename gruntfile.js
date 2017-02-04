@@ -22,6 +22,9 @@ module.exports = function (grunt) {
                 }, {
                     src: ["src/services/user-service/**/*.js", "src/common/**/*.js"],
                     dest: "functions/user-service/"
+                }, {
+                    src: ["src/services/billing-service/**/*.js", "src/common/**/*.js"],
+                    dest: "functions/billing-service/"
                 }]
             },
             package: {

@@ -1,5 +1,5 @@
 var routerClass = require("koa-better-router");
-var router = routerClass({ prefix: "student" }).loadMethods();
+var router = routerClass({ prefix: "/billing" }).loadMethods();
 var superServer = require("../../common/app");
 
 var service = require("./service");
@@ -18,11 +18,11 @@ var serverz = function () {
     }
 
     self.routes = function (app, superz) {
-        // TODO authz -> super admin creates admin ; admin token contains insticode and schoolCode; match that with path params
-        router.get("/institution/:institutionCode/school/:schoolCode/", superz.roleBasedAuth(["admin", "parent"]), service.getStudents);
-        router.post("/institution/:institutionCode/school/:schoolCode/", superz.roleBasedAuth(["parent"]), service.enrollStudent);
+        router.post("/paymentMethod", superz.roleBasedAuth(["parent"]), service.addPaymentMethodForParent);
+        router.get("/paymentMethod", superz.roleBasedAuth(["parent"]), service.getPaymentMethodForParent);
         app.use(router.legacyMiddleware());
     }
+
 
     self.getApp = function () {
         return self.app;

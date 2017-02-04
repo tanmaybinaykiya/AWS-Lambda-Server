@@ -9,7 +9,7 @@ if (process.env.IS_LOCAL) {
         apiVersion: "2012-08-10",
         credentials: new dynogels.AWS.Credentials(process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY),
         region: "us-east-1",
-        // endpoint: "http://localhost:8000"
+        endpoint: "http://localhost:8000"
     };
     dynogels.dynamoDriver(new dynogels.AWS.DynamoDB(opts));
 } else {
@@ -121,13 +121,15 @@ var getSchoolsByInstitutionCode = function (institutionCode) {
     });
 }
 
-var getSchoolByShortCode = function (institutionCode, shortCode) {
+var getSchoolByInstitutionCodeAndSchoolCode = function (institutionCode, shortCode) {
+    console.log("getSchoolByInstitutionCodeAndSchoolCode: ", institutionCode, shortCode);
     return new Promise(function (resolve, reject) {
         models.School.get(institutionCode, shortCode, function (err, school) {
             if (err) {
                 console.error("err, school :: ", err, school);
                 reject(err);
             } else {
+                console.log("Found School: ", school);
                 resolve(school);
             }
         });
@@ -352,6 +354,35 @@ var getStudentsByParentEmailAndSchoolCode = function (email, code) {
     });
 }
 
+var addPaymentMethod = function (paymentMethod) {
+    return new Promise(function (resolve, reject) {
+        models.PaymentMethod.create(paymentMethod, function (err, resp) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(resp);
+            }
+        });
+    });
+}
+
+var getPaymentMethodsForParentEmail = function (parentEmail) {
+    return new Promise((resolve, reject) => {
+        models.PaymentMethod.query(parentEmail)
+            .loadAll()
+            .usingIndex('ParentMethodIndex')
+            .exec((err, result) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    console.log("Result: ", result);
+                    resolve(result);
+                }
+            });
+    });
+}
+
 module.exports = {
     createTables,
 
@@ -363,7 +394,7 @@ module.exports = {
 
     createSchool,
     getSchoolsByInstitutionCode,
-    getSchoolByShortCode,
+    getSchoolByInstitutionCodeAndSchoolCode,
 
     createStudent,
     getStudentsByBirthDateAndFirstName,
@@ -380,5 +411,9 @@ module.exports = {
     getClassesBySchoolCodeAndGrade,
 
     getGradesBySchoolCodeAndInstitution,
-    getGradesBySchoolCodeAndName
+    getGradesBySchoolCodeAndName,
+
+    addPaymentMethod,
+    getPaymentMethodsForParentEmail
+
 }

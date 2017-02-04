@@ -36,7 +36,8 @@ var Student = dynogels.define("Students", {
             isEnrolled: Joi.boolean().default(false),
             pastClassesEnrolled: Joi.array(),
             classesEnrolled: Joi.array(),
-        }
+        },
+        paymentMethodId: Joi.string().required()
     },
     tableName: getTableName("Students"),
     indexes: [{
@@ -79,6 +80,24 @@ var Users = dynogels.define('Users', {
         hashKey: 'schoolCode', rangeKey: 'role', name: 'UsersSchoolRoleIndex', type: 'global'
     }, {
         hashKey: 'familyCustomerId', name: 'UsersFamilyIndex', type: 'global'
+    }]
+});
+
+var PaymentMethod = dynogels.define('PaymentMethod', {
+    hashKey: 'methodId',
+    timestamps: true,
+    schema: {
+        methodId: dynogels.types.uuid(),
+        parentEmail: Joi.string().required(),
+        cardNumber: Joi.string().regex(/^[\d]{16}$/).required(),
+        cvv: Joi.string().required(),
+        postalCode: Joi.string().required(),
+        expiration: Joi.string().regex(/^[\d]{2}\/[\d]{2}$/).required(),
+        isDefault: Joi.boolean().required()
+    },
+    tableName: getTableName("PaymentMethod"),
+    indexes: [{
+        hashKey: 'parentEmail', rangeKey: 'methodId', name: 'ParentMethodIndex', type: 'global'
     }]
 });
 
@@ -238,6 +257,7 @@ module.exports = {
     School,
     Class,
     Student,
+    PaymentMethod
     // Family
 }
 
