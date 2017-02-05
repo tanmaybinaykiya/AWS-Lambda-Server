@@ -3,68 +3,64 @@ var HttpError = require("./errors").HttpError;
 
 var enrollStudent = function* (student) {
 
-    if (isValidStudentEnrollRequest(student)) {
-        delete student.studentId;
-        var existingStudents = null;
-        try {
-            existingStudents = yield dao.getStudentsByBirthDateAndFirstName(new Date(student.dateOfBirth), student.firstName);
-        } catch (err) {
-            console.log("Error in getStudentByBirthDateAndFirstName", err);
-            throw err;
-        }
-        if (existingStudents && existingStudents.length > 0) {
-            console.log("Student with Birthdate and Firstname already exists", existingStudents.map(item => item.attrs));
-            throw new HttpError(400, { err: "Student with Birthdate and Firstname already exists" });
-        }
-        var existingSchool = null;
-        try {
-            existingSchool = yield dao.getSchoolByInstitutionCodeAndSchoolCode(student.institutionShortCode, student.schoolCode);
-        } catch (err) {
-            console.log("Error in getSchoolByShortCode", err);
-            throw err;
-        }
-        if (!existingSchool) {
-            console.log("School with provided shortcode does not exist");
-            throw new HttpError(400, { err: "School with provided shortcode does not exist" });
-        }
-        student.paymentInfo = {
-            paymentStatus: "NOT_PAID"
-        };
-        student.enrollmentInfo = {
-            isEnrolled: false,
-            pastClassesEnrolled: [],
-            classesEnrolled: []
-        }
-        var newStudent = null;
-        try {
-            var newStudent = yield dao.createStudent(student);
-        } catch (err) {
-            console.log("Error in createStudent", err);
-            throw err;
-        }
-        if (!newStudent) {
-            throw new HttpError(400, "Bad request");
-        }
-        return newStudent;
-    } else {
+    validateStudentEnrollRequest(student);
+    delete student.studentId;
+    var existingStudents = null;
+    try {
+        existingStudents = yield dao.getStudentsByBirthDateAndFirstName(new Date(student.dateOfBirth), student.firstName);
+    } catch (err) {
+        console.log("Error in getStudentByBirthDateAndFirstName", err);
+        throw err;
+    }
+    if (existingStudents && existingStudents.length > 0) {
+        console.log("Student with Birthdate and Firstname already exists", existingStudents.map(item => item.attrs));
+        throw new HttpError(400, { err: "Student with Birthdate and Firstname already exists" });
+    }
+    var existingSchool = null;
+    try {
+        existingSchool = yield dao.getSchoolByInstitutionCodeAndSchoolCode(student.institutionShortCode, student.schoolCode);
+    } catch (err) {
+        console.log("Error in getSchoolByShortCode", err);
+        throw err;
+    }
+    if (!existingSchool) {
+        console.log("School with provided shortcode does not exist");
+        throw new HttpError(400, { err: "School with provided shortcode does not exist" });
+    }
+    student.paymentInfo = {
+        paymentStatus: "NOT_PAID"
+    };
+    student.enrollmentInfo = {
+        isEnrolled: false,
+        pastClassesEnrolled: [],
+        classesEnrolled: []
+    }
+    var newStudent = null;
+    try {
+        var newStudent = yield dao.createStudent(student);
+    } catch (err) {
+        console.log("Error in createStudent", err);
+        throw err;
+    }
+    if (!newStudent) {
         throw new HttpError(400, "Bad request");
     }
+    return newStudent;
 
 }
 
-function isValidStudentEnrollRequest(student) {
-    console.log("isValidStudentEnrollRequest:  ", student);
-    return student.institutionShortCode &&
-        student.schoolCode &&
-        student.firstName &&
-        student.lastName &&
-        student.dateOfBirth &&
-        student.gender &&
-        student.documents &&
-        student.documents.medicalForm &&
-        student.documents.tuitionForm &&
-        student.parentEmail &&
-        student.paymentMethodId;
+function validateStudentEnrollRequest(student) {
+    if(!student.institutionShortCode ) throw new HttpError(400, {error:"invalid institutionShortCode"})
+    if(!student.schoolCode ) throw new HttpError(400, {error:"invalid schoolCode"})
+    if(!student.firstName ) throw new HttpError(400, {error:"invalid firstName"})
+    if(!student.lastName ) throw new HttpError(400, {error:"invalid lastName"})
+    if(!student.dateOfBirth ) throw new HttpError(400, {error:"invalid dateOfBirth"})
+    if(!student.gender ) throw new HttpError(400, {error:"invalid gender"})
+    if(!student.documents ) throw new HttpError(400, {error:"invalid documents"})
+    if(!student.documents.medicalForm ) throw new HttpError(400, {error:"invalid medicalForm"})
+    if(!student.documents.tuitionForm ) throw new HttpError(400, {error:"invalid tuitionForm"})
+    if(!student.parentEmail ) throw new HttpError(400, {error:"invalid parentEmail"})
+    if(!student.paymentMethodId) throw new HttpError(400, {error:"invalid paymentMethodId"})
 }
 
 var updateStudentDetails = function* (student) {

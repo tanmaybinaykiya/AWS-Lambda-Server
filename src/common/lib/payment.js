@@ -3,9 +3,16 @@ var HttpError = require("./errors").HttpError;
 
 module.exports.addPaymentMethod = function* (paymentMethod) {
     if (paymentMethod.cardNumber && paymentMethod.cvv && paymentMethod.expiration && paymentMethod.postalCode && paymentMethod.parentEmail) {
-        var existingDefaultPaymentMethods = yield this.getDefaultPaymentMethodForParent(paymentMethod.parentEmail);
-        paymentMethod.isDefault = (existingDefaultPaymentMethods.length < 1);
-        return yield dao.addPaymentMethod(paymentMethod);
+        try{
+            var existingDefaultPaymentMethods = yield this.getDefaultPaymentMethodForParent(paymentMethod.parentEmail);
+            paymentMethod.isDefault = (existingDefaultPaymentMethods.length < 1);
+            return yield dao.addPaymentMethod(paymentMethod);
+        }catch(err){
+            console.log("Joi Validation error: ", err);
+            if(err.isJoi){
+                throw new HttpError(400, { err: "Invalid input" });
+            }
+        }
     } else {
         throw new HttpError(400);
     }

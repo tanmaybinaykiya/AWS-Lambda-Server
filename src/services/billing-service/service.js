@@ -24,11 +24,9 @@ module.exports.getPaymentMethodForParent = function* () {
     var queryParams = this.request.query;
     if (queryParams.parentEmail) {
         if (queryParams.default === "true") {
-            console.log("default");
             var paymentMethods = yield payment.getDefaultPaymentMethodForParent(queryParams.parentEmail);
             this.body = paymentMethods.map(method => method.toJSON()).map(paymentMethodSerializer);
         } else {
-            console.log("Not default");
             var paymentMethods = yield payment.getPaymentMethodsForParent(queryParams.parentEmail);
             this.body = paymentMethods.Items.map(method => method.toJSON()).map(paymentMethodSerializer);
         }
@@ -40,7 +38,8 @@ module.exports.getPaymentMethodForParent = function* () {
 
 var paymentMethodSerializer = (method) => ({
     cardNumber: obfuscateCardNumber(method.cardNumber || method.get("cardNumber")),
-    methodId: method.methodId || method.get("methodId")
+    methodId: method.methodId || method.get("methodId"),
+    isDefault: (method.isDefault !== undefined) ? method.isDefault : method.get("isDefault")
 });
 
 function obfuscateCardNumber(cardNumber) {
