@@ -222,3 +222,30 @@ Resources:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
         TableName: ${self:custom.currentStage}_Class
+  PaymentMethodTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: methodId
+            AttributeType: S
+          - AttributeName: parentEmail
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: ParentMethodIndex
+            KeySchema:
+              - AttributeName: parentEmail
+                KeyType: HASH
+              - AttributeName: methodId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        KeySchema:
+          - AttributeName: methodId
+            KeyType: HASH
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_PaymentMethod
