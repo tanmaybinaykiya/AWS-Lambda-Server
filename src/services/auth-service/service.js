@@ -1,6 +1,7 @@
 var AWS = require('aws-sdk');
 var jwt = require('jsonwebtoken');
 var user = require("../../common/lib/user");
+var braintree = require("../../common/lib/braintree");
 
 var ISSUER = "https://www.secureslice.com/issuer";
 
@@ -23,5 +24,14 @@ module.exports.getToken = function* getToken() {
         institutionShortCode: userObj.institutionShortCode,
         schoolCode: userObj.schoolCode
     };
+    this.status = 200;
+};
+
+module.exports.getClientToken = function* getToken() {
+    console.log("getClientToken");
+    var clientToken = yield braintree.generateClientToken();
+    this.body = {
+        clientToken: clientToken
+    }
     this.status = 200;
 };

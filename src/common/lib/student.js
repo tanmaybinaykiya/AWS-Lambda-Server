@@ -50,17 +50,17 @@ var enrollStudent = function* (student) {
 }
 
 function validateStudentEnrollRequest(student) {
-    if(!student.institutionShortCode ) throw new HttpError(400, {error:"invalid institutionShortCode"})
-    if(!student.schoolCode ) throw new HttpError(400, {error:"invalid schoolCode"})
-    if(!student.firstName ) throw new HttpError(400, {error:"invalid firstName"})
-    if(!student.lastName ) throw new HttpError(400, {error:"invalid lastName"})
-    if(!student.dateOfBirth ) throw new HttpError(400, {error:"invalid dateOfBirth"})
-    if(!student.gender ) throw new HttpError(400, {error:"invalid gender"})
-    if(!student.documents ) throw new HttpError(400, {error:"invalid documents"})
-    if(!student.documents.medicalForm ) throw new HttpError(400, {error:"invalid medicalForm"})
-    if(!student.documents.tuitionForm ) throw new HttpError(400, {error:"invalid tuitionForm"})
-    if(!student.parentEmail ) throw new HttpError(400, {error:"invalid parentEmail"})
-    if(!student.paymentMethodId) throw new HttpError(400, {error:"invalid paymentMethodId"})
+    if(!student.institutionShortCode ) throw new HttpError(400, {error:"Invalid institutionShortCode"})
+    if(!student.schoolCode ) throw new HttpError(400, {error:"Invalid schoolCode"})
+    if(!student.firstName ) throw new HttpError(400, {error:"Invalid firstName"})
+    if(!student.lastName ) throw new HttpError(400, {error:"Invalid lastName"})
+    if(!student.dateOfBirth ) throw new HttpError(400, {error:"Invalid dateOfBirth"})
+    if(!student.gender ) throw new HttpError(400, {error:"Invalid gender"})
+    if(!student.documents ) throw new HttpError(400, {error:"Invalid documents"})
+    if(!student.documents.medicalForm ) throw new HttpError(400, {error:"Invalid medicalForm"})
+    if(!student.documents.tuitionForm ) throw new HttpError(400, {error:"Invalid tuitionForm"})
+    if(!student.parentEmail ) throw new HttpError(400, {error:"Invalid parentEmail"})
+    if(!student.paymentMethodId) throw new HttpError(400, {error:"Invalid paymentMethodId"})
 }
 
 var updateStudentDetails = function* (student) {

@@ -1,5 +1,7 @@
 var dynogels = require("dynogels");
 var Joi = require("joi");
+var constants = require("./constants");
+
 var getTableName = function (modelName) {
     return process.env.SERVERLESS_STAGE + "_" + modelName;
 }
@@ -89,10 +91,10 @@ var PaymentMethod = dynogels.define('PaymentMethod', {
     schema: {
         methodId: dynogels.types.uuid(),
         parentEmail: Joi.string().required(),
-        cardNumber: Joi.string().regex(/^[\d]{16}$/).required(),
+        cardNumber: Joi.string().regex(constants.creditCardRegex).required(),
         cvv: Joi.string().required(),
         postalCode: Joi.string().required(),
-        expiration: Joi.string().regex(/^[\d]{2}\/[\d]{2}$/).required(),
+        expiration: Joi.string().regex(constants.expirationDateRegex).required(),
         isDefault: Joi.boolean().required()
     },
     tableName: getTableName("PaymentMethod"),

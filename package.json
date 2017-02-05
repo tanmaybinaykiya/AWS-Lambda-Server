@@ -11,6 +11,7 @@
     "deployToAws": "cd functions && AWS_CLIENT_TIMEOUT=1200000 SLS_DEBUG=\"asd\" ../node_modules/serverless/bin/serverless"
   },
   "dependencies": {
+    "braintree": "1.47.0",
     "cloudflare": "1.1.1",
     "co": "4.6.0",
     "co-bcryptjs": "0.2.0",
