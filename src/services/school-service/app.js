@@ -29,6 +29,7 @@ var serverz = function () {
         router.post("/institution/:institutionCode/school/:schoolCode/grade", superz.roleBasedAuth(["admin"]), service.createGrades);
 
         router.get("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class", superz.roleBasedAuth(["admin"]), service.getClasses);
+        router.get("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class/:name", superz.roleBasedAuth(["admin"]), service.getClasses);
         router.post("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class", superz.roleBasedAuth(["admin"]), service.createClass);
 
         app.use(router.legacyMiddleware());

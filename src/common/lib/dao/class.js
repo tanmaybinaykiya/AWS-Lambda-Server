@@ -1,4 +1,4 @@
-var dynogels = require ("./dynogelsConfig");
+var dynogels = require("./dynogelsConfig");
 
 module.exports.createClass = function (clazz) {
     return new Promise(function (resolve, reject) {
@@ -12,10 +12,9 @@ module.exports.createClass = function (clazz) {
     });
 }
 
-
-module.exports.getClassByShortCode = function (schoolCode, classCode) {
+module.exports.getClassByName = function (compositeKey, name) {
     return new Promise(function (resolve, reject) {
-        models.Class.get(schoolCode, classCode, function (err, clazz) {
+        models.Class.get(compositeKey, name, function (err, clazz) {
             if (err) {
                 console.error("err, clazz :: ", err, clazz);
                 reject(err);
@@ -23,22 +22,6 @@ module.exports.getClassByShortCode = function (schoolCode, classCode) {
                 resolve(clazz);
             }
         });
-    });
-}
-
-module.exports.getClassesBySchoolCodeAndInstitutionCode = function (schoolCode, institutionCode) {
-    return new Promise(function (resolve, reject) {
-        models.Class.query(schoolCode)
-            .loadAll()
-            .where('institutionShortCode').equals(institutionCode)
-            .exec(function (err, classes) {
-                if (err) {
-                    console.error("err, classes :: ", err, classes);
-                    reject(err);
-                } else {
-                    resolve(classes.Items);
-                }
-            });
     });
 }
 

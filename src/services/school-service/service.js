@@ -43,14 +43,26 @@ module.exports.getSchoolsByInstitutionAndSchoolCode = function* () {
 };
 
 module.exports.createClass = function* () {
-    console.log("Create Class Body: ", this.request.body, this.params.institutionCode, this.params.schoolCode, this.params.gradeName);
-    var clazz = classLib.addClass(this.request.body);
-    this.status = 200;
-    this.body = clazz.toJSON();
+    var institutionCode = this.params.institutionCode;
+    var schoolCode = this.params.schoolCode;
+    var gradeName = this.params.gradeName;
+    var requestBody = this.request.body;
+    console.log("Create Class Body: ", requestBody, institutionCode, schoolCode, gradeName);
+    if (isValidCreateClassRequest(requestBody, institutionCode, schoolCode, gradeName)) {
+        var clazz = yield classLib.addClass(institutionCode, schoolCode, gradeName, requestBody);
+        this.status = 200;
+        this.body = clazz.toJSON();
+    } else {
+        this.status = 400;
+    }
 };
 
-function isValidClassRequest(requestBody) {
-    return requestBody.code &&
+function isValidCreateClassRequest(requestBody, institutionCode, schoolCode, gradeName) {
+    return institutionCode &&
+        schoolCode &&
+        gradeName &&
+        requestBody &&
+        requestBody.name &&
         requestBody.teacherIds && requestBody.teacherIds.length > 0 &&
         requestBody.startDate &&
         requestBody.endDate &&
@@ -60,7 +72,7 @@ function isValidClassRequest(requestBody) {
 
 module.exports.getClasses = function* (req, next) {
     var queryParams = this.request.query;
-    if (queryParams.className && queryParams.schoolCode && queryParams.institutionCode && queryParams.gradeName) {
+    if (this.params.schoolCode && this.params.institutionCode && this.params.gradeName) {
         var classes = yield classLib.getClassesBySchool(queryParams.schoolCode, queryParams.institutionCode, queryParams.gradeName);
         return classes.Items.map(item => item.toJSON());
     } else {
@@ -71,9 +83,13 @@ module.exports.getClasses = function* (req, next) {
 };
 
 module.exports.getClassByName = function* (req, next) {
+    var institutionCode = this.params.institutionCode;
+    var schoolCode = this.params.schoolCode;
+    var gradeName = this.params.gradeName;
+    var className = this.params.name;
     var queryParams = this.request.query;
-    if (this.params.className && queryParams.schoolCode && queryParams.institutionCode && queryParams.gradeName) {
-        var classObj = yield classLib.getClassByName(queryParams.schoolCode, queryParams.institutionCode, queryParams.gradeName, queryParams.className);
+    if (institutionCode && schoolCode && gradeName && className && queryParams) {
+        var classObj = yield classLib.getClassByName(institutionCode, schoolCode, gradeName, className);
         return classObj.toJSON();
     } else {
         this.status = 400;
@@ -83,11 +99,34 @@ module.exports.getClassByName = function* (req, next) {
 };
 
 module.exports.createGrade = function* () {
-    console.log("Create Class Body: ", this.request.body);
-    var clazz = classLib.addClass(this.request.body);
-    this.status = 200;
-    this.body = clazz.toJSON();
+    var institutionCode = this.params.institutionCode;
+    var schoolCode = this.params.schoolCode;
+    var requestBody = this.request.body;
+    console.log("Create Grade Request: ", institutionCode, schoolCode, requestBody);
+    if (isCreateGradeRequestValid(institutionCode, schoolCode, requestBody)) {
+        var clazz = classLib.addClass(this.request.body);
+        this.status = 200;
+        this.body = clazz.toJSON();
+    } else {
+        this.status = 400;
+    }
 };
+
+function isCreateGradeRequestValid(institutionCode, schoolCode, requestBody) {
+    return institutionCode &&
+        schoolCode &&
+        requestBody &&
+        requestBody.name &&
+        requestBody.tuitionFee > 0 &&
+        requestBody.planId &&
+        requestBody.duration &&
+        requestBody.duration.days &&
+        requestBody.duration.from &&
+        requestBody.duration.to &&
+        requestBody.minimumAgeCriterion &&
+        requestBody.minimumAgeCriterion.age > 0 &&
+        requestBody.minimumAgeCriterion.validationDate;
+}
 
 module.exports.getGrades = function* (req, next) {
     var queryParams = this.request.query;
@@ -98,4 +137,3 @@ module.exports.getGrades = function* (req, next) {
     this.status = 200;
     this.body = response;
 };
-

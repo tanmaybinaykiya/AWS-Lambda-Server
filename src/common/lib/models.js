@@ -146,8 +146,7 @@ var School = dynogels.define('School', {
         braintreeConfig: {
             merchantId: Joi.string(),
             publicKey: Joi.string(),
-            privateKey: Joi.string(),
-            planId: Joi.string()
+            privateKey: Joi.string()
         }
     },
     tableName: getTableName("School"),
@@ -186,7 +185,7 @@ var Class = dynogels.define('Class', {
     schema: {
         //composite key of institutionCode, schoolCode and grade
         institutionSchoolGradeCode: Joi.string().required(),
-        code: Joi.string().required(), //classId
+        name: Joi.string().required(), //classId
         teacherId: dynogels.types.stringSet(),
         startDate: Joi.date().required(),
         endDate: Joi.date().required(),
@@ -202,20 +201,19 @@ var Class = dynogels.define('Class', {
     }]
 });
 
-var BillingPlan = dynogels.define('BillingPlan', {
-    hashKey: 'planId',
-    timestamps: true,
-    schema: {
-        planId: dynogels.types.uuid(),
-        paymentSolution: Joi.string().required(),
-        sPlanId: Joi.string().required()
-
-    },
-    tableName: getTableName("BillingPlan"),
-    indexes: [{
-        hashKey: 'sPlanId', name: 'PaymentSolutionPlanId', type: 'global'
-    }]
-});
+// var BillingPlan = dynogels.define('BillingPlan', {
+//     hashKey: 'planId',
+//     timestamps: true,
+//     schema: {
+//         planId: dynogels.types.uuid(),
+//         paymentSolution: Joi.string().required(),
+//         sPlanId: Joi.string().required()
+//     },
+//     tableName: getTableName("BillingPlan"),
+//     indexes: [{
+//         hashKey: 'sPlanId', name: 'PaymentSolutionPlanId', type: 'global'
+//     }]
+// });
 
 
 //   var family ={

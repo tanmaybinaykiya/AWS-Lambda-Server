@@ -80,10 +80,9 @@ module.exports.updateBraintreeConfig = function* () {
         var braintreeCredentials = {
             merchantId: requestBody.merchantId,
             publicKey: requestBody.publicKey,
-            privateKey: requestBody.privateKey,
-            planId: requestBody.planId
+            privateKey: requestBody.privateKey
         };
-        yield braintree.updateBraintreeCredentialsByInstitutionAndSchool(this.params.institutionCode, this.params.schoolCode, braintreeCredentials);
+        yield braintree.updateBraintreeConfigByInstitutionAndSchool(this.params.institutionCode, this.params.schoolCode, braintreeCredentials);
         this.status = 200;
     } else {
         this.status = 400;

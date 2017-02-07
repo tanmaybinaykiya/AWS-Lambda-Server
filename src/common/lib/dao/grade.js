@@ -1,4 +1,4 @@
-var dynogels = require ("./dynogelsConfig");
+var dynogels = require("./dynogelsConfig");
 
 module.exports.createGrade = function (grade) {
     return new Promise(function (resolve, reject) {
