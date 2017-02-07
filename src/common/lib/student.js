@@ -1,13 +1,13 @@
-var dao = require("./dao");
+var schoolDAO = require("./dao/school");
 var HttpError = require("./errors").HttpError;
 
-var enrollStudent = function* (student) {
+module.exports.enrollStudent = function* (student) {
 
     validateStudentEnrollRequest(student);
     delete student.studentId;
     var existingStudents = null;
     try {
-        existingStudents = yield dao.getStudentsByBirthDateAndFirstName(new Date(student.dateOfBirth), student.firstName);
+        existingStudents = yield schoolDAO.getStudentsByBirthDateAndFirstName(new Date(student.dateOfBirth), student.firstName);
     } catch (err) {
         console.log("Error in getStudentByBirthDateAndFirstName", err);
         throw err;
@@ -18,7 +18,7 @@ var enrollStudent = function* (student) {
     }
     var existingSchool = null;
     try {
-        existingSchool = yield dao.getSchoolByInstitutionCodeAndSchoolCode(student.institutionShortCode, student.schoolCode);
+        existingSchool = yield schoolDAO.getSchoolByInstitutionCodeAndSchoolCode(student.institutionShortCode, student.schoolCode);
     } catch (err) {
         console.log("Error in getSchoolByShortCode", err);
         throw err;
@@ -37,7 +37,7 @@ var enrollStudent = function* (student) {
     }
     var newStudent = null;
     try {
-        var newStudent = yield dao.createStudent(student);
+        var newStudent = yield schoolDAO.createStudent(student);
     } catch (err) {
         console.log("Error in createStudent", err);
         throw err;
@@ -50,22 +50,22 @@ var enrollStudent = function* (student) {
 }
 
 function validateStudentEnrollRequest(student) {
-    if(!student.institutionShortCode ) throw new HttpError(400, {error:"Invalid institutionShortCode"})
-    if(!student.schoolCode ) throw new HttpError(400, {error:"Invalid schoolCode"})
-    if(!student.firstName ) throw new HttpError(400, {error:"Invalid firstName"})
-    if(!student.lastName ) throw new HttpError(400, {error:"Invalid lastName"})
-    if(!student.dateOfBirth ) throw new HttpError(400, {error:"Invalid dateOfBirth"})
-    if(!student.gender ) throw new HttpError(400, {error:"Invalid gender"})
-    if(!student.documents ) throw new HttpError(400, {error:"Invalid documents"})
-    if(!student.documents.medicalForm ) throw new HttpError(400, {error:"Invalid medicalForm"})
-    if(!student.documents.tuitionForm ) throw new HttpError(400, {error:"Invalid tuitionForm"})
-    if(!student.parentEmail ) throw new HttpError(400, {error:"Invalid parentEmail"})
-    if(!student.paymentMethodId) throw new HttpError(400, {error:"Invalid paymentMethodId"})
+    if (!student.institutionShortCode) throw new HttpError(400, { error: "Invalid institutionShortCode" })
+    if (!student.schoolCode) throw new HttpError(400, { error: "Invalid schoolCode" })
+    if (!student.firstName) throw new HttpError(400, { error: "Invalid firstName" })
+    if (!student.lastName) throw new HttpError(400, { error: "Invalid lastName" })
+    if (!student.dateOfBirth) throw new HttpError(400, { error: "Invalid dateOfBirth" })
+    if (!student.gender) throw new HttpError(400, { error: "Invalid gender" })
+    if (!student.documents) throw new HttpError(400, { error: "Invalid documents" })
+    if (!student.documents.medicalForm) throw new HttpError(400, { error: "Invalid medicalForm" })
+    if (!student.documents.tuitionForm) throw new HttpError(400, { error: "Invalid tuitionForm" })
+    if (!student.parentEmail) throw new HttpError(400, { error: "Invalid parentEmail" })
+    if (!student.paymentMethodId) throw new HttpError(400, { error: "Invalid paymentMethodId" })
 }
 
-var updateStudentDetails = function* (student) {
+module.exports.updateStudentDetails = function* (student) {
     if (student && student.studentId) {
-        var existingStudent = yield dao.getStudentByStudentId(student.studentId);
+        var existingStudent = yield schoolDAO.getStudentByStudentId(student.studentId);
         if (!existingStudent) {
             throw new HttpError(400, "Student does not exist");
         }
@@ -83,37 +83,28 @@ var updateStudentDetails = function* (student) {
         if (student.documents && student.documents.medicalForm) updatedStudent.documents.medicalForm = student.documents.medicalForm;
         if (student.documents && student.documents.tuitionForm) updatedStudent.documents.tuitionForm = student.documents.tuitionForm;
 
-        yield dao.updatedStudent(updatedStudent);
+        yield schoolDAO.updatedStudent(updatedStudent);
     } else {
         throw new HttpError(400, "Bad request");
     }
 }
 
-var unenrollStudent = function* (student) {
+module.exports.unenrollStudent = function* (student) {
     if (student && student.studentId) {
-        var existingStudent = yield dao.getStudentByStudentId(student.studentId);
+        var existingStudent = yield schoolDAO.getStudentByStudentId(student.studentId);
         if (!existingStudent) {
             throw new HttpError(400, "Student does not exist");
         }
         existingStudent.enrollmentInfo.isEnrolled = false;
-        yield dao.updateStudent(updatedStudent);
+        yield schoolDAO.updateStudent(updatedStudent);
     } else {
         throw new HttpError(400, "Bad request");
     }
 }
 
-var updatePaymentDetails = function* (studentId, paymentDetails) {
-    // if (studentId && paymentDetails) {
-
-    // } else {
-    //     throw new HttpError(400, "Bad request");
-    // }
-
-}
-
-var approvePaymentDetails = function* (studentId) {
+module.exports.approvePaymentDetails = function* (studentId) {
     if (studentId) {
-        var existingStudent = yield dao.getStudentByStudentId(studentId);
+        var existingStudent = yield schoolDAO.getStudentByStudentId(studentId);
         if (!existingStudent) {
             throw new HttpError(400, "Bad request");
         }
@@ -125,29 +116,20 @@ var approvePaymentDetails = function* (studentId) {
 }
 
 //token should contain institutionShortCode and schoolCode
-var getStudentsBySchoolCode = function* (schoolCode) {
+module.exports.getStudentsBySchoolCode = function* (schoolCode) {
     if (schoolCode) {
-        var existingStudents = yield dao.getStudentsBySchoolCode(schoolCode);
+        var existingStudents = yield schoolDAO.getStudentsBySchoolCode(schoolCode);
         return existingStudents;
     } else {
         throw new HttpError(400, "Bad request");
     }
 }
 
-var getStudentsByParentEmailAndSchoolCode = function* (parentEmail, schoolCode) {
+module.exports.getStudentsByParentEmailAndSchoolCode = function* (parentEmail, schoolCode) {
     if (schoolCode) {
-        var existingStudents = yield dao.getStudentsByParentEmailAndSchoolCode(parentEmail, schoolCode);
+        var existingStudents = yield schoolDAO.getStudentsByParentEmailAndSchoolCode(parentEmail, schoolCode);
         return existingStudents;
     } else {
         throw new HttpError(400, "Bad request");
     }
-}
-
-module.exports = {
-    enrollStudent,
-    updatePaymentDetails,
-    approvePaymentDetails,
-    getStudentsBySchoolCode,
-    enrollStudent,
-    getStudentsByParentEmailAndSchoolCode
 }

@@ -18,7 +18,6 @@ var serverz = function () {
 
     self.routes = function (app, superz) {
         router.post("/token", service.getToken);
-        router.get("/clienttoken", service.getClientToken);
         app.use(router.legacyMiddleware());
     }
 

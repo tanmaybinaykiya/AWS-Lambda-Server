@@ -1,6 +1,7 @@
 var dao = require("./dao");
 var chargebee = require('./chargebee');
 var HttpError=require("./errors").HttpError;
+
 var createFamily = function* (user) {
     var existingInstitution = yield dao.getInstitutionByShortcode(user.institutionShortCode);
     if (!existingInstitution) {

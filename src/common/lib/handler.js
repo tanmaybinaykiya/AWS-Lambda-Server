@@ -1,17 +1,18 @@
 var HttpError = require("./errors").HttpError;
 var co = require("co");
+
 var handleRequest = function () {
     var args = Array.prototype.slice.call(arguments);
-    var cb=args[0];
+    var cb = args[0];
     var handlers = Array.prototype.slice.call(arguments, 1);
     co(function* () {
         try {
-            var context={};
-            for(var i=0;i<handlers.length;i++){
+            var context = {};
+            for (var i = 0; i < handlers.length; i++) {
                 yield handlers[i](context);
             }
-            console.log("context.body" , context.body);
-            cb(null, context.body);    
+            console.log("context.body", context.body);
+            cb(null, context.body);
         } catch (err) {
             console.error(err);
             if (err instanceof HttpError) {

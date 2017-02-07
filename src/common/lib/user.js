@@ -1,9 +1,9 @@
 var bcrypt = require("co-bcryptjs");
-var dao = require("./dao");
+var userDAO = require("./dao/user");
 var HttpError = require("./errors").HttpError;
 
-var validateAndGetUser = function* (email, password) {
-    var user = yield dao.getUser(email);
+module.exports.validateAndGetUser = function* (email, password) {
+    var user = yield userDAO.getUser(email);
     if (!user) {
         throw new HttpError(401, "Invalid username or password");
     }
@@ -14,8 +14,8 @@ var validateAndGetUser = function* (email, password) {
     }
 }
 
-var addUser = function* (user) {
-    var existinguser = yield dao.getUser(user.email);
+module.exports.addUser = function* (user) {
+    var existinguser = yield userDAO.getUser(user.email);
     if (existinguser) {
         throw new HttpError(400, "User with email already exist");
     }
@@ -27,7 +27,7 @@ var addUser = function* (user) {
     user.passwordHash = passwordHash;
     delete user.password;
 
-    var user = yield dao.createUser(user);
+    var user = yield userDAO.createUser(user);
 
     if (!user) {
         throw new HttpError(400, "Bad request");
@@ -35,12 +35,12 @@ var addUser = function* (user) {
     return user;
 }
 
-var getUser = function* (email) {
-    return yield dao.getUser(email);
+module.exports.getUser = function* (email) {
+    return yield userDAO.getUser(email);
 }
 
-var getProfileManager = function* (familyCustomerId) {
-    var profileManagers = yield dao.getUsersByFamilyCustomerId(familyCustomerId);
+module.exports.getProfileManager = function* (familyCustomerId) {
+    var profileManagers = yield userDAO.getUsersByFamilyCustomerId(familyCustomerId);
     return profileManagers.map(mgr => ({
         familyCustomerId: mgr.familyCustomerId,
         name: mgr.name,
@@ -50,8 +50,8 @@ var getProfileManager = function* (familyCustomerId) {
     }));
 }
 
-var addProfileManager = function* (familyCustomerId, mgr) {
-    var user = {
+module.exports.addProfileManager = function* (familyCustomerId, mgr) {
+    module.exports.user = {
         email: mgr.email,
         familyCustomerId: mgr.familyCustomerId,
         relation: mgr.relation
@@ -59,7 +59,7 @@ var addProfileManager = function* (familyCustomerId, mgr) {
     yield addUser(user);
 }
 
-var createAdmin = function* (admin, institutionShortCode) {
+module.exports.createAdmin = function* (admin, institutionShortCode) {
     admin.institutionShortCode = institutionShortCode;
     admin.role = "admin";
     admin.schoolCode = "secureslice";
@@ -67,7 +67,7 @@ var createAdmin = function* (admin, institutionShortCode) {
     yield addUser(admin);
 }
 
-var createSuperAdmin = function* (admin) {
+module.exports.createSuperAdmin = function* (admin) {
     admin.role = "superadmin";
     admin.institutionShortCode = "superadmin";
     admin.schoolCode = "superadmin";
@@ -75,7 +75,7 @@ var createSuperAdmin = function* (admin) {
     yield addUser(admin);
 }
 
-var createTeacher = function* (user, institutionShortCode, schoolCode) {
+module.exports.createTeacher = function* (user, institutionShortCode, schoolCode) {
     user.role = "teacher";
     user.institutionShortCode = institutionShortCode;
     user.schoolCode = schoolCode;
@@ -83,7 +83,7 @@ var createTeacher = function* (user, institutionShortCode, schoolCode) {
     yield addUser(admin);
 }
 
-var createStaff = function* (user, institutionShortCode, schoolCode) {
+module.exports.createStaff = function* (user, institutionShortCode, schoolCode) {
     user.role = "staff";
     user.institutionShortCode = institutionShortCode;
     user.schoolCode = schoolCode;
@@ -91,29 +91,14 @@ var createStaff = function* (user, institutionShortCode, schoolCode) {
     yield addUser(admin);
 }
 
-var getStaffBySchoolCode = function* (schoolCode) {
-    return yield dao.getUsersBySchoolCodeAndRole(schoolCode, "staff");
+module.exports.getStaffBySchoolCode = function* (schoolCode) {
+    return yield userDAO.getUsersBySchoolCodeAndRole(schoolCode, "staff");
 }
 
-var getParentsBySchoolCode = function* (schoolCode) {
-    return yield dao.getUsersBySchoolCodeAndRole(schoolCode, "parent");
+module.exports.getParentsBySchoolCode = function* (schoolCode) {
+    return yield userDAO.getUsersBySchoolCodeAndRole(schoolCode, "parent");
 }
 
-var getAdminByInstitutionCode = function* (institutionShortCode) {
-    return yield dao.getUsersByInstitutionCodeAndRole(institutionShortCode, "admin");
-}
-
-module.exports = {
-    validateAndGetUser,
-    addUser,
-    getUser,
-    getProfileManager,
-    addProfileManager,
-    createAdmin,
-    createSuperAdmin,
-    createTeacher,
-    createStaff,
-    getStaffBySchoolCode,
-    getParentsBySchoolCode,
-    getAdminByInstitutionCode
+module.exports.getAdminByInstitutionCode = function* (institutionShortCode) {
+    return yield userDAO.getUsersByInstitutionCodeAndRole(institutionShortCode, "admin");
 }

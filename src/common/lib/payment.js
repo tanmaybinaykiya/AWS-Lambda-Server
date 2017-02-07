@@ -1,15 +1,15 @@
-var dao = require("./dao");
+var paymentMethodDAO = require("./dao/payment");
 var HttpError = require("./errors").HttpError;
 
 module.exports.addPaymentMethod = function* (paymentMethod) {
     if (paymentMethod.cardNumber && paymentMethod.cvv && paymentMethod.expiration && paymentMethod.postalCode && paymentMethod.parentEmail) {
-        try{
+        try {
             var existingDefaultPaymentMethods = yield this.getDefaultPaymentMethodForParent(paymentMethod.parentEmail);
             paymentMethod.isDefault = (existingDefaultPaymentMethods.length < 1);
-            return yield dao.addPaymentMethod(paymentMethod);
-        }catch(err){
+            return yield paymentMethodDAO.addPaymentMethod(paymentMethod);
+        } catch (err) {
             console.log("Joi Validation error: ", err);
-            if(err.isJoi){
+            if (err.isJoi) {
                 throw new HttpError(400, { err: "Invalid input" });
             }
         }
@@ -19,7 +19,7 @@ module.exports.addPaymentMethod = function* (paymentMethod) {
 }
 
 module.exports.getPaymentMethodsForParent = function* (parentEmail) {
-    return yield dao.getPaymentMethodsForParentEmail(parentEmail);
+    return yield paymentMethodDAO.getPaymentMethodsForParentEmail(parentEmail);
 }
 
 module.exports.getDefaultPaymentMethodForParent = function* (parentEmail) {

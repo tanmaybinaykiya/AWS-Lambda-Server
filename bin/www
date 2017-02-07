@@ -25,7 +25,6 @@ process.env.BRAINTREE_PRIVATEKEY="7794ed9d8f0375fb0ddd44d92270d20a";
 //module dependencies.
 var apps = [];
 apps.push(require("../functions/auth-service/src/services/auth-service/app").app);
-apps.push(require("../functions/class-service/src/services/class-service/app").app);
 apps.push(require("../functions/institution-service/src/services/institution-service/app").app);
 apps.push(require("../functions/school-service/src/services/school-service/app").app);
 apps.push(require("../functions/student-service/src/services/student-service/app").app);

@@ -91,10 +91,11 @@ var PaymentMethod = dynogels.define('PaymentMethod', {
     schema: {
         methodId: dynogels.types.uuid(),
         parentEmail: Joi.string().required(),
-        cardNumber: Joi.string().regex(constants.creditCardRegex).required(),
-        cvv: Joi.string().required(),
-        postalCode: Joi.string().required(),
-        expiration: Joi.string().regex(constants.expirationDateRegex).required(),
+        braintree:{
+            token: Joi.string().required(),
+            customerId: Joi.string().required(),
+            creditCardMaskedNumber: Joi.string().required()
+        },
         isDefault: Joi.boolean().required()
     },
     tableName: getTableName("PaymentMethod"),
@@ -141,7 +142,13 @@ var School = dynogels.define('School', {
     schema: {
         name: Joi.string().required(),
         code: Joi.string().required(),
-        institutionShortCode: Joi.string().required()
+        institutionShortCode: Joi.string().required(),
+        braintreeConfig: {
+            merchantId: Joi.string(),
+            publicKey: Joi.string(),
+            privateKey: Joi.string(),
+            planId: Joi.string()
+        }
     },
     tableName: getTableName("School"),
     indexes: [{
@@ -150,56 +157,67 @@ var School = dynogels.define('School', {
 });
 
 var Grade = dynogels.define('Grade', {
-    hashKey: 'schoolCode',
-    rangeKey: "name",
+    hashKey: 'institutionSchoolCode',
+    rangeKey: 'name',
     timestamps: true,
     schema: {
-        schoolCode: Joi.string().required(),
         name: Joi.string().required(),
-        institutionShortCode: Joi.string().required(),
+        //composite key of institutionCode and schoolCode
+        institutionSchoolCode: Joi.string().required(),
         tuitionFee: Joi.number().required(),
+        planId: Joi.string().required(),
         duration: {
             days: Joi.string().regex(/^[01]{7}$/).required(),
-            from: Joi.number().required(),
-            to: Joi.number().required(),
+            from: Joi.date().required(),
+            to: Joi.date().required(),
         },
         minimumAgeCriterion: {
             age: Joi.number().required(),
-            validationDate: Joi.number().required(),
+            validationDate: Joi.date().required(),
         }
     },
-    tableName: getTableName("Grade"),
-    indexes: [{
-        hashKey: 'schoolCode', rangeKey: 'institutionShortCode', name: 'GradeInstitutionIndex', type: 'global'
-    }]
-
+    tableName: getTableName("Grade")
 });
 
 var Class = dynogels.define('Class', {
-    hashKey: 'schoolCode',
-    rangeKey: "code",
+    hashKey: 'institutionSchoolGradeCode',
+    rangeKey: 'name',
     timestamps: true,
     schema: {
-        schoolCode: Joi.string().required(),
+        //composite key of institutionCode, schoolCode and grade
+        institutionSchoolGradeCode: Joi.string().required(),
         code: Joi.string().required(), //classId
-        institutionShortCode: Joi.string().required(),
-        gradeId: Joi.string().required(),
         teacherId: dynogels.types.stringSet(),
         startDate: Joi.date().required(),
         endDate: Joi.date().required(),
         fees: Joi.number().required(),
-        feeType: Joi.string().required(),
+        feeType: Joi.string(),
         fullCapacity: Joi.number().required(),
         currentUsage: Joi.number().default(0),
-        planId: Joi.string().required()
+
     },
     tableName: getTableName("Class"),
     indexes: [{
-        hashKey: 'institutionShortCode', name: 'ClassInstitutionIndex', type: 'global'
-        // }, {
-        // hashKey: 'planId', name: 'ClassPlanIndex', type: 'global'
+        hashKey: 'institutionSchoolCode', name: 'ClassInstitutionIndex', type: 'global'
     }]
 });
+
+var BillingPlan = dynogels.define('BillingPlan', {
+    hashKey: 'planId',
+    timestamps: true,
+    schema: {
+        planId: dynogels.types.uuid(),
+        paymentSolution: Joi.string().required(),
+        sPlanId: Joi.string().required()
+
+    },
+    tableName: getTableName("BillingPlan"),
+    indexes: [{
+        hashKey: 'sPlanId', name: 'PaymentSolutionPlanId', type: 'global'
+    }]
+});
+
+
 //   var family ={
 //     institutionId:"",
 //     paymentMethods:[
