@@ -2,10 +2,10 @@ var paymentMethodDAO = require("./dao/paymentMethod");
 var HttpError = require("./errors").HttpError;
 
 module.exports.addPaymentMethod = function* (paymentMethod) {
-    if (paymentMethod.cardNumber && paymentMethod.cvv && paymentMethod.expiration && paymentMethod.postalCode && paymentMethod.parentEmail) {
+
+    if (paymentMethod.parentEmail && paymentMethod.isDefault && paymentMethod.braintree && paymentMethod.braintree.token
+        && paymentMethod.braintree.customerId && paymentMethod.braintree.creditCardMaskedNumber) {
         try {
-            var existingDefaultPaymentMethods = yield this.getDefaultPaymentMethodForParent(paymentMethod.parentEmail);
-            paymentMethod.isDefault = (existingDefaultPaymentMethods.length < 1);
             return yield paymentMethodDAO.addPaymentMethod(paymentMethod);
         } catch (err) {
             console.log("Joi Validation error: ", err);

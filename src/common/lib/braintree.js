@@ -23,7 +23,7 @@ module.exports.generateClientToken = function* (credentials) {
     });
 }
 
-module.exports.getBraintreeConfigByInstitutionAndSchool = function* (institutionCode, schoolCode) {
+module.exports.getBraintreeCredentialsByInstitutionAndSchool = function* (institutionCode, schoolCode) {
     var school = yield schoolDAO.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
     if (!school) {
         throw new HttpError("School not found");
@@ -32,7 +32,7 @@ module.exports.getBraintreeConfigByInstitutionAndSchool = function* (institution
     }
 }
 
-module.exports.updateBraintreeConfigByInstitutionAndSchool = function* (institutionCode, schoolCode, braintreeConfig) {
+module.exports.updateBraintreeCredentialsByInstitutionAndSchool = function* (institutionCode, schoolCode, braintreeConfig) {
     var school = yield schoolDAO.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
     if (!school) {
         throw new HttpError("School not found");

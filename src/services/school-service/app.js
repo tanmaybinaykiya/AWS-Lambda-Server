@@ -21,7 +21,7 @@ var serverz = function () {
         // TODO change authz to superadmin
         // TODO add authz for path param institutionCode and admin token scope match
         
-        router.get("/institution/:institutionCode/school", superz.roleBasedAuth(["admin"]), service.getSchoolsByInstitution);
+        router.get("/institution/:institutionCode/school", superz.roleBasedAuth(["admin", "parent"]), service.getSchoolsByInstitution);
         router.get("/institution/:institutionCode/school/:schoolCode", superz.roleBasedAuth(["parent"]), service.getSchoolsByInstitutionAndSchoolCode);
         router.post("/institution/:institutionCode/school", superz.roleBasedAuth(["admin"]), service.createSchool);
 

@@ -135,7 +135,7 @@ module.exports.Institution = dynogels.define('Institution', {
     tableName: getTableName("Institution")
 });
 
-var School = dynogels.define('School', {
+module.exports.School = dynogels.define('School', {
     hashKey: 'institutionShortCode',
     rangeKey: "code",
     timestamps: true,

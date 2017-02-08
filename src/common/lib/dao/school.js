@@ -13,7 +13,6 @@ module.exports.createSchool = function (school) {
     });
 }
 
-
 module.exports.getSchoolsByInstitutionCode = function (institutionCode) {
     return new Promise(function (resolve, reject) {
         models.School.query(institutionCode)

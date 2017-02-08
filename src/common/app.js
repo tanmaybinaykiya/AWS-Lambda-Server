@@ -42,6 +42,7 @@ module.exports = function () {
                     this.status = err.status;
                     this.body = err.message;
                 } else if (err.statusCode === 401) {
+                    console.log("Error: ", err);
                     this.status = err.statusCode;
                     this.body = { error: "Authentication Error" }
                 } else if (err.statusCode === 403) {

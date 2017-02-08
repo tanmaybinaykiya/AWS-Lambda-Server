@@ -21,9 +21,9 @@ module.exports.addPaymentMethodForParent = function* () {
                 creditCardMaskedNumber: creditCardInfo.maskedNumber
             }
         });
-        console.log("Payment method successfully added: ", paymentMethodSerializer(addedPaymentMethod));
+        console.log("Payment method successfully added: ", paymentMethodSerializer(addedPaymentMethod.toJSON()));
         this.status = 200;
-        this.body = paymentMethodSerializer(addedPaymentMethod);
+        this.body = paymentMethodSerializer(addedPaymentMethod.toJSON());
     } else {
         this.status = 400;
     }
@@ -54,14 +54,10 @@ module.exports.getPaymentMethodForParent = function* () {
 };
 
 var paymentMethodSerializer = (method) => ({
-    cardNumber: method.cardNumber || method.get("cardNumber"),
-    methodId: method.methodId || method.get("methodId"),
+    cardNumber: method.braintree.creditCardMaskedNumber,
+    methodId: method.methodId,
     isDefault: (method.isDefault !== undefined) ? method.isDefault : method.get("isDefault")
 });
-
-function obfuscateCardNumber(cardNumber) {
-    return 'XXXX-XXXX-XXXX-' + cardNumber.slice(-4);
-}
 
 module.exports.getBraintreeClientToken = function* () {
     console.log("getBraintreeClientToken: ", this.params.institutionCode, this.params.schoolCode);
@@ -82,7 +78,7 @@ module.exports.updateBraintreeConfig = function* () {
             publicKey: requestBody.publicKey,
             privateKey: requestBody.privateKey
         };
-        yield braintree.updateBraintreeConfigByInstitutionAndSchool(this.params.institutionCode, this.params.schoolCode, braintreeCredentials);
+        yield braintree.updateBraintreeCredentialsByInstitutionAndSchool(this.params.institutionCode, this.params.schoolCode, braintreeCredentials);
         this.status = 200;
     } else {
         this.status = 400;
