@@ -1,4 +1,5 @@
 var dynogels = require ("./dynogelsConfig");
+var models = require ("../models");
 
 module.exports.createInstitution = function (institution) {
     return new Promise(function (resolve, reject) {

@@ -1,22 +1,22 @@
 var dynogels = require("./dynogelsConfig");
+var models = require ("../models");
 
 module.exports.createGrade = function (grade) {
     return new Promise(function (resolve, reject) {
-        models.Grade.create(clazz, function (err, clazz) {
+        models.Grade.create(grade, function (err, resp) {
             if (err) {
                 reject(err);
             } else {
-                resolve(clazz);
+                resolve(resp);
             }
         });
     });
 }
 
-module.exports.getGradesBySchoolCodeAndInstitution = function (schoolCode, institutionShortCode) {
+module.exports.getGradesByInstitutionSchoolCode = function (institutionSchoolCode) {
     return new Promise((resolve, reject) => {
-        models.Grade.query(schoolCode)
-            .usingIndex('GradeInstitutionIndex')
-            .where("institutionShortCode").eq(institutionShortCode)
+        models.Grade.query(institutionSchoolCode)
+            .loadAll()
             .exec((err, result) => {
                 if (err) {
                     console.log("Error: ", err);
@@ -28,10 +28,9 @@ module.exports.getGradesBySchoolCodeAndInstitution = function (schoolCode, insti
     });
 }
 
-module.exports.getGradesBySchoolCodeAndName = function (schoolCode, gradeName) {
+module.exports.getGradesByInstitutionSchoolCodeAndName = function (institutionSchoolCode, gradeName) {
     return new Promise((resolve, reject) => {
-        models.Grade.get(schoolCode, gradeName)
-            .exec((err, result) => {
+        models.Grade.get(institutionSchoolCode, gradeName, (err, result) => {
                 if (err) {
                     console.log("Error: ", err);
                     reject(err);

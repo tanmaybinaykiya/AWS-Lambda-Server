@@ -42,6 +42,8 @@ module.exports.getSchoolsByInstitutionAndSchoolCode = function* () {
     }
 };
 
+// ********************* Class ********************* 
+
 module.exports.createClass = function* () {
     var institutionCode = this.params.institutionCode;
     var schoolCode = this.params.schoolCode;
@@ -51,7 +53,7 @@ module.exports.createClass = function* () {
     if (isValidCreateClassRequest(requestBody, institutionCode, schoolCode, gradeName)) {
         var clazz = yield classLib.addClass(institutionCode, schoolCode, gradeName, requestBody);
         this.status = 200;
-        this.body = clazz.toJSON();
+        this.body = classMapper(jsonMapper(clazz));
     } else {
         this.status = 400;
     }
@@ -64,22 +66,21 @@ function isValidCreateClassRequest(requestBody, institutionCode, schoolCode, gra
         requestBody &&
         requestBody.name &&
         requestBody.teacherIds && requestBody.teacherIds.length > 0 &&
-        requestBody.startDate &&
-        requestBody.endDate &&
-        requestBody.fees > 0 &&
+        // requestBody.startDate &&
+        // requestBody.endDate &&
+        // requestBody.fees > 0 &&
         requestBody.fullCapacity > 0
 }
 
 module.exports.getClasses = function* (req, next) {
     var queryParams = this.request.query;
-    if (this.params.schoolCode && this.params.institutionCode && this.params.gradeName) {
-        var classes = yield classLib.getClassesBySchool(queryParams.schoolCode, queryParams.institutionCode, queryParams.gradeName);
-        return classes.Items.map(item => item.toJSON());
+    if (this.params.institutionCode && this.params.schoolCode && this.params.gradeName) {
+        var classes = yield classLib.getClassesByGrade(this.params.institutionCode, this.params.schoolCode, this.params.gradeName);
+        this.body = classes.Items.map(jsonMapper).map(classMapper);
+        this.status = 200;
     } else {
         this.status = 400;
     }
-    this.status = 200;
-    this.body = response;
 };
 
 module.exports.getClassByName = function* (req, next) {
@@ -90,7 +91,7 @@ module.exports.getClassByName = function* (req, next) {
     var queryParams = this.request.query;
     if (institutionCode && schoolCode && gradeName && className && queryParams) {
         var classObj = yield classLib.getClassByName(institutionCode, schoolCode, gradeName, className);
-        return classObj.toJSON();
+        return classMapper(jsonMapper(classObj));
     } else {
         this.status = 400;
     }
@@ -98,15 +99,23 @@ module.exports.getClassByName = function* (req, next) {
     this.body = response;
 };
 
+
+var classMapper = (clazz) => ({
+    name: clazz.name,
+    teacherIds: clazz.teacherIds,
+    fullCapacity: clazz.fullCapacity
+});
+
+// ********************* Grade ********************* 
+
 module.exports.createGrade = function* () {
     var institutionCode = this.params.institutionCode;
     var schoolCode = this.params.schoolCode;
     var requestBody = this.request.body;
     console.log("Create Grade Request: ", institutionCode, schoolCode, requestBody);
     if (isCreateGradeRequestValid(institutionCode, schoolCode, requestBody)) {
-        var clazz = classLib.addClass(this.request.body);
-        this.status = 200;
-        this.body = clazz.toJSON();
+        var grade = yield gradeLib.addGrade(institutionCode, schoolCode, requestBody)
+        this.status = 201;
     } else {
         this.status = 400;
     }
@@ -130,10 +139,17 @@ function isCreateGradeRequestValid(institutionCode, schoolCode, requestBody) {
 
 module.exports.getGrades = function* (req, next) {
     var queryParams = this.request.query;
-    var classes = yield classLib.getClassesBySchool(queryParams.schoolCode, queryParams.institutionCode);
-    var response = classes.Items.forEach(function (clazz) {
-        ctx.body.push(clazz.toJSON());
-    })
+    var grades = yield gradeLib.getGradesBySchool(this.params.institutionCode, this.params.schoolCode);
     this.status = 200;
-    this.body = response;
+    this.body = grades.Items.map(jsonMapper).map(gradeMapper);
 };
+
+var gradeMapper = (grade) => ({
+    name: grade.name,
+    tuitionFee: grade.tuitionFee,
+    planId: grade.planId,
+    duration: grade.duration,
+    minimumAgeCriterion: grade.minimumAgeCriterion
+});
+
+var jsonMapper = (item) => item.toJSON();

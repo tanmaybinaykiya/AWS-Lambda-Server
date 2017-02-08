@@ -1,6 +1,5 @@
 var dynogels = require("dynogels");
 dynogels.log.level("info");
-var models = require("./models");
 
 if (process.env.IS_LOCAL) {
     console.log("IS LOCAL");

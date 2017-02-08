@@ -1,4 +1,4 @@
-var paymentMethodDAO = require("./dao/payment");
+var paymentMethodDAO = require("./dao/paymentMethod");
 var HttpError = require("./errors").HttpError;
 
 module.exports.addPaymentMethod = function* (paymentMethod) {

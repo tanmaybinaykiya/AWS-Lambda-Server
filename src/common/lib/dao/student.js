@@ -1,4 +1,5 @@
 var dynogels = require ("./dynogelsConfig");
+var models = require ("../models");
 
 module.exports.createStudent = function (clazz) {
     return new Promise(function (resolve, reject) {

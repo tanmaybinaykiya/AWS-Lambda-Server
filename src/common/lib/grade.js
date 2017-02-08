@@ -1,21 +1,29 @@
 var gradeDao = require("./dao/grade");
 var HttpError = require("./errors").HttpError;
 
-module.exports.addGrade = function* (grade, schoolCode, institutionShortCode) {
-    var existingGrade = yield gradeDao.getGradesBySchoolCodeAndName(schoolCode, grade.name);
+module.exports.addGrade = function* (institutionShortCode, schoolCode, grade) {
+    var existingGrade = yield gradeDao.getGradesByInstitutionSchoolCodeAndName(getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode), grade.name);
     if (existingGrade) {
         throw new HttpError(400, "Grade with same name already exists");
-    }
-    grade.schoolCode = schoolCode;
-    grade.institutionShortCode = institutionShortCode;
-    try {
-        yield gradeDao.createGrade(grade);
-    } catch (err) {
-        console.log("Error: ", err);
-        throw new HttpError(500, "Grade with same name already exists" + err);
+    } else {
+        grade.institutionSchoolCode = getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode);
+        try {
+            yield gradeDao.createGrade(grade);
+        } catch (err) {
+            console.log("Error: ", err);
+            throw new HttpError(500, "Grade with same name already exists: " + err.message);
+        }
     }
 }
 
-module.exports.getGradesBySchool = function* (schoolCode, institutionShortCode) {
-    return yield gradeDao.getGradesBySchoolCode(schoolCode, institutionShortCode);
+module.exports.getGradesBySchool = function* (institutionShortCode, schoolCode) {
+    return yield gradeDao.getGradesByInstitutionSchoolCode(getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode));
+}
+
+module.exports.getGradeBySchoolAndName = function* (institutionShortCode, schoolCode, gradeName) {
+    return  yield gradeDao.getGradesByInstitutionSchoolCodeAndName(getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode), gradeName);
+}
+
+function getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode) {
+    return [institutionShortCode, schoolCode].join(":");
 }

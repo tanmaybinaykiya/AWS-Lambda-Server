@@ -1,16 +1,17 @@
 var classDAO = require("./dao/class");
+var gradeHelper = require("./grade");
 var HttpError = require("./errors").HttpError;
 
 module.exports.addClass = function* (institutionShortCode, schoolCode, grade, clazz) {
-    var school = yield classDAO.getSchoolByShortCode(institutionShortCode, schoolCode);
-    if (!school) {
-        throw new HttpError(400, "Not valid schoolCode");
+    var existingGrade = yield gradeHelper.getGradeBySchoolAndName(institutionShortCode, schoolCode, grade);
+    if (!existingGrade) {
+        throw new HttpError(400, "Not valid grade");
     }
     var existingClass = yield classDAO.getClassByName(getCompositeHashKeyForClass(institutionShortCode, schoolCode, grade), clazz.name);
     if (existingClass) {
-        throw new HttpError(400, "Class with shortcode already exists");
+        throw new HttpError(400, "Class with same name already exists");
     }
-    clazz.institutionSchoolGradeCode = getCompositeHashKeyForClass(clazz.institutionShortCode, clazz.schoolCode, clazz.grade);
+    clazz.institutionSchoolGradeCode = getCompositeHashKeyForClass(institutionShortCode, schoolCode, grade);
     var newclass = yield classDAO.createClass(clazz);
     if (!newclass) {
         throw new HttpError(400, "Bad request");
@@ -27,5 +28,5 @@ module.exports.getClassesByGrade = function* (institutionShortCode, schoolCode, 
 }
 
 function getCompositeHashKeyForClass(institutionShortCode, schoolCode, gradeCode) {
-    return [institutionShortCode, schoolCode, gradeCode].join("_");
+    return [institutionShortCode, schoolCode, gradeCode].join(":");
 }

@@ -6,7 +6,7 @@ var getTableName = function (modelName) {
     return process.env.SERVERLESS_STAGE + "_" + modelName;
 }
 
-var Student = dynogels.define("Students", {
+module.exports.Student = dynogels.define("Students", {
     hashKey: 'studentId',
     timestamps: true,
     schema: {
@@ -53,7 +53,7 @@ var Student = dynogels.define("Students", {
     }]
 });
 
-var Users = dynogels.define('Users', {
+module.exports.Users = dynogels.define('Users', {
     hashKey: 'email',
     timestamps: true,
     schema: {
@@ -85,7 +85,7 @@ var Users = dynogels.define('Users', {
     }]
 });
 
-var PaymentMethod = dynogels.define('PaymentMethod', {
+module.exports.PaymentMethod = dynogels.define('PaymentMethod', {
     hashKey: 'methodId',
     timestamps: true,
     schema: {
@@ -104,7 +104,7 @@ var PaymentMethod = dynogels.define('PaymentMethod', {
     }]
 });
 
-var Institution = dynogels.define('Institution', {
+module.exports.Institution = dynogels.define('Institution', {
     hashKey: 'shortCode',
     timestamps: true,
     schema: {
@@ -155,7 +155,7 @@ var School = dynogels.define('School', {
     }]
 });
 
-var Grade = dynogels.define('Grade', {
+module.exports.Grade = dynogels.define('Grade', {
     hashKey: 'institutionSchoolCode',
     rangeKey: 'name',
     timestamps: true,
@@ -178,7 +178,7 @@ var Grade = dynogels.define('Grade', {
     tableName: getTableName("Grade")
 });
 
-var Class = dynogels.define('Class', {
+module.exports.Class = dynogels.define('Class', {
     hashKey: 'institutionSchoolGradeCode',
     rangeKey: 'name',
     timestamps: true,
@@ -186,19 +186,16 @@ var Class = dynogels.define('Class', {
         //composite key of institutionCode, schoolCode and grade
         institutionSchoolGradeCode: Joi.string().required(),
         name: Joi.string().required(), //classId
-        teacherId: dynogels.types.stringSet(),
-        startDate: Joi.date().required(),
-        endDate: Joi.date().required(),
-        fees: Joi.number().required(),
-        feeType: Joi.string(),
+        teacherIds: Joi.array(),
+        // startDate: Joi.date().required(),
+        // endDate: Joi.date().required(),
+        // fees: Joi.number().required(),
+        // feeType: Joi.string(),
         fullCapacity: Joi.number().required(),
         currentUsage: Joi.number().default(0),
 
     },
-    tableName: getTableName("Class"),
-    indexes: [{
-        hashKey: 'institutionSchoolCode', name: 'ClassInstitutionIndex', type: 'global'
-    }]
+    tableName: getTableName("Class")
 });
 
 // var BillingPlan = dynogels.define('BillingPlan', {
@@ -269,15 +266,7 @@ var Class = dynogels.define('Class', {
 //     userId:"",//Sent to whom?
 //     institutionId:""//Hash key
 //   }
-module.exports = {
-    Users,
-    Institution,
-    School,
-    Class,
-    Student,
-    PaymentMethod
-    // Family
-}
+
 
 //For School
 //Family - Customer , Subscription  
