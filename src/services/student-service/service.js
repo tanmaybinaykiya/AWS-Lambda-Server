@@ -1,6 +1,8 @@
 var AWS = require('aws-sdk');
 var jwt = require('jsonwebtoken');
-var student = require("../../common/lib/student");
+
+var constants = require("../../common/lib/constants");
+var studentLib = require("../../common/lib/student");
 
 module.exports.getStudents = function* (req, send) {
     console.log("getStudents: ", "this.state: ", this.state, "req: ", req, "send: ", send);
@@ -9,7 +11,7 @@ module.exports.getStudents = function* (req, send) {
         if (!queryParams.parentEmail) {
             this.status = 400;
         } else {
-            var userObjs = yield student.getStudentsByParentEmailAndSchoolCode(queryParams.parentEmail, this.params.schoolCode);
+            var userObjs = yield studentLib.getStudentsByParentEmailAndSchoolCode(queryParams.parentEmail, this.params.schoolCode);
             console.log("userObjs: ", userObjs);
             if (!userObjs || userObjs.length < 1) {
                 this.status = 204;
@@ -35,7 +37,7 @@ module.exports.getStudents = function* (req, send) {
             }
         }
     } else {
-        var userObjs = yield student.getStudentsBySchoolCode(this.params.schoolCode);
+        var userObjs = yield studentLib.getStudentsBySchoolCode(this.params.schoolCode);
         this.status = 200;
         this.body = userObjs.map(userObj => ({
             studentId: userObj.studentId,
@@ -63,7 +65,7 @@ module.exports.enrollStudent = function* (req, send) {
     var newStudent = this.request.body;
     newStudent.institutionShortCode = this.params.institutionCode;
     newStudent.schoolCode = this.params.schoolCode;
-    var userObj = yield student.enrollStudent(newStudent);
+    var userObj = yield studentLib.enrollStudent(newStudent);
     this.body = {
         studentId: userObj.get("studentId"),
         // firstName: userObj.firstName,
@@ -83,5 +85,39 @@ module.exports.enrollStudent = function* (req, send) {
         // documents: userObj.documents
 
     };
-    this.status = 200;
+    this.status = 201;
 };
+
+module.exports.updateStudentStatus = function* () {
+    var requestBody = this.request.body;
+    if (requestBody && requestBody.state && isValidState(requestBody.state) && requestBody.studentIds && requestBody.studentIds.length > 0) {
+        var studentIds = requestBody.studentIds;
+        var enrolledStudents = yield studentLib.getStudentsById(studentIds);
+        // console.log(enrolledStudents);
+        if (enrolledStudents && enrolledStudents.length > 0) {
+            for (var i = 0; i < enrolledStudents.length; i++) {
+                console.log(enrolledStudents[i]);
+                enrolledStudents[i].enrollmentInfo.state = requestBody.state;
+            }
+            yield studentLib.updateStudents(enrolledStudents);
+            this.status = 200;
+        } else {
+            this.status = 404;
+            this.body = {
+                error: "Student Does not exist",
+                code: "InvalidStudentId"
+            }
+        }
+
+    } else {
+        this.status = 400;
+        this.body = {
+            error: "Invalid params",
+            code: "BadRequest"
+        }
+    }
+}
+
+function isValidState(state) {
+    return state.match(constants.nonRegisteredEnrollmentStateRegex) && (state.match(constants.nonRegisteredEnrollmentStateRegex)[0] === state);
+}

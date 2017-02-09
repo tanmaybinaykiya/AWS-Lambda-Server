@@ -27,19 +27,17 @@ module.exports.Student = dynogels.define("Students", {
         gender: Joi.string().required(),
         extraInfo: Joi.string(),
         paymentInfo: {
-            paymentMethod: Joi.string(),
-            paymentStatus: Joi.string().required()
+            methodId: Joi.string().required()
         },
         documents: {
             medicalForm: Joi.string().required(),
             tuitionForm: Joi.string().required()
         },
         enrollmentInfo: {
-            isEnrolled: Joi.boolean().default(false),
+            state: Joi.string().regex(constants.enrollmentStateRegex).required().default('PENDING_REVIEW'),
             pastClassesEnrolled: Joi.array(),
-            classesEnrolled: Joi.array(),
+            classEnrolled: Joi.string(),
         },
-        paymentMethodId: Joi.string().required()
     },
     tableName: getTableName("Students"),
     indexes: [{

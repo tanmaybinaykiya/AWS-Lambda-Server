@@ -30,12 +30,11 @@ module.exports.enrollStudent = function* (student) {
         throw new HttpError(400, { err: "School with provided shortcode does not exist" });
     }
     student.paymentInfo = {
-        paymentStatus: "NOT_PAID"
+        methodId: student.paymentMethodId
     };
+    delete student.paymentMethodId;
     student.enrollmentInfo = {
-        isEnrolled: false,
-        pastClassesEnrolled: [],
-        classesEnrolled: []
+        state: 'PENDING_REVIEW',
     };
     student.studentId = uuid.v1();
     
@@ -133,6 +132,22 @@ module.exports.getStudentsByParentEmailAndSchoolCode = function* (parentEmail, s
     if (schoolCode) {
         var existingStudents = yield studentDAO.getStudentsByParentEmailAndSchoolCode(parentEmail, schoolCode);
         return existingStudents;
+    } else {
+        throw new HttpError(400, "Bad request");
+    }
+}
+
+module.exports.getStudentsById  = function* (studentIds){
+    if (studentIds) {
+        return yield studentDAO.batchGetStudentsByStudentId(studentIds);
+    } else {
+        throw new HttpError(400, "Bad request");
+    }
+}
+
+module.exports.updateStudents  = function* (students){
+    if (students && students.length>0) {
+        yield studentDAO.batchUpdateStudents(students);
     } else {
         throw new HttpError(400, "Bad request");
     }

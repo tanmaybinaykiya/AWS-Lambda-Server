@@ -1,5 +1,5 @@
-var dynogels = require ("./dynogelsConfig");
-var models = require ("../models");
+var dynogels = require("./dynogelsConfig");
+var models = require("../models");
 
 module.exports.createStudent = function (clazz) {
     return new Promise(function (resolve, reject) {
@@ -72,4 +72,41 @@ module.exports.getStudentsByParentEmailAndSchoolCode = function (email, code) {
                 }
             });
     });
+}
+
+module.exports.batchGetStudentsByStudentId = function (studentIds) {
+    return new Promise((resolve, reject) => {
+        models.Student.getItems(studentIds, (err, results) => {
+            if (err) {
+                console.log("Error: ", err);
+                reject(err);
+            } else {
+                resolve(results.map(item => item.toJSON()));
+            }
+        });
+    });
+}
+
+module.exports.batchUpdateStudents = function (students) {
+    try {
+        var promises = students.map(student =>  new Promise((resolve, reject) => {
+            models.Student.update(student, (err, results) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        }));
+    } catch (err) {
+        console.log("ERRR 1 : ", err);
+    }
+    try {
+        return Promise.all(promises)
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
+    } catch (err2) {
+        console.log("ERRR 2 : ", err2);
+    }
 }
