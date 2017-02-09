@@ -21,7 +21,7 @@ var serverz = function () {
         router.post("/institution/:institutionCode/school/:schoolCode/paymentMethod", superz.roleBasedAuth(["parent"]), service.addPaymentMethodForParent);
         router.get("/paymentMethod", superz.roleBasedAuth(["parent"]), service.getPaymentMethodForParent);
         router.get("/institution/:institutionCode/school/:schoolCode/braintree/token", superz.roleBasedAuth(["parent"]),service.getBraintreeClientToken);
-        router.post("/institution/:institutionCode/school/:schoolCode/braintree/config", superz.roleBasedAuth(["parent"]), service.updateBraintreeConfig);
+        router.post("/institution/:institutionCode/school/:schoolCode/braintree/credentials", superz.roleBasedAuth(["admin"]), service.updateBraintreeCredentials);
         app.use(router.legacyMiddleware());
     }
 

@@ -1,4 +1,4 @@
-var dynogels = require("dynogels");
+var dynogels = require("./dao/dynogelsConfig");
 var Joi = require("joi");
 var constants = require("./constants");
 
@@ -10,7 +10,7 @@ module.exports.Student = dynogels.define("Students", {
     hashKey: 'studentId',
     timestamps: true,
     schema: {
-        studentId: dynogels.types.uuid(),
+        studentId: Joi.string().required(),
         parentEmail: Joi.string().email().required(),
         institutionShortCode: Joi.string().required(),
         schoolCode: Joi.string().required(),
@@ -89,7 +89,7 @@ module.exports.PaymentMethod = dynogels.define('PaymentMethod', {
     hashKey: 'methodId',
     timestamps: true,
     schema: {
-        methodId: dynogels.types.uuid(),
+        methodId: Joi.string().required(),
         parentEmail: Joi.string().required(),
         braintree:{
             token: Joi.string().required(),

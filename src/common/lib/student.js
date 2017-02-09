@@ -1,6 +1,7 @@
 var studentDAO = require("./dao/student");
 var schoolDAO = require("./dao/school");
 var HttpError = require("./errors").HttpError;
+var uuid = require("uuid");
 
 module.exports.enrollStudent = function* (student) {
 
@@ -35,7 +36,9 @@ module.exports.enrollStudent = function* (student) {
         isEnrolled: false,
         pastClassesEnrolled: [],
         classesEnrolled: []
-    }
+    };
+    student.studentId = uuid.v1();
+    
     var newStudent = null;
     try {
         var newStudent = yield studentDAO.createStudent(student);

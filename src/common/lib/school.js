@@ -2,11 +2,7 @@ var schoolDAO = require("./dao/school");
 var HttpError = require("./errors").HttpError;
 
 module.exports.addSchool = function* (school) {
-    var existingInstitution = yield schoolDAO.getInstitutionByShortcode(school.institutionShortCode);
-    if (!existingInstitution) {
-        throw new HttpError(400, "institution with shortcode doesnot exist");
-    }
-    var existingSchool = yield schoolDAO.getSchoolByShortCode(school.institutionShortCode, school.code);
+    var existingSchool = yield schoolDAO.getSchoolByInstitutionCodeAndSchoolCode(school.institutionShortCode, school.code);
     if (existingSchool) {
         throw new HttpError(400, "school with shortcode already exists");
     }

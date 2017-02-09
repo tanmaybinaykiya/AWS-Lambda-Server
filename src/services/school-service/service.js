@@ -35,11 +35,15 @@ module.exports.getSchoolsByInstitutionAndSchoolCode = function* () {
     console.log("getSchoolsByInstitutionAndSchoolCode: ", this.params.institutionCode, this.params.schoolCode);
     if (this.params && this.params.institutionCode && this.params.schoolCode) {
         var school = yield schoolLib.getSchoolByInstitutionCodeAndSchoolCode(this.params.institutionCode, this.params.schoolCode);
-        this.body = {
-            name: school.get("name"),
-            code: school.get("code")
-        };
-        this.status = 200;
+        if (school) {
+            this.body = {
+                name: school.get("name"),
+                code: school.get("code")
+            };
+            this.status = 200;
+        }else{
+            this.status = 404;
+        }
     } else {
         this.status = 400;
     }

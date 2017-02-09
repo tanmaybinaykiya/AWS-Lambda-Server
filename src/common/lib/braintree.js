@@ -32,13 +32,15 @@ module.exports.getBraintreeCredentialsByInstitutionAndSchool = function* (instit
     }
 }
 
-module.exports.updateBraintreeCredentialsByInstitutionAndSchool = function* (institutionCode, schoolCode, braintreeConfig) {
+module.exports.updateBraintreeCredentialsByInstitutionAndSchool = function* (institutionCode, schoolCode, braintreeCredentials) {
     var school = yield schoolDAO.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
     if (!school) {
         throw new HttpError("School not found");
     } else {
-        school.braintreeConfig = braintreeConfig;
-        yield schoolDAO.updateSchool(school);
+        
+        var schoolJson = school.toJSON();
+        schoolJson.braintreeCredentials = braintreeCredentials;
+        yield schoolDAO.updateSchool(schoolJson);
     }
 }
 

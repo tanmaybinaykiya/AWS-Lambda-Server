@@ -44,8 +44,7 @@ module.exports.getSchoolByInstitutionCodeAndSchoolCode = function (institutionCo
 
 module.exports.updateSchool = function (school) {
     return new Promise((resolve, reject) => {
-        models.School.update(school)
-            .exec((err, updatedSchool) => {
+        models.School.update(school, (err, updatedSchool) => {
                 if (err) {
                     console.log("Error: ", err);
                     reject(err);
