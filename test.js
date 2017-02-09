@@ -7,7 +7,7 @@ var bcrypt = require("co-bcryptjs");
 var co = require("co");
 var user = require("./src/common/lib/user");
 var institution = require("./src/common/lib/institution");
-var dao = require("./src/common/lib/dao");
+var dao = require("./src/common/lib/dao/utils");
 
 function* createTables() {
     yield dao.createTables();
