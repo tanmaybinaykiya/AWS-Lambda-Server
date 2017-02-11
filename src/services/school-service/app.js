@@ -2,7 +2,9 @@ var routerClass = require("koa-better-router");
 var router = routerClass({ prefix: "/school" }).loadMethods();
 var superServer = require("../../common/app");
 
-var service = require("./service");
+var schoolService = require("./schoolService");
+var gradeService = require("./gradeService");
+var classService = require("./classService");
 
 var serverz = function () {
 
@@ -21,16 +23,17 @@ var serverz = function () {
         // TODO change authz to superadmin
         // TODO add authz for path param institutionCode and admin token scope match
         
-        router.get("/institution/:institutionCode/school", superz.roleBasedAuth(["admin", "parent"]), service.getSchoolsByInstitution);
-        router.get("/institution/:institutionCode/school/:schoolCode", superz.roleBasedAuth(["parent"]), service.getSchoolsByInstitutionAndSchoolCode);
-        router.post("/institution/:institutionCode/school", superz.roleBasedAuth(["admin"]), service.createSchool);
+        router.get("/institution/:institutionCode/school", superz.roleBasedAuth(["admin", "parent"]), schoolService.getSchoolsByInstitution);
+        router.get("/institution/:institutionCode/school/:schoolCode", superz.roleBasedAuth(["parent"]), schoolService.getSchoolsByInstitutionAndSchoolCode);
+        router.post("/institution/:institutionCode/school", superz.roleBasedAuth(["admin"]), schoolService.createSchool);
 
-        router.get("/institution/:institutionCode/school/:schoolCode/grade", superz.roleBasedAuth(["admin"]), service.getGrades);
-        router.post("/institution/:institutionCode/school/:schoolCode/grade", superz.roleBasedAuth(["admin"]), service.createGrade);
+        router.get("/institution/:institutionCode/school/:schoolCode/grade", superz.roleBasedAuth(["admin"]), gradeService.getGrades);
+        router.post("/institution/:institutionCode/school/:schoolCode/grade", superz.roleBasedAuth(["admin"]), gradeService.createGrade);
 
-        router.get("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class", superz.roleBasedAuth(["admin"]), service.getClasses);
-        // router.get("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class/:name", superz.roleBasedAuth(["admin"]), service.getClassByName);
-        router.post("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class", superz.roleBasedAuth(["admin"]), service.createClass);
+        router.get("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class", superz.roleBasedAuth(["admin"]), classService.getClassesByGrade);
+        // router.get("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class/:name", superz.roleBasedAuth(["admin"]), classService.getClassByName);
+        router.post("/institution/:institutionCode/school/:schoolCode/grade/:gradeName/class", superz.roleBasedAuth(["admin"]), classService.createClass);
+        router.get("/institution/:institutionCode/school/:schoolCode/class", superz.roleBasedAuth(["admin"]), classService.getClassesBySchool);
 
         app.use(router.legacyMiddleware());
     }

@@ -27,7 +27,8 @@ module.exports.Student = dynogels.define("Students", {
         gender: Joi.string().required(),
         extraInfo: Joi.string(),
         paymentInfo: {
-            methodId: Joi.string().required()
+            methodId: Joi.string().required(),
+            subscriptionId: Joi.string()
         },
         documents: {
             medicalForm: Joi.string().required(),
@@ -141,7 +142,7 @@ module.exports.School = dynogels.define('School', {
         name: Joi.string().required(),
         code: Joi.string().required(),
         institutionShortCode: Joi.string().required(),
-        braintreeConfig: {
+        braintreeCredentials: {
             merchantId: Joi.string(),
             publicKey: Joi.string(),
             privateKey: Joi.string()
@@ -183,6 +184,7 @@ module.exports.Class = dynogels.define('Class', {
     schema: {
         //composite key of institutionCode, schoolCode and grade
         institutionSchoolGradeCode: Joi.string().required(),
+        institutionSchoolCode: Joi.string().required(),
         name: Joi.string().required(), //classId
         teacherIds: Joi.array(),
         // startDate: Joi.date().required(),
@@ -193,7 +195,22 @@ module.exports.Class = dynogels.define('Class', {
         currentUsage: Joi.number().default(0),
 
     },
-    tableName: getTableName("Class")
+    tableName: getTableName("Class"),
+    indexes: [{
+        hashKey:'institutionSchoolCode', rangeKey: 'name', name: 'SchoolNameIndex', type: 'global'
+    }]
+});
+
+module.exports.BillingUsageLog = dynogels.define('BillingUsageLog', {
+    hashKey: 'method',
+    rangeKey: 'timestamp',
+    timestamps: true,
+    schema: {
+        method: Joi.string().required(),
+        timestamp: Joi.date().required(),
+        log: Joi.string().required(),
+    },
+    tableName: getTableName("BillingUsageLog"),
 });
 
 // var BillingPlan = dynogels.define('BillingPlan', {

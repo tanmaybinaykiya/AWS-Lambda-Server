@@ -1,6 +1,7 @@
 var braintree = require("braintree");
 
 var schoolDAO = require("./dao/school");
+var billingUsageDAO = require("./dao/billingUsage");
 var HttpError = require("./errors").HttpError;
 
 module.exports.generateClientToken = function* (credentials) {
@@ -17,7 +18,13 @@ module.exports.generateClientToken = function* (credentials) {
                 console.log("Error getting braintree client token: ", err);
                 reject(err);
             } else {
-                resolve(response.clientToken);
+                billingUsageDAO.log(response)
+                    .then(() => {
+                        resolve(response.clientToken);
+                    }).catch((err) => {
+                        console.log("Error logging to billing usage log: ", err);
+                        resolve(response.clientToken);
+                    })
             }
         });
     });
@@ -37,7 +44,6 @@ module.exports.updateBraintreeCredentialsByInstitutionAndSchool = function* (ins
     if (!school) {
         throw new HttpError("School not found");
     } else {
-        
         var schoolJson = school.toJSON();
         schoolJson.braintreeCredentials = braintreeCredentials;
         yield schoolDAO.updateSchool(schoolJson);
@@ -83,13 +89,53 @@ module.exports.createCustomer = function (firstName, lastName, nonce, clientDevi
                 console.log("Error getting braintree client token: ", err, result);
                 reject(err);
             } else if (result.success) {
-                console.log("Successfully created customer: ", JSON.stringify(result, null, 4));
-                resolve(result.customer);
+                billingUsageDAO.log(result)
+                    .then(() => {
+                        console.log("Successfully created customer: ", JSON.stringify(result, null, 4));
+                        resolve(result.customer);
+                    }).catch((err) => {
+                        console.log("Error logging to billing usage log: ", err);
+                        console.log("Successfully created customer: ", JSON.stringify(result, null, 4));
+                        resolve(result.customer);
+                    });
             } else {
                 console.log("something went wrong. Possibly, customer validation: ", err, JSON.stringify(result, null, 4));
                 reject("Customer Validation failed");
             }
         });
     });
+}
 
+
+module.exports.addSubscription = function* (braintreeCredentials, paymentMethod, planId, amount) {
+    return new Promise((resolve, reject) => {
+        var gateway = braintree.connect({
+            environment: (process.env.BRAINTREE_PRODUCTION === "PRoDuCtiOn") ? braintree.Environment.Production : braintree.Environment.Sandbox,
+            merchantId: credentials.merchantId,
+            publicKey: credentials.publicKey,
+            privateKey: credentials.privateKey,
+        });
+        gateway.config.timeout = 10000;
+        gateway.subscription.create({
+            paymentMethodToken: someToken,
+            planId: planId,
+            price: amount
+        }, function (err, result) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(result);
+                billingUsageDAO.log(result)
+                    .then(() => {
+                        console.log("Successfully addSubscription: ", JSON.stringify(result, null, 4));
+                        resolve(result.id);
+                    }).catch((err) => {
+                        console.log("Error logging to billing usage log: ", err);
+                        console.log("Successfully addSubscription: ", JSON.stringify(result, null, 4));
+                        resolve(result.id);
+                    });
+            }
+        });
+
+    });
 }

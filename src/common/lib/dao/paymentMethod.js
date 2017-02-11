@@ -28,3 +28,29 @@ module.exports.getPaymentMethodsForParentEmail = function (parentEmail) {
             });
     });
 }
+
+module.exports.getPaymentMethodById = function (paymentId) {
+    return new Promise((resolve, reject) => {
+        models.PaymentMethod.get(paymentId, (err, result) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+    });
+}
+
+module.exports.getPaymentMethodsByIds = function (paymentIds) {
+    return new Promise((resolve, reject) => {
+        models.PaymentMethod.getItems(paymentIds, (err, results) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            });
+    });
+}

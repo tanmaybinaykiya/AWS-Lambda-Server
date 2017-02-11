@@ -39,18 +39,30 @@ module.exports = function () {
                 yield next;
             } catch (err) {
                 if (err instanceof HttpError) {
-                    this.status = err.status;
-                    this.body = err.message;
+                    this.status = err.statusCode;
+                    this.body = {
+                        error: err.message,
+                        code: err.code || ''
+                    };
                 } else if (err.statusCode === 401) {
                     console.log("Error: ", err);
                     this.status = err.statusCode;
-                    this.body = { error: "Authentication Error" }
+                    this.body = {
+                        error: "Authentication Error",
+                        code: "AuthError"
+                    }
                 } else if (err.statusCode === 403) {
                     this.status = err.statusCode;
-                    this.body = { error: "Authorization Error" }
+                    this.body = {
+                        error: "Authorization Error",
+                        code: "AuthzError"
+                    }
                 } else {
                     this.status = err.statusCode || 500;
-                    this.body = err.responseBody || { error: "Unexpected Server error" };
+                    this.body = err.responseBody || {
+                        error: "Unexpected Server error",
+                        code: "UnhandledError"
+                    };
                     this.app.emit("error", err, this);
                 }
             }

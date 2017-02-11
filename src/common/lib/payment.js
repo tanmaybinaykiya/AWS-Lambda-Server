@@ -13,10 +13,7 @@ module.exports.addPaymentMethod = function* (paymentMethod) {
         } catch (err) {
             console.log("Joi Validation error: ", err);
             if (err.isJoi) {
-                throw new HttpError(400, {
-                    err: "Invalid input",
-                    code: "InvalidInput"
-                });
+                throw new HttpError(400, "Invalid input", "InvalidInput");
             }
         }
     } else {
@@ -32,3 +29,13 @@ module.exports.getDefaultPaymentMethodForParent = function* (parentEmail) {
     var existingPaymentMethods = yield this.getPaymentMethodsForParent(parentEmail);
     return existingPaymentMethods.Items.filter(method => method.get("isDefault") === true);
 }
+
+module.exports.getPaymentMethodsByIds = function* (paymentMethodIds) {
+    var paymentMethodIdsSet = [] ;
+    new Set(paymentMethodIds).forEach(el => paymentMethodIdsSet.push(el));
+    console.log(paymentMethodIdsSet);
+    var paymentMethods = yield paymentMethodDAO.getPaymentMethodsByIds(paymentMethodIdsSet);
+    console.log("paymentMethods: ", paymentMethods);
+    return paymentMethodIds.map((id) => paymentMethods.find((method) => (method.methodId === id)));
+}
+

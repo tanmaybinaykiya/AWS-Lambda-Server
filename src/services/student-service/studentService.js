@@ -1,6 +1,7 @@
 var AWS = require('aws-sdk');
 var jwt = require('jsonwebtoken');
 
+var HttpError = require("../../common/lib/errors").HttpError;
 var constants = require("../../common/lib/constants");
 var studentLib = require("../../common/lib/student");
 
@@ -102,19 +103,24 @@ module.exports.updateStudentStatus = function* () {
             yield studentLib.updateStudents(enrolledStudents);
             this.status = 200;
         } else {
-            this.status = 404;
-            this.body = {
-                error: "Student Does not exist",
-                code: "InvalidStudentId"
-            }
+            throw new HttpError(404, "Student Does not exist", "InvalidStudentId");
         }
 
     } else {
-        this.status = 400;
-        this.body = {
-            error: "Invalid params",
-            code: "BadRequest"
-        }
+        throw new HttpError(400, "Invalid params", "BadRequest");
+    }
+}
+
+module.exports.updateStudentClass = function* () {
+    var requestBody = this.request.body;
+    var studentIds = requestBody.studentIds;
+    var className = requestBody.className
+    var institutionCode = this.params.institutionCode;
+    var schoolCode = this.params.schoolCode;
+    if (requestBody && className && studentIds && studentIds.length > 0) {
+        yield studentLib.assignStudentClass(institutionCode, schoolCode, studentIds, className);
+    } else {
+        throw new HttpError(400, "Invalid Params", "BadRequest");
     }
 }
 

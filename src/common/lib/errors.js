@@ -1,13 +1,14 @@
 'use strict';
+
 class HttpError extends Error {
-  constructor ( code,message ) {
-    super()
-    Error.captureStackTrace( this, this.constructor )
-    this.name = 'HttpError'
-    this.message = message
-    this.status = code;
-  }
+    constructor(statusCode, message, code) {
+        super()
+        Error.captureStackTrace(this, this.constructor)
+        this.name = 'HttpError'
+        this.message = message;
+        this.statusCode = statusCode;
+        this.code = code;
+    }
 }
-module.exports = {
-    HttpError
-} 
+
+module.exports = { HttpError }

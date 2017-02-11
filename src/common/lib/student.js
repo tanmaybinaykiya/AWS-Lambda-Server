@@ -1,7 +1,13 @@
+var uuid = require("uuid");
+
+var HttpError = require("./errors").HttpError;
 var studentDAO = require("./dao/student");
 var schoolDAO = require("./dao/school");
-var HttpError = require("./errors").HttpError;
-var uuid = require("uuid");
+var paymentDAO = require("./dao/paymentMethod");
+var paymentLib = require("./payment");
+var classLib = require("./class");
+var gradeLib = require("./grade");
+var braintree = require("./braintree");
 
 module.exports.enrollStudent = function* (student) {
 
@@ -16,7 +22,7 @@ module.exports.enrollStudent = function* (student) {
     }
     if (existingStudents && existingStudents.length > 0) {
         console.log("Student with Birthdate and Firstname already exists", existingStudents.map(item => item.attrs));
-        throw new HttpError(400, { err: "Student with Birthdate and Firstname already exists" });
+        throw new HttpError(400, "Student with Birthdate and Firstname already exists", "StudentEntityAlreadyExists");
     }
     var existingSchool = null;
     try {
@@ -27,17 +33,24 @@ module.exports.enrollStudent = function* (student) {
     }
     if (!existingSchool) {
         console.log("School with provided shortcode does not exist");
-        throw new HttpError(400, { err: "School with provided shortcode does not exist" });
+        throw new HttpError(400, "School with provided shortcode does not exist", "InvalidSchoolCode");
     }
-    student.paymentInfo = {
-        methodId: student.paymentMethodId
-    };
+    var paymentMethod = yield paymentDAO.getPaymentMethodById(student.paymentMethodId);
+    if (!paymentMethod) {
+        console.log("Payment Method does not exist: ", student.paymentMethodId);
+        throw new HttpError(400, "Payment Method does not exist", "InvalidPaymentMethod");
+    }
     delete student.paymentMethodId;
+    student.paymentInfo = {
+        methodId: paymentMethod.methodId
+    };
     student.enrollmentInfo = {
         state: 'PENDING_REVIEW',
     };
     student.studentId = uuid.v1();
-    
+    student.firstName = titleCase(student.firstName);
+    student.lastName = titleCase(student.lastName);
+    student.middleName = titleCase(student.middleName);
     var newStudent = null;
     try {
         var newStudent = yield studentDAO.createStudent(student);
@@ -49,7 +62,6 @@ module.exports.enrollStudent = function* (student) {
         throw new HttpError(400, "Bad request");
     }
     return newStudent;
-
 }
 
 function validateStudentEnrollRequest(student) {
@@ -137,7 +149,7 @@ module.exports.getStudentsByParentEmailAndSchoolCode = function* (parentEmail, s
     }
 }
 
-module.exports.getStudentsById  = function* (studentIds){
+module.exports.getStudentsById = function* (studentIds) {
     if (studentIds) {
         return yield studentDAO.batchGetStudentsByStudentId(studentIds);
     } else {
@@ -145,10 +157,93 @@ module.exports.getStudentsById  = function* (studentIds){
     }
 }
 
-module.exports.updateStudents  = function* (students){
-    if (students && students.length>0) {
+module.exports.updateStudents = function* (students) {
+    if (students && students.length > 0) {
         yield studentDAO.batchUpdateStudents(students);
     } else {
         throw new HttpError(400, "Bad request");
     }
+}
+
+titleCase = (str) => (str ? str.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase()) : '');
+
+module.exports.assignStudentClass = function* (institutionCode, schoolCode, studentIds, className) {
+
+    console.log("getting Enrolled Students: ", studentIds);
+    var enrolledStudents = yield this.getStudentsById(studentIds);
+    console.log("enrolled Students: ", enrolledStudents);
+    if (!enrolledStudents || enrolledStudents.length < 1) {
+        throw new HttpError(404, "Student Does not exist", "InvalidStudentId");
+    }
+    if (enrolledStudents.length > 20) {
+        throw new HttpError(400, "Too many Student Ids Passed to request", "StudentIdCountExceeded");
+    }
+
+    console.log("getting ClassBySchoolAndName: ", institutionCode, schoolCode, className);
+    var clazz = yield classLib.getClassBySchoolAndName(institutionCode, schoolCode, className);
+    console.log("got ClassBySchoolAndName: ", clazz);
+    if (!clazz) {
+        throw new HttpError(400, "Invalid class", "InvalidClassName");
+    }
+    clazz = clazz.Items[0].toJSON();
+
+    console.log("getting GradeByName: ", institutionCode, schoolCode, classLib.getGradeNameForClass(clazz));
+    var grade = yield gradeLib.getGradeBySchoolAndName(institutionCode, schoolCode, classLib.getGradeNameForClass(clazz));
+    console.log("got GradeByName: ", grade);
+    if (!grade) {
+        throw new HttpError(500, "Invalid grade", "InvalidGradeName");
+    }
+    grade = grade.toJSON();
+
+    var planId = grade.planId;
+    // console.log(enrolledStudents);
+    if ((clazz.fullCapacity - clazz.currentUsage) < studentIds.length) {
+        throw new HttpError(400, "Class does not have enough slots to complete the request", "ClassCapacityConstraintViolation");
+    }
+
+    if (enrolledStudents.some(isStudentAgeConstraintViolated(grade))) {
+        throw new HttpError(400, "StudentAgeConstraintViolation", "StudentAgeConstraintViolation");
+    }
+
+    console.log("getting SchoolByInstitutionCodeAndSchoolCode: ", institutionCode, schoolCode);
+    var school = yield schoolDAO.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
+    console.log("got SchoolByInstitutionCodeAndSchoolCode: ", school);
+    school = school.toJSON();
+    if (!school || !school.braintreeCredentials) {
+        throw new HttpError(400, "BraintreeCredentialsMissing", "BraintreeCredentialsMissing");
+    }
+
+    var paymentMethodIds = enrolledStudents.map((student) => student.paymentInfo.methodId);
+    console.log("getting PaymentMethodByIds: ", paymentMethodIds);
+    var paymentMethods = yield paymentLib.getPaymentMethodsByIds(paymentMethodIds);
+    console.log("got PaymentMethodsByIds: ", paymentMethods);
+    if (paymentMethods.length !== enrolledStudents.length) {
+        console.log("Payment Methods array size not equal to students array size: methods: ", paymentMethods, " students: ", enrolledStudents);
+        throw new HttpError(500, "Unhandled Server Error", "InternalServerError");
+    }
+
+    for (var i = 0; i < enrolledStudents.length; i++) {
+        var prevEnrInf = enrolledStudents[i].enrollmentInfo;
+        prevEnrInf = {
+            pastClassesEnrolled: prevEnrInf.pastClassesEnrolled ? prevEnrInf.pastClassesEnrolled.concat(prevEnrInf.classEnrolled) : [prevEnrInf.classEnrolled],
+            classEnrolled: className,
+            state: 'REGISTERED'
+        };
+        var paymentMethod = paymentMethods[i];
+        var subscriptionId = yield braintree.addSubscription(school.braintreeCredentials, paymentMethod, planId);
+        enrolledStudents[i].paymentInfo.subscriptionId = subscriptionId;
+        yield studentDAO.updateStudent(enrolledStudents[i]);
+    }
+
+    yield classLib.incrementCurrentUsage(clazz, studentIds.length);
+    this.status = 200;
+}
+
+function isStudentAgeConstraintViolated(grade) {
+    return (student) => {
+        var studentBirthDate = new Date(student.dateOfBirth);
+        var validationDate = new Date(grade.minimumAgeCriterion.validationDate);
+        var dateDiff = Math.floor((validationDate - studentBirthDate) / (1000 * 3600 * 24 * 365));
+        return dateDiff < grade.minimumAgeCriterion.age;
+    };
 }

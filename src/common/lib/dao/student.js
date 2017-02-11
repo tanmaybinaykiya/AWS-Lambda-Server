@@ -89,7 +89,7 @@ module.exports.batchGetStudentsByStudentId = function (studentIds) {
 
 module.exports.batchUpdateStudents = function (students) {
     try {
-        var promises = students.map(student =>  new Promise((resolve, reject) => {
+        var promises = students.map(student => new Promise((resolve, reject) => {
             models.Student.update(student, (err, results) => {
                 if (err) {
                     console.log("Error: ", err);
@@ -109,4 +109,17 @@ module.exports.batchUpdateStudents = function (students) {
     } catch (err2) {
         console.log("ERRR 2 : ", err2);
     }
+}
+
+module.exports.updateStudent = function (students) {
+    return new Promise((resolve, reject) => {
+        models.Student.update(student, (err, results) => {
+            if (err) {
+                console.log("Error: ", err);
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 }
