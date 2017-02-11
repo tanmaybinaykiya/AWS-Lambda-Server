@@ -1,5 +1,5 @@
 var dynogels = require("./dynogelsConfig");
-var models = require ("../models");
+var models = require("../models");
 
 module.exports.createClass = function (clazz) {
     return new Promise(function (resolve, reject) {
@@ -73,3 +73,14 @@ module.exports.getClassBySchoolAndName = function (secondaryCompositeKey, classN
     });
 }
 
+module.exports.update = function (clazz) {
+    return new Promise((resolve, reject) => {
+        models.Class.update(clazz, (err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(res);
+            }
+        })
+    });
+}

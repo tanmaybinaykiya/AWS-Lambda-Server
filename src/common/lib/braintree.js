@@ -107,23 +107,24 @@ module.exports.createCustomer = function (firstName, lastName, nonce, clientDevi
 }
 
 
-module.exports.addSubscription = function* (braintreeCredentials, paymentMethod, planId, amount) {
+module.exports.addSubscription = function* (braintreeCredentials, parentToken, planId, amount) {
     return new Promise((resolve, reject) => {
         var gateway = braintree.connect({
             environment: (process.env.BRAINTREE_PRODUCTION === "PRoDuCtiOn") ? braintree.Environment.Production : braintree.Environment.Sandbox,
-            merchantId: credentials.merchantId,
-            publicKey: credentials.publicKey,
-            privateKey: credentials.privateKey,
+            merchantId: braintreeCredentials.merchantId,
+            publicKey: braintreeCredentials.publicKey,
+            privateKey: braintreeCredentials.privateKey,
         });
         gateway.config.timeout = 10000;
         gateway.subscription.create({
-            paymentMethodToken: someToken,
+            paymentMethodToken: parentToken,
             planId: planId,
             price: amount
         }, function (err, result) {
             if (err) {
                 console.log(err);
-            } else {
+                reject(err);
+            } else if (result.success){
                 console.log(result);
                 billingUsageDAO.log(result)
                     .then(() => {
@@ -134,6 +135,9 @@ module.exports.addSubscription = function* (braintreeCredentials, paymentMethod,
                         console.log("Successfully addSubscription: ", JSON.stringify(result, null, 4));
                         resolve(result.id);
                     });
+            }else{
+                console.log(result);
+                reject(result.message);
             }
         });
 

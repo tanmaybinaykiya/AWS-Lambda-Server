@@ -111,7 +111,7 @@ module.exports.batchUpdateStudents = function (students) {
     }
 }
 
-module.exports.updateStudent = function (students) {
+module.exports.updateStudent = function (student) {
     return new Promise((resolve, reject) => {
         models.Student.update(student, (err, results) => {
             if (err) {

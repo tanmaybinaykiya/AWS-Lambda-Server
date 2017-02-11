@@ -2,6 +2,10 @@ var classDAO = require("./dao/class");
 var gradeHelper = require("./grade");
 var HttpError = require("./errors").HttpError;
 
+/**
+ *  TODO validate planId
+ *  https://developers.braintreepayments.com/reference/request/plan/all/node
+**/
 module.exports.addClass = function* (institutionShortCode, schoolCode, grade, clazz) {
     var existingGrade = yield gradeHelper.getGradeBySchoolAndName(institutionShortCode, schoolCode, grade);
     if (!existingGrade) {

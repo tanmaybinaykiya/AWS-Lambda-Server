@@ -36,6 +36,8 @@ module.exports.getPaymentMethodsByIds = function* (paymentMethodIds) {
     console.log(paymentMethodIdsSet);
     var paymentMethods = yield paymentMethodDAO.getPaymentMethodsByIds(paymentMethodIdsSet);
     console.log("paymentMethods: ", paymentMethods);
-    return paymentMethodIds.map((id) => paymentMethods.find((method) => (method.methodId === id)));
+    console.log("paymentMethods: ", paymentMethods[0].attrs);
+    console.log("paymentMethods: ", paymentMethods[0].toJSON());
+    console.log("paymentMethods: ", JSON.stringify(paymentMethods));
+    return paymentMethodIds.map((id) => paymentMethods.find((method) => (method.toJSON().methodId === id)).toJSON());
 }
-

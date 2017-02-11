@@ -224,19 +224,24 @@ module.exports.assignStudentClass = function* (institutionCode, schoolCode, stud
 
     for (var i = 0; i < enrolledStudents.length; i++) {
         var prevEnrInf = enrolledStudents[i].enrollmentInfo;
-        prevEnrInf = {
+        enrolledStudents[i].enrollmentInfo = {
             pastClassesEnrolled: prevEnrInf.pastClassesEnrolled ? prevEnrInf.pastClassesEnrolled.concat(prevEnrInf.classEnrolled) : [prevEnrInf.classEnrolled],
             classEnrolled: className,
             state: 'REGISTERED'
         };
         var paymentMethod = paymentMethods[i];
-        var subscriptionId = yield braintree.addSubscription(school.braintreeCredentials, paymentMethod, planId);
+        console.log("Adding Subscription:  ", school.braintreeCredentials, paymentMethod.braintree.token, planId);
+        var subscriptionId = yield braintree.addSubscription(school.braintreeCredentials, paymentMethod.braintree.token, planId);
+        console.log("Added Subscription:  ", subscriptionId);
         enrolledStudents[i].paymentInfo.subscriptionId = subscriptionId;
+        console.log("Updating Student:  ", enrolledStudents[i]);
         yield studentDAO.updateStudent(enrolledStudents[i]);
+        console.log("Updated Student:  ", enrolledStudents[i]);
     }
 
+    console.log("Incrementing class Usage:  ", clazz, studentIds.length);
     yield classLib.incrementCurrentUsage(clazz, studentIds.length);
-    this.status = 200;
+    console.log("Incremented class usage");
 }
 
 function isStudentAgeConstraintViolated(grade) {

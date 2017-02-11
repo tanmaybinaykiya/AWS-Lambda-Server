@@ -119,6 +119,7 @@ module.exports.updateStudentClass = function* () {
     var schoolCode = this.params.schoolCode;
     if (requestBody && className && studentIds && studentIds.length > 0) {
         yield studentLib.assignStudentClass(institutionCode, schoolCode, studentIds, className);
+        this.status = 200;
     } else {
         throw new HttpError(400, "Invalid Params", "BadRequest");
     }
