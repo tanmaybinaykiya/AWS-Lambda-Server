@@ -1,6 +1,9 @@
 "use strict";
 const koaProxy = require("./koa-proxy/index");
 var server;
+
+console.log("ENVIRONMENT VARIABLES:", process.env);
+
 class Starter {
     constructor(app, serviceName) {
         Starter.proxy = new koaProxy.Proxy(serviceName);

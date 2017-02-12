@@ -19,7 +19,7 @@ var serverz = function () {
 
     self.routes = function (app, superz) {
         // TODO change authz to superadmin
-        router.get("/", superz.roleBasedAuth(["admin", "parent"]), service.getInstitution);
+        router.get("/:institutionCode", superz.roleBasedAuth(["admin", "parent"]), service.getInstitution);
         router.post("/", superz.roleBasedAuth(["admin"]), service.createInstitution);
         app.use(router.legacyMiddleware());
     }

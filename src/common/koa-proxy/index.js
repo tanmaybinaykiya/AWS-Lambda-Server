@@ -44,10 +44,12 @@ class Proxy {
         return `/tmp/server-${this.socketPathPrefix}-${socketPathSuffix}.sock`;
     }
     removeStageFromPath(path) {
+        console.log("Removing stage from path: ", path, process.env.SERVERLESS_STAGE);
         if (path) {
             var pathParts = path.split("/");
             var index = pathParts.indexOf(process.env.SERVERLESS_STAGE);
             if (index < 0) {
+                console.log("index < 0");
                 return path;
             }
             pathParts = pathParts.splice(index + 1, pathParts.length);
@@ -56,6 +58,7 @@ class Proxy {
         return path;
     }
     getPathWithQueryStringParams(event) {
+        console.log("getPathWithQueryStringParams: ", event.path);
         var transformedPath = this.removeStageFromPath(event.path);
         const queryStringKeys = Object.keys(event.queryStringParameters || {});
         if (queryStringKeys.length === 0) {

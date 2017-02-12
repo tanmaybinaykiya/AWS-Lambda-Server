@@ -3,7 +3,7 @@ var HttpError = require("./errors").HttpError;
 var cloudflare = require('./cloudflare');
 var emailHelper = require('./emailhelper');
 
-var restrictedCodes = ["app-beta", "app", "api", "secureslice"];
+module.exports.restrictedCodes = ["app-beta", "app", "api", "secureslice"];
 
 module.exports.createInstitution = function* (institution) {
 
@@ -49,5 +49,3 @@ function validateInstitutionRequestBody(institution) {
 module.exports.getInstitution = function* (institutionShortCode) {
     return yield institutionDAO.getInstitutionByShortcode(institutionShortCode);
 }
-
-module.exports.restrictedCodes = restrictedCodes;

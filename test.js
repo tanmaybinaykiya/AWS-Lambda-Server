@@ -1,12 +1,13 @@
-process.env.SERVERLESS_STAGE = "dev";
-process.env.AWS_ACCESS_KEY_ID = "blahAKIAJPCJUTYCLYKYMLYA";
-process.env.AWS_SECRET_ACCESS_KEY = "blahu3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
+process.env.SERVERLESS_STAGE = "stage";
+process.env.AWS_ACCESS_KEY_ID = "AKIAJPCJUTYCLYKYMLYA";
+process.env.AWS_SECRET_ACCESS_KEY = "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";
 process.env.IS_LOCAL = true;
 
 var bcrypt = require("co-bcryptjs");
 var co = require("co");
 var user = require("./src/common/lib/user");
 var institution = require("./src/common/lib/institution");
+var schoolLib = require("./src/common/lib/school");
 var dao = require("./src/common/lib/dao/utils");
 
 function* createTables() {
@@ -54,10 +55,6 @@ function* createInstitution() {
     });
 }
 
-function* createSchool() {
-
-}
-
 function* createParent() {
     console.log("Creating Parent");
     var returnUser = yield user.addUser({
@@ -74,19 +71,15 @@ function* createParent() {
     console.log(returnUser);
 }
 
-function* createStudent() {
-
-}
-
 function genSalt() {
     co(function* () {
         try {
-            yield createTables();
+            // yield createTables();
             // yield createSuperAdmin();
             // yield createAdmin();
             // yield createInstitution();
             // yield createSchool();
-            // yield createParent();
+            yield createParent();
             // yield createStudent();
 
 

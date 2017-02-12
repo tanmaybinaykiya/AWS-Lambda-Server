@@ -6,9 +6,9 @@
   "scripts": {
     "start": "./node_modules/grunt/bin/grunt  && node bin/www",
     "grunt": "./node_modules/grunt/bin/grunt ",
-    "prepareForDeploy": "npm install && ./node_modules/grunt/bin/grunt cleanDeploy && cd functions && npm install --production",
+    "prepareForDeploy": "npm install && ./node_modules/grunt/bin/grunt cleanDeploy && cd functions && npm prune && npm install --production",
     "prepareForDeployNoInstall": "./node_modules/grunt/bin/grunt cleanDeploy && cd functions && npm install --production",
-    "deployToAws": "cd functions && AWS_CLIENT_TIMEOUT=1200000 SLS_DEBUG=\"asd\" ../node_modules/serverless/bin/serverless"
+    "deployToAws": "cd functions && AWS_CLIENT_TIMEOUT=1200000 SLS_DEBUG=\"asd\" ../node_modules/serverless/bin/serverless --verbose "
   },
   "dependencies": {
     "braintree": "1.47.0",
@@ -25,18 +25,17 @@
     "koa-body": "1.6.0",
     "koa-cors": "0.0.16",
     "koa-jwt": "1.2.0",
+    "nexmo": "1.2.0",
     "node-uuid": "1.4.7",
     "nodemailer": "2.4.2",
     "nodemailer-sendgrid-transport": "0.2.0",
     "request": "2.75.0",
     "requestretry": "1.12.0",
-    "serverless-plugin-stage-variables": "1.6.6",
-    "serverless-plugin-write-env-vars": "1.0.1",
     "uuid": "2.0.3",
     "vogels": "2.2.0"
   },
   "devDependencies": {
-    "eslint":"3.15.0",
+    "eslint": "3.15.0",
     "aws-sdk": "2.6.7",
     "grunt": "1.0.1",
     "grunt-cli": "1.2.0",

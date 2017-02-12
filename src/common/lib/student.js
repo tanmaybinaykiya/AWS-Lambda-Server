@@ -40,6 +40,8 @@ module.exports.enrollStudent = function* (student) {
         console.log("Payment Method does not exist: ", student.paymentMethodId);
         throw new HttpError(400, "Payment Method does not exist", "InvalidPaymentMethod");
     }
+    paymentMethod = paymentMethod.toJSON();
+    console.log("paymentMethod: ", paymentMethod);
     delete student.paymentMethodId;
     student.paymentInfo = {
         methodId: paymentMethod.methodId

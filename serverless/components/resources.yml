@@ -185,8 +185,22 @@ Resources:
         AttributeDefinitions:
           - AttributeName: institutionSchoolGradeCode
             AttributeType: S
+          - AttributeName: institutionSchoolCode
+            AttributeType: S
           - AttributeName: name
             AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: SchoolNameIndex
+            KeySchema:
+              - AttributeName: institutionSchoolCode
+                KeyType: HASH
+              - AttributeName: name
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
         KeySchema:
           - AttributeName: institutionSchoolGradeCode
             KeyType: HASH
@@ -223,3 +237,20 @@ Resources:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
         TableName: ${self:custom.currentStage}_PaymentMethod
+  BillingUsageTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: method
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+        KeySchema:
+          - AttributeName: method
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        TableName: ${self:custom.currentStage}_BillingUsage

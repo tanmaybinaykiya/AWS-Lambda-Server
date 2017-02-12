@@ -9,9 +9,8 @@ module.exports.createInstitution = function* () {
 };
 
 module.exports.getInstitution = function* () {
-    console.log("getInstitution: ", this.request.query);
-    var queryParams = this.request.query;
-    var institutionShortCode = queryParams.institutionCode;
+    console.log("getInstitution: ", this.params.institutionCode);
+    var institutionShortCode = this.params.institutionCode;
     if (institutionShortCode.indexOf(institutionLib.restrictedCodes) >= 0) {
         this.body = {
             name: "secureslice",

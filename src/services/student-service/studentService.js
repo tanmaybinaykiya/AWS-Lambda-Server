@@ -66,6 +66,7 @@ module.exports.enrollStudent = function* (req, send) {
     var newStudent = this.request.body;
     newStudent.institutionShortCode = this.params.institutionCode;
     newStudent.schoolCode = this.params.schoolCode;
+    
     var userObj = yield studentLib.enrollStudent(newStudent);
     this.body = {
         studentId: userObj.get("studentId"),

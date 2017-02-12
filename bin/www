@@ -22,6 +22,9 @@ process.env.BRAINTREE_MERCHANTID="5k52p2nbs8p5zcch";
 process.env.BRAINTREE_PUBLICKEY="k5bqd6zp5ngjdfw9";
 process.env.BRAINTREE_PRIVATEKEY="7794ed9d8f0375fb0ddd44d92270d20a";
 
+process.env.NEXMO_KEY = "DEMO06600054";
+process.env.NEXMO_SECRET = "DEMOafd392875cf8f549"; 
+
 //module dependencies.
 var apps = [];
 apps.push(require("../functions/auth-service/src/services/auth-service/app").app);

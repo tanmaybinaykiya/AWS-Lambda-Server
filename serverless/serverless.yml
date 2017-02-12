@@ -10,7 +10,7 @@ provider:
   vpc: ${self:custom.${self:custom.currentStage}.vpc}
   iamRoleStatements: ${file(./components/iam.yml)}
 custom: ${file(./components/custom.yml)}
-functions: 
+functions:
   authService:
     handler: auth-service/src/services/auth-service/starter/index.handle
     name: ${self:custom.currentStage}-authService
@@ -191,7 +191,4 @@ functions:
           method: delete
           # see http://forum.serverless.com/t/serverless-v1-0-cors-methods-with-any-http-method/580
           cors: ${self:custom.cors}
-plugins:
-  - serverless-plugin-write-env-vars
-  - serverless-plugin-stage-variables
 resources: ${file(./components/resources.yml)}

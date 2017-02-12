@@ -1,36 +1,41 @@
-# ALL CUSTOM SERVERLESS CONFIGURATIONS GO HERE
-integration: lambda-proxy
-method: any
-cors:
-  origins:
-    - '*'
-  headers:
+--- 
+cors: 
+  headers: 
     - "Authorization,X-CSRFToken,Content-Type,Origin"
-currentStage: ${opt:stage, self:provider.stage}
-currentRegion: ${opt:region}
-dev:
+  origins: 
+    - "*"
+currentRegion: "${opt:region}"
+currentStage: "${opt:stage, self:provider.stage}"
+dev: 
   ignoreSSLValidation: true
   secret: secureslice
-stage:
-  ignoreSSLValidation: false
-  secret: s1e1c2u3r5e8s13l21i34ce
-prod:
+integration: lambda-proxy
+method: any
+prod: 
   ignoreSSLValidation: false
   secret: s1c2e5r13u34l21s8c3i1e
-writeEnvVars:
-    SERVERLESS_STAGE: ${self:custom.currentStage}
-    SERVERLESS_REGION: ${self:custom.currentRegion}
-    SERVERLESS_SERVICE_NAME: ${self:service}
-    NODE_TLS_REJECT_UNAUTHORIZED: ${self:custom.${self:custom.currentStage}.ignoreSSLValidation}
-    JWT_SECRET: ${self:custom.${self:custom.currentStage}.secret}
-stageVariables:
-    APIGatewayUrl: {"Fn::Join": [
-          "",
-          [
-            "https://",
-            {
-              "Ref": "ApiGatewayRestApi"
-            },
-            ".execute-api.${self:custom.currentRegion}.amazonaws.com/${self:custom.currentStage}"
-          ]
-        ]}
+stage: 
+  ignoreSSLValidation: false
+  secret: s1e1c2u3r5e8s13l21i34ce
+stageVariables: 
+  APIGatewayUrl: 
+    ? "Fn::Join"
+    : 
+      - ""
+      - 
+        - "https://"
+        - 
+          Ref: ApiGatewayRestApi
+        - ".execute-api.${self:custom.currentRegion}.amazonaws.com/${self:custom.currentStage}"
+writeEnvVars: 
+  JWT_SECRET: "${self:custom.${self:custom.currentStage}.secret}"
+  NODE_TLS_REJECT_UNAUTHORIZED: "${self:custom.${self:custom.currentStage}.ignoreSSLValidation}"
+  SERVERLESS_REGION: "${self:custom.currentRegion}"
+  SERVERLESS_SERVICE_NAME: "${self:service}"
+  SERVERLESS_STAGE: "${self:custom.currentStage}"
+# envVars: 
+#   JWT_SECRET: abcdefghijkl
+#   NODE_TLS_REJECT_UNAUTHORIZED: false
+#   SERVERLESS_REGION: us-east-1
+#   SERVERLESS_SERVICE_NAME: secure-slice
+#   SERVERLESS_STAGE: stage
