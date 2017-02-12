@@ -8,6 +8,7 @@ module.exports.createGrade = function* () {
     if (isCreateGradeRequestValid(institutionCode, schoolCode, requestBody)) {
         var grade = yield gradeLib.addGrade(institutionCode, schoolCode, requestBody)
         this.status = 201;
+        this.body = {};
     } else {
         this.status = 400;
     }
