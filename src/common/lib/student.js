@@ -6,6 +6,7 @@ var schoolDAO = require("./dao/school");
 var paymentDAO = require("./dao/paymentMethod");
 var paymentLib = require("./payment");
 var classLib = require("./class");
+var smsHelper = require("./smshelper");
 var gradeLib = require("./grade");
 var braintree = require("./braintree");
 
@@ -244,6 +245,11 @@ module.exports.assignStudentClass = function* (institutionCode, schoolCode, stud
     console.log("Incrementing class Usage:  ", clazz, studentIds.length);
     yield classLib.incrementCurrentUsage(clazz, studentIds.length);
     console.log("Incremented class usage");
+
+    // TODODODODODODOD
+    // yield user
+    // yield sendStudentAdditionSuccessMessage();
+
 }
 
 function isStudentAgeConstraintViolated(grade) {
@@ -253,4 +259,8 @@ function isStudentAgeConstraintViolated(grade) {
         var dateDiff = Math.floor((validationDate - studentBirthDate) / (1000 * 3600 * 24 * 365));
         return dateDiff < grade.minimumAgeCriterion.age;
     };
+}
+
+function* sendStudentAdditionSuccessMessage(parentContactNumber, studentName) {
+    yield smsHelper.sendNotification(parentContactNumber, "Congratulations!, The admin has approved the addition of " + studentName + ".");
 }

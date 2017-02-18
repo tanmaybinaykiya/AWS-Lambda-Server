@@ -16,13 +16,13 @@ console.info("email templates Dir ", templateDir);
 
 var sendJoinEmail = function (email, familyId, institutionCode, role) {
     return new Promise(function (resolve, reject) {
-        var registerEmail = {
+        var registerEmailTokenScope = {
             "email": email,
             "familyId": familyId,
             "institutionCode": institutionCode,
             "role": role
         };
-        var token = jwt.sign(registerEmail, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 48 });
+        var token = jwt.sign(registerEmailTokenScope, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 * 7 });
         var registrationLink = util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
         console.debug("registrationLink Link " + registrationLink);
         var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");

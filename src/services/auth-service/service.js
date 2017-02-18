@@ -25,3 +25,5 @@ module.exports.getToken = function* getToken() {
     };
     this.status = 200;
 };
+
+// admin scope does not have schoolCode

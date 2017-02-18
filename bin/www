@@ -10,20 +10,20 @@ process.env.SERVERLESS_REGION = "us-west-2";
 process.env.SERVERLESS_STAGE = "dev";
 process.env.SERVERLESS_SERVICE_NAME = "localRun";
 process.env.LOCAL_DYNAMO = "http://127.0.0.1:8000"
-process.env.DEBUG = "koa*"
+// process.env.DEBUG = "koa*"
 
-process.env.SENDGRIDKEY = "Blah"
+process.env.SENDGRIDKEY = "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"
 
 process.env.IS_LOCAL = true;
 process.env.AWS_ACCESS_KEY_ID = "DUMMYVALUE";
 process.env.AWS_SECRET_ACCESS_KEY = "DUMMYVALUE";
 
-process.env.BRAINTREE_MERCHANTID="5k52p2nbs8p5zcch";
-process.env.BRAINTREE_PUBLICKEY="k5bqd6zp5ngjdfw9";
-process.env.BRAINTREE_PRIVATEKEY="7794ed9d8f0375fb0ddd44d92270d20a";
+// process.env.BRAINTREE_MERCHANTID="5k52p2nbs8p5zcch";
+// process.env.BRAINTREE_PUBLICKEY="k5bqd6zp5ngjdfw9";
+// process.env.BRAINTREE_PRIVATEKEY="7794ed9d8f0375fb0ddd44d92270d20a";
 
-process.env.NEXMO_KEY = "DEMO06600054";
-process.env.NEXMO_SECRET = "DEMOafd392875cf8f549"; 
+process.env.NEXMO_KEY = "06600054";
+process.env.NEXMO_SECRET = "afd392875cf8f549"; 
 
 //module dependencies.
 var apps = [];

@@ -19,7 +19,15 @@ var serverz = function () {
     self.routes = function (app, superz) {
         // TODO authz -> super admin invites admin
         router.post("/institution/:institutionCode/user/:role", superz.roleBasedAuth(["admin"]), service.createUser);
-        router.post("/institution/:institutionCode/admin/register", superz.roleBasedAuth(["registerAdmin"]), service.registerAdmin);
+
+        //TODO validate iss code
+        router.post("/admin/register", superz.roleBasedAuth(["registerAdmin"]), service.registerAdmin);
+        
+        // TODO validate issCode and schoolCode
+        router.post("/parent/register", superz.roleBasedAuth(["registerParent"]), service.registerParent);
+
+        router.post("/contact/generateVerificationCode", superz.roleBasedAuth(["registerAdmin", "registerParent"]), service.generateVerificationCode);
+        // router.post("/contact/verify", superz.roleBasedAuth(["registerAdmin", "registerParent"]), service.verifyUser);
         app.use(router.legacyMiddleware());
     }
 

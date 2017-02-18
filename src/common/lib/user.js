@@ -102,3 +102,7 @@ module.exports.getParentsBySchoolCode = function* (schoolCode) {
 module.exports.getAdminByInstitutionCode = function* (institutionShortCode) {
     return yield userDAO.getUsersByInstitutionCodeAndRole(institutionShortCode, "admin");
 }
+
+module.exports.updateUser = function* (user){
+    return yield userDAO.updateUser(user);
+}

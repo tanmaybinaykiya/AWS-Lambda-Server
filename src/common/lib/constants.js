@@ -8,3 +8,4 @@ module.exports.ENROLLMENT_STATES = {
 };
 module.exports.nonRegisteredEnrollmentStateRegex = new RegExp(/^(PENDING_REVIEW)|(WAITLIST)|(IN_PROCESS)|(REGISTERED)$/);
 module.exports.enrollmentStateRegex = new RegExp(/^(PENDING_REVIEW)|(WAITLIST)|(IN_PROCESS)|(REGISTERED)$/);
+module.exports.contactNumberRegex = new RegExp(/^\+?[\d]{5,}$/);

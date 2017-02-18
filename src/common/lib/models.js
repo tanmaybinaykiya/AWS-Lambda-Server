@@ -66,6 +66,7 @@ module.exports.Users = dynogels.define('Users', {
         zip: Joi.number(),
         passwordHash: Joi.string(),
         mobileVerified: Joi.boolean().default(false),
+        mobileVerificationRequestId: Joi.string(),
         mailVerified: Joi.boolean().default(false),
         institutionShortCode: Joi.string(),
         schoolCode: Joi.string(),
