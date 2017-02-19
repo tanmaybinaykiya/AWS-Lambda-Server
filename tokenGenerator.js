@@ -14,7 +14,7 @@ console.log("registerAdmin", jwt.sign(tokenObj, process.env.JWT_SECRET, { expire
 
 var tokenObj = {
     "role": "registerParent",
-    "email": "admin@usc.com",
+    "email": "tanmay+parent@gmail.com",
     "institutionCode": "USC",
     "schoolCode": "CSE"
 };

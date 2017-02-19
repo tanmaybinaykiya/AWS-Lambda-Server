@@ -28,6 +28,8 @@ var serverz = function () {
 
         router.post("/contact/generateVerificationCode", superz.roleBasedAuth(["registerAdmin", "registerParent"]), service.generateVerificationCode);
         // router.post("/contact/verify", superz.roleBasedAuth(["registerAdmin", "registerParent"]), service.verifyUser);
+
+        // router.post("/nexmooo", service.sendNexmoMessage);
         app.use(router.legacyMiddleware());
     }
 

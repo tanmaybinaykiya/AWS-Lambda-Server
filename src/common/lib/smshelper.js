@@ -17,7 +17,7 @@ module.exports.sendOTP = function (number) {
             if (error) {
                 console.error("Verification OTP response error ", error);
                 reject(error);
-            } else if(response.status == 0) {
+            } else if (response.status == 0) {
                 console.info("Verification OTP response ", response);
                 resolve(response.request_id);
             } else {
@@ -38,7 +38,7 @@ module.exports.verifyOTP = function (requestId, code) {
             if (error) {
                 console.error("Verification OTP response error ", error);
                 reject(error);
-            } else if(response.status == 0 ){
+            } else if (response.status == 0) {
                 console.info("Verification OTP response ", response);
                 resolve(response.request_id);
             } else {
@@ -52,16 +52,18 @@ module.exports.verifyOTP = function (requestId, code) {
 module.exports.sendNotification = function (number, message) {
     console.info("Sending notification to", number, " message: ", message);
     return new Promise(function (resolve, reject) {
-        nexmo.message.sendSms("SecureSlice", number, message, function (error, res) {
-             if (error) {
-                console.error("Error occured sendNotification error ", error);
+        nexmo.message.sendSms("SecureSlice", number, message, function (error, response) {
+            if (error) {
+                console.error("Error occured during sendNotification ", error);
                 reject(error);
-            } else if(response.status == 0 ){
-                console.info("sendNotification successfull ", response);
-                resolve(response.request_id);
             } else {
-                console.info("sendNotification response ", response);
-                reject(response.error_text);
+                console.info("sendNotification resp: ", response);
+                if (response.messages[0].status == 0) {
+                    resolve(response.messages[0]["message-id"]);
+                } else {
+                    reject(response.messages[0]["message-id"]);
+                }
+
             }
         });
     });

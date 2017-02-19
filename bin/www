@@ -22,8 +22,8 @@ process.env.AWS_SECRET_ACCESS_KEY = "DUMMYVALUE";
 // process.env.BRAINTREE_PUBLICKEY="k5bqd6zp5ngjdfw9";
 // process.env.BRAINTREE_PRIVATEKEY="7794ed9d8f0375fb0ddd44d92270d20a";
 
-process.env.NEXMO_KEY = "06600054";
-process.env.NEXMO_SECRET = "afd392875cf8f549"; 
+process.env.NEXMO_KEY = "35cbb6ea";
+process.env.NEXMO_SECRET = "8a7a9564f30906a9"; 
 
 //module dependencies.
 var apps = [];
