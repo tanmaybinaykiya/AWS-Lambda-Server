@@ -103,6 +103,12 @@ module.exports.getAdminByInstitutionCode = function* (institutionShortCode) {
     return yield userDAO.getUsersByInstitutionCodeAndRole(institutionShortCode, "admin");
 }
 
-module.exports.updateUser = function* (user){
+module.exports.updateUser = function* (user) {
     return yield userDAO.updateUser(user);
+}
+
+module.exports.findByEmails = function* (parentEmails) {
+    var parentEmailsSet = [] ;
+    new Set(parentEmails).forEach(el => parentEmailsSet.push(el));
+    return yield userDAO.getUsers(parentEmailsSet);
 }

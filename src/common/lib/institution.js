@@ -3,7 +3,7 @@ var HttpError = require("./errors").HttpError;
 var cloudflare = require('./cloudflare');
 var emailHelper = require('./emailhelper');
 
-module.exports.restrictedCodes = ["app-beta", "app", "api", "secureslice"];
+restrictedCodes = ["app-beta", "app", "api", "secureslice"];
 
 module.exports.createInstitution = function* (institution) {
 
@@ -28,7 +28,7 @@ module.exports.createInstitution = function* (institution) {
     //     console.error("unable to create subdomain ", err);
     // }
     try {
-        yield emailHelper.sendAdminInviteEmail(institution.adminemail, institution.shortCode);
+        yield emailHelper.sendAdminInvite(institution.adminemail, institution);
     } catch (err) {
         console.error("unable to send admin invite email", err);
     }

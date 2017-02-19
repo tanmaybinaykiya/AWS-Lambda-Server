@@ -57,7 +57,7 @@ module.exports.Users = dynogels.define('Users', {
     timestamps: true,
     schema: {
         email: Joi.string().email().required(),
-        mobile: Joi.number().required(),
+        mobile: Joi.string().required(),
         firstname: Joi.string().required(),
         lastname: Joi.string().required(),
         street: Joi.string(),
@@ -66,7 +66,6 @@ module.exports.Users = dynogels.define('Users', {
         zip: Joi.number(),
         passwordHash: Joi.string(),
         mobileVerified: Joi.boolean().default(false),
-        mobileVerificationRequestId: Joi.string(),
         mailVerified: Joi.boolean().default(false),
         institutionShortCode: Joi.string(),
         schoolCode: Joi.string(),

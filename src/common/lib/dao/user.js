@@ -15,6 +15,21 @@ module.exports.getUser = function (email) {
     });
 }
 
+module.exports.getUsers = function (emails) {
+    return new Promise(function (resolve, reject) {
+        console.log("Emails: ", emails);
+        models.Users.getItems(emails, function (err, users) {
+            if (err) {
+                console.error("err: ", err);
+                reject(err);
+            } else {
+                console.error("users: ", users);
+                resolve(users);
+            }
+        });
+    });
+}
+
 module.exports.createUser = function (user) {
     return new Promise(function (resolve, reject) {
         models.Users.create(user, function (err, user) {

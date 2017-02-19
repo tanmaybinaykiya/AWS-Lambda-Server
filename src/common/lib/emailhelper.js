@@ -19,46 +19,45 @@ console.info("email templates Dir ", templateDir);
 var parentRegistrationLinkFormat = "%s/#/register/parent?token=%s&institutionCode=%s&schoolCode=%s";
 var adminRegistrationLinkFormat = "%s/#/register/admin?token=%s&institutionCode=%s";
 
-module.exports.sendJoinEmail = function (email, familyId, institutionCode, role) {
-    return new Promise(function (resolve, reject) {
-        var registerEmailTokenScope = {
-            "email": email,
-            "familyId": familyId,
-            "institutionCode": institutionCode,
-            "role": role
-        };
-        var token = jwt.sign(registerEmailTokenScope, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 * 7 });
-        var registrationLink = util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
-        console.debug("registrationLink Link " + registrationLink);
-        var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");
+// module.exports.sendJoinEmail = function (email, familyId, institutionCode, role) {
+//     return new Promise(function (resolve, reject) {
+//         var registerEmailTokenScope = {
+//             "email": email,
+//             "familyId": familyId,
+//             "institutionCode": institutionCode,
+//             "role": role
+//         };
+//         var token = jwt.sign(registerEmailTokenScope, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 * 7 });
+//         var registrationLink = util.format("%s/#/parent/register?token=%s", getDomain(institutionCode), token);
+//         console.debug("registrationLink Link " + registrationLink);
+//         var registrationEmailTemplate = new EmailTemplate(templateDir + "/registration");
 
-        registrationEmailTemplate.render({
-            registrationLink: registrationLink
-        }, function (err, result) {
-            console.info(result);
-
-        });
-        var registrationEmail = transporter.templateSender(registrationEmailTemplate, {
-            from: "no-reply@secureslice.com"
-        });
-        verificationEmail({
-            to: email,
-            subject: "Parent Registration Invitation"
-        }, {
-                registrationLink: registrationLink,
-                email: email
-            }, function (err, info) {
-                if (err) {
-                    console.error("Error sending email ", err);
-                    reject(err);
-                }
-                else {
-                    console.debug("Message sent: ", info);
-                    resolve(info);
-                }
-            });
-    });
-}
+//         registrationEmailTemplate.render({
+//             registrationLink: registrationLink
+//         }, function (err, result) {
+//             console.info(result);
+//         });
+//         var registrationEmail = transporter.templateSender(registrationEmailTemplate, {
+//             from: "no-reply@secureslice.com"
+//         });
+//         verificationEmail({
+//             to: email,
+//             subject: "Parent Registration Invitation"
+//         }, {
+//                 registrationLink: registrationLink,
+//                 email: email
+//             }, function (err, info) {
+//                 if (err) {
+//                     console.error("Error sending email ", err);
+//                     reject(err);
+//                 }
+//                 else {
+//                     console.debug("Message sent: ", info);
+//                     resolve(info);
+//                 }
+//             });
+//     });
+// }
 
 var getDomain = function () {
     switch (process.env.SERVERLESS_STAGE) {
@@ -71,49 +70,49 @@ var getDomain = function () {
     }
 }
 
-module.exports.sendAdminInviteEmail = function (email, institutionCode) {
+// module.exports.sendAdminInviteEmail = function (email, institutionCode) {
 
-    // TODO Fix this.
-    return new Promise(function (resolve, reject) {
-        var registerEmail = {
-            "email": email,
-            "institutionCode": institutionCode,
-            "role": "admin"
-        };
-        var token = jwt.sign(registerEmail, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 48 });
-        var registrationLink = util.format("%s/#/admin/register?token=%s", getDomain(), token);
-        console.debug("registrationLink Link " + registrationLink);
-        var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");
-        registrationEmailTemplate.render({
-            registrationLink: registrationLink,
-            email: email,
-        }, function (err, result) {
-            console.info(result);
+//     // TODO Fix this.
+//     return new Promise(function (resolve, reject) {
+//         var registerEmail = {
+//             "email": email,
+//             "institutionCode": institutionCode,
+//             "role": "admin"
+//         };
+//         var token = jwt.sign(registerEmail, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 48 });
+//         var registrationLink = util.format("%s/#/admin/register?token=%s", getDomain(), token);
+//         console.debug("registrationLink Link " + registrationLink);
+//         var registrationEmailTemplate = new EmailTemplate(templateDir + "/admininvite");
+//         registrationEmailTemplate.render({
+//             registrationLink: registrationLink,
+//             email: email,
+//         }, function (err, result) {
+//             console.info(result);
 
-        });
-        var registrationEmail = transporter.templateSender(registrationEmailTemplate, {
-            from: "no-reply@secureslice.com"
-        });
-        verificationEmail({
-            to: email,
-            subject: "Administrator Account Invitation"
-        }, {
-                registrationLink: registrationLink,
-                email: email
-            }, function (err, info) {
-                if (err) {
-                    console.error("Error sending email ", err);
-                    reject(err);
-                }
-                else {
-                    console.debug("Message sent: ", info);
-                    resolve(info);
-                }
-            });
-    });
-}
+//         });
+//         var registrationEmail = transporter.templateSender(registrationEmailTemplate, {
+//             from: "no-reply@secureslice.com"
+//         });
+//         verificationEmail({
+//             to: email,
+//             subject: "Administrator Account Invitation"
+//         }, {
+//                 registrationLink: registrationLink,
+//                 email: email
+//             }, function (err, info) {
+//                 if (err) {
+//                     console.error("Error sending email ", err);
+//                     reject(err);
+//                 }
+//                 else {
+//                     console.debug("Message sent: ", info);
+//                     resolve(info);
+//                 }
+//             });
+//     });
+// }
 
-function generateTemplate(templateVariables, templateLocation, emailId) {
+function generateTemplate(templateVariables, templateLocation, emailIds) {
     return new Promise(function (resolve, reject) {
         var registrationEmailTemplate = new EmailTemplate(templateLocation);
         registrationEmailTemplate.render(templateVariables, function (err, result) {
@@ -121,8 +120,8 @@ function generateTemplate(templateVariables, templateLocation, emailId) {
                 console.log("Error generating Template", err);
                 reject(err);
             } else {
-                console.log("generated Template", result, emailId);
-                resolve({ email: emailId, template: result.html });
+                console.log("generated Template", result, emailIds);
+                resolve({ emails: emailIds, template: result.html });
             }
         });
     });
@@ -148,12 +147,12 @@ function getRegisterParentToken(emailId, institutionCode, schoolCode) {
 }
 
 function sendInvite(result) {
-    var emailId = result.email;
+    var emailIds = result.emails;
     var emailTemplate = result.template;
-    console.log("sendInvite: ", emailId, emailTemplate);
+    console.log("sendInvite: ", emailIds, emailTemplate);
     return new Promise(function (resolve, reject) {
         var email = {
-            to: [emailId],
+            to: emailIds,
             from: 'no-reply@secureslice.com',
             subject: 'Invitation to register at SecureSlice',
             text: 'tb();',
@@ -170,7 +169,6 @@ function sendInvite(result) {
 
     });
 }
-
 
 module.exports.sendAdminInvite = function (emailId, institution) {
     console.log("sendAdminInvite: ", emailId, institution);
@@ -194,10 +192,10 @@ module.exports.sendAdminInvite = function (emailId, institution) {
     });
 }
 
-module.exports.sendParentInvite = function (emailId, school) {
-    console.log("sendParentInvite: ", emailId, school);
+module.exports.sendParentInvite = function (emailIds, school) {
+    console.log("sendParentInvite: ", emailIds, school);
     return new Promise(function (resolve, reject) {
-        var token = getRegisterAdminToken(emailId, school.institutionShortCode, school.code);
+        var token = getRegisterAdminToken(emailIds, school.institutionShortCode, school.code);
         var registrationLink = util.format(parentRegistrationLinkFormat, getDomain(), token, school.institutionShortCode, school.code);
         console.log("registrationLink Link " + registrationLink);
         var templateLocation = templateDir + "/registration/parent";
@@ -205,7 +203,7 @@ module.exports.sendParentInvite = function (emailId, school) {
             registrationLink: registrationLink,
             schoolName: school.name
         };
-        generateTemplate(templateVariables, templateLocation, emailId)
+        generateTemplate(templateVariables, templateLocation, emailIds)
             .then(sendInvite)
             .then((res) => {
                 resolve(res);

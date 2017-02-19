@@ -5,6 +5,7 @@ var studentDAO = require("./dao/student");
 var schoolDAO = require("./dao/school");
 var paymentDAO = require("./dao/paymentMethod");
 var paymentLib = require("./payment");
+var userHelper = require("./user");
 var classLib = require("./class");
 var smsHelper = require("./smshelper");
 var gradeLib = require("./grade");
@@ -247,8 +248,7 @@ module.exports.assignStudentClass = function* (institutionCode, schoolCode, stud
     console.log("Incremented class usage");
 
     // TODODODODODODOD
-    // yield user
-    // yield sendStudentAdditionSuccessMessage();
+    yield sendStudentAdditionSuccessMessage(enrolledStudents);
 
 }
 
@@ -261,6 +261,15 @@ function isStudentAgeConstraintViolated(grade) {
     };
 }
 
-function* sendStudentAdditionSuccessMessage(parentContactNumber, studentName) {
-    yield smsHelper.sendNotification(parentContactNumber, "Congratulations!, The admin has approved the addition of " + studentName + ".");
+function* sendStudentAdditionSuccessMessage(enrolledStudents) {
+    console.log("sendStudentAdditionSuccessMessage: ", enrolledStudents);
+    var parentEmails = enrolledStudents.map(student => student.parentEmail);
+    var parents = yield userHelper.findByEmails(parentEmails);
+    parents = parents.map(parent => parent.toJSON());
+    console.log("parents: ", parents);
+    for (var i = 0; i < enrolledStudents.length; i++) {
+        var parent = parents.find(parent => parent.email === enrolledStudents[i].parentEmail);
+        console.log("parent: ", parent);
+        yield smsHelper.sendNotification(parent.mobile, "Congratulations!, The admin has approved the addition of " + enrolledStudents[i].firstName + ".");
+    }
 }

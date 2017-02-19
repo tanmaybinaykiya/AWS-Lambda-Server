@@ -194,7 +194,7 @@ module.exports.inviteParent = function* () {
     var requestBody = this.request.body;
     var institutionCode = this.params.institutionCode;
     var schoolCode = this.params.schoolCode;
-    if (requestBody.email && institutionCode && schoolCode) {
+    if (requestBody.email && requestBody.email.length>0 && institutionCode && schoolCode) {
         var school = yield schoolHelper.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
         if (school) {
             yield emailHelper.sendParentInvite(requestBody.email, school.toJSON());

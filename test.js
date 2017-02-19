@@ -1,7 +1,10 @@
 process.env.SERVERLESS_STAGE = "stage";
-process.env.AWS_ACCESS_KEY_ID = "AKIAJPCJUTYCLYKYMLYA";
-process.env.AWS_SECRET_ACCESS_KEY = "u3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
+process.env.AWS_ACCESS_KEY_ID = "DUMMYAKIAJPCJUTYCLYKYMLYA";
+process.env.AWS_SECRET_ACCESS_KEY = "DUMMYu3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
 process.env.IS_LOCAL = true;
+process.env.SERVERLESS_STAGE = "dev";
+process.env.JWT_SECRET = "12345678";
+process.env.SENDGRIDKEY = "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"
 
 var bcrypt = require("co-bcryptjs");
 var co = require("co");
@@ -11,6 +14,7 @@ var schoolLib = require("./src/common/lib/school");
 var dao = require("./src/common/lib/dao/utils");
 
 function* createTables() {
+    console.log("Creating tables");
     yield dao.createTables();
 }
 
@@ -19,8 +23,8 @@ function* createSuperAdmin() {
     var returnUser = yield user.addUser({
         password: "password",
         role: "SECS",
-        email: "superadmin@secureslice.com",
-        mobile: 9823012345,
+        email: "tanmay+superadmin@secureslice.com",
+        mobile: "+919538209368",
         firstname: "SuperLorem",
         lastname: "IpsumAdmin",
     })
@@ -33,11 +37,10 @@ function* createAdmin() {
         firstname: "Lorem",
         lastname: "Admin",
         password: "password",
-        email: "admin@usc.com",
+        email: "tanmay+admin@secureslice.com",
         role: "admin",
-        mobile: 9823054321,
-        institutionShortCode: "USC",
-        schoolCode: "CSE",
+        mobile: "+919538209368",
+        institutionShortCode: "USC"
     })
     console.log(returnUser);
 }
@@ -46,7 +49,7 @@ function* createInstitution() {
     yield institution.createInstitution({
         name: "University of Southern California",
         shortCode: "USC",
-        adminemail: "admin@usc.com",
+        adminemail: "tanmay+admin@secureslice.com",
         addressline1: "UNKNOWN",
         city: "New York",
         state: "California",
@@ -60,8 +63,8 @@ function* createParent() {
     var returnUser = yield user.addUser({
         password: "password",
         role: "parent",
-        email: "parent@gmail.com",
-        mobile: 9823054321,
+        email: "tanmay+parent@secureslice.com",
+        mobile: "+919538209368",
         firstname: "Lorem",
         lastname: "Parent",
         institutionShortCode: "USC",
@@ -74,12 +77,13 @@ function* createParent() {
 function genSalt() {
     co(function* () {
         try {
-            // yield createTables();
+            console.log("genSalt");
+            yield createTables();
             // yield createSuperAdmin();
             // yield createAdmin();
-            // yield createInstitution();
+            yield createInstitution();
             // yield createSchool();
-            yield createParent();
+            // yield createParent();
             // yield createStudent();
 
 

@@ -2,11 +2,13 @@ var dynogels = require ("./dynogelsConfig");
 
 module.exports.createTables = function () {
     return new Promise(function (resolve, reject) {
-        dynogels.createTables(function (err) {
+        dynogels.createTables(function (err, result) {
             if (err) {
+                console.error(err);
                 reject(err);
             } else {
-                resolve(err);
+                console.log("Success:", result);
+                resolve();
             }
         });
     });
