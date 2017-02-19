@@ -26,6 +26,9 @@ var serverz = function () {
         // TODO validate issCode and schoolCode
         router.post("/parent/register", superz.roleBasedAuth(["registerParent"]), service.registerParent);
 
+        router.post("/institution/:institutionCode/school/:schoolCode/parent/invite", superz.roleBasedAuth(["admin"]), service.inviteParent);
+        router.post("/institution/:institutionCode/admin/invite", superz.roleBasedAuth(["admin"]), service.inviteAdmin);
+
         router.post("/contact/generateVerificationCode", superz.roleBasedAuth(["registerAdmin", "registerParent"]), service.generateVerificationCode);
         // router.post("/contact/verify", superz.roleBasedAuth(["registerAdmin", "registerParent"]), service.verifyUser);
 

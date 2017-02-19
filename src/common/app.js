@@ -4,10 +4,10 @@ var jwt = require("koa-jwt");
 var koa = require("koa");
 var path = require("path");
 var eventContext = require("./koa-proxy/middleware");
-var HttpError = require("./lib/errors").HttpError;
 var util = require("util");
 
-var ISSUER = "https://www.secureslice.com/issuer";
+var HttpError = require("./lib/errors").HttpError;
+var jwtConfig = require("./lib/jwt");
 
 module.exports = function () {
     var self = this;
@@ -77,7 +77,7 @@ module.exports = function () {
     }
 
     self.loadJWTDecryption = function () {
-        app.use(jwt({ secret: process.env.JWT_SECRET, issuer: ISSUER, debug: true }));
+        app.use(jwt({ secret: jwtConfig.secret, issuer: jwtConfig.ISSUER, debug: true }));
     }
 
     self.roleBasedAuth = function (allowedRoles) {

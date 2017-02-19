@@ -1,9 +1,11 @@
 var AWS = require('aws-sdk');
 var jwt = require('jsonwebtoken');
 
-
 var HttpError = require("../../common/lib/errors").HttpError;
 var userHelper = require("../../common/lib/user");
+var emailHelper = require("../../common/lib/emailhelper");
+var institutionHelper = require("../../common/lib/institution");
+var schoolHelper = require("../../common/lib/school");
 var smsHelper = require("../../common/lib/smsHelper");
 var constants = require("../../common/lib/constants");
 
@@ -66,6 +68,7 @@ module.exports.registerParent = function* createUser(req, send) {
         if (requestId) {
             var newUser = {
                 email: requestBody.email,
+                mailVerified: true,
                 institutionShortCode: requestBody.institutionCode,
                 schoolCode: requestBody.schoolCode,
                 role: "parent",
@@ -118,6 +121,7 @@ module.exports.registerAdmin = function* createUser(req, send) {
         if (requestId) {
             var newUser = {
                 email: requestBody.email,
+                mailVerified: true,
                 institutionShortCode: requestBody.institutionCode,
                 role: "admin",
                 mobile: requestBody.contact.number,
@@ -186,4 +190,37 @@ module.exports.verifyUser = function* (req, send) {
     }
 };
 */
+module.exports.inviteParent = function* () {
+    var requestBody = this.request.body;
+    var institutionCode = this.params.institutionCode;
+    var schoolCode = this.params.schoolCode;
+    if (requestBody.email && institutionCode && schoolCode) {
+        var school = yield schoolHelper.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
+        if (school) {
+            yield emailHelper.sendParentInvite(requestBody.email, school.toJSON());
+            this.status = 200;
+            this.body = { status: "ok" }
+        } else {
+            throw new HttpError(400, "Invalid school", "SchoolNotFound");
+        }
+    } else {
+        throw new HttpError(400, "Invalid request body", "BadRequest");
+    }
+};
 
+module.exports.inviteAdmin = function* () {
+    var requestBody = this.request.body;
+    var institutionCode = this.params.institutionCode;
+    if (requestBody.email && institutionCode) {
+        var institution = yield institutionHelper.getInstitution(institutionCode);
+        if (institution) {
+            yield emailHelper.sendAdminInvite(requestBody.email, institution.toJSON());
+            this.status = 200;
+            this.body = { status: "ok" }
+        } else {
+            throw new HttpError(400, "Invalid institution", "InstitutionNotFound");
+        }
+    } else {
+        throw new HttpError(400, "Invalid request body", "BadRequest");
+    }
+};

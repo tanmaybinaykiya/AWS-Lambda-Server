@@ -1,5 +1,7 @@
 var AWS = require('aws-sdk');
 var jwt = require('jsonwebtoken');
+
+var jwtConfig = require("../../common/lib/jwt");
 var user = require("../../common/lib/user");
 
 var ISSUER = "https://www.secureslice.com/issuer";
@@ -13,7 +15,7 @@ module.exports.getToken = function* getToken() {
         institutionShortCode: userObj.institutionShortCode,
         schoolCode: userObj.schoolCode
     };
-    var token = jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "1d", issuer: ISSUER });
+    var token = jwt.sign(tokenObj, jwtConfig.secret, jwtConfig.jwtOptions);
     this.body = {
         token: token,
         expiresIn: 86400000,

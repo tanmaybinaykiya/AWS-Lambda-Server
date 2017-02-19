@@ -5,6 +5,14 @@ var tokenObj = { "role": "SECS" };
 console.log("SECS", jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "120d", issuer: "https://www.secureslice.com/issuer" }));
 
 var tokenObj = {
+    "role": "admin",
+    "email": "tanmay+admin@secureslice.com",
+    "institutionCode": "USC"
+};
+
+console.log("ADMIN", jwt.sign(tokenObj, process.env.JWT_SECRET, { expiresIn: "120d", issuer: "https://www.secureslice.com/issuer" }));
+
+var tokenObj = {
     "role": "registerAdmin",
     "email": "tanmay@secureslice.com",
     "institutionCode": "USC"
