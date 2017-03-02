@@ -32,6 +32,22 @@ module.exports.getUsersByInstitutionSchoolCodeRole = function (institutionSchool
     });
 }
 
+module.exports.getUsersByInstitutionSchoolCode = function (institutionSchoolCode) {
+    return new Promise(function (resolve, reject) {
+        console.log("institutionSchoolCode: ", institutionSchoolCode);
+        models.Users.query(institutionSchoolCode)
+            .usingIndex('UsersInstitutionSchoolCodeRoleIndex')
+            .loadAll()
+            .exec((err, users) => {
+                if (err) {
+                    console.log("err, users :: ", err, users);
+                    reject(err);
+                } else {
+                    resolve(users.Items);
+                }
+            });
+    });
+}
 
 module.exports.getUsers = function (emails) {
     return new Promise(function (resolve, reject) {

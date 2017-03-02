@@ -136,9 +136,9 @@ function getRegisterAdminToken(emailId, institutionCode) {
     return jwt.sign(tokenScope, jwtConfig.secret, jwtConfig.registrationOptions);
 }
 
-function getRegisterParentToken(emailId, institutionCode, schoolCode) {
+function getRegisterParentToken(emailIds, institutionCode, schoolCode) {
     var tokenScope = {
-        email: emailId,
+        email: emailIds,
         institutionCode: institutionCode,
         schoolCode: schoolCode,
         role: "registerParent"
@@ -195,7 +195,7 @@ module.exports.sendAdminInvite = function (emailId, institution) {
 module.exports.sendParentInvite = function (emailIds, school) {
     console.log("sendParentInvite: ", emailIds, school);
     return new Promise(function (resolve, reject) {
-        var token = getRegisterAdminToken(emailIds, school.institutionShortCode, school.code);
+        var token = getRegisterParentToken(emailIds, school.institutionShortCode, school.code);
         var registrationLink = util.format(parentRegistrationLinkFormat, getDomain(), token, school.institutionShortCode, school.code);
         console.log("registrationLink Link " + registrationLink);
         var templateLocation = templateDir + "/registration/parent";

@@ -42,14 +42,15 @@ function isValidPaymentMethod(requestBody) {
 }
 
 module.exports.getPaymentMethodForParent = function* () {
-    console.log("getPaymentMethodForParent: ", this.request.query.parentEmail, this.request.query.default);
+    var parentEmail = this.request.body.parentEmail;
+    console.log("getPaymentMethodForParent: ", parentEmail, this.request.query.default);
     var queryParams = this.request.query;
-    if (queryParams.parentEmail) {
+    if (parentEmail) {
         if (queryParams.default === "true") {
-            var paymentMethods = yield payment.getDefaultPaymentMethodForParent(queryParams.parentEmail);
+            var paymentMethods = yield payment.getDefaultPaymentMethodForParent(parentEmail);
             this.body = paymentMethods.map(method => method.toJSON()).map(paymentMethodSerializer);
         } else {
-            var paymentMethods = yield payment.getPaymentMethodsForParent(queryParams.parentEmail);
+            var paymentMethods = yield payment.getPaymentMethodsForParent(parentEmail);
             this.body = paymentMethods.Items.map(method => method.toJSON()).map(paymentMethodSerializer);
         }
         this.status = 200;

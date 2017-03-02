@@ -39,6 +39,7 @@ module.exports.getStudents = function* (req, send) {
         }
     } else {
         var userObjs = yield studentLib.getStudentsBySchoolCode(this.params.schoolCode);
+        console.log("userObjs: ", userObjs);
         this.status = 200;
         this.body = userObjs.map(userObj => ({
             studentId: userObj.studentId,
@@ -66,7 +67,7 @@ module.exports.enrollStudent = function* (req, send) {
     var newStudent = this.request.body;
     newStudent.institutionShortCode = this.params.institutionCode;
     newStudent.schoolCode = this.params.schoolCode;
-    
+
     var userObj = yield studentLib.enrollStudent(newStudent);
     this.body = {
         studentId: userObj.get("studentId"),

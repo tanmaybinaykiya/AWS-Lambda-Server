@@ -73,6 +73,8 @@ Resources:
         AttributeDefinitions:
           - AttributeName: email
             AttributeType: S
+          - AttributeName: institutionSchoolCode
+            AttributeType: S
           - AttributeName: institutionShortCode
             AttributeType: S
           - AttributeName: schoolCode
@@ -104,6 +106,18 @@ Resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5
+          - IndexName: UsersInstitutionSchoolCodeRoleIndex
+            KeySchema:
+              - AttributeName: institutionSchoolCode
+                KeyType: HASH
+              - AttributeName: role
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+
           - IndexName: UsersFamilyIndex
             KeySchema:
               - AttributeName: familyCustomerId

@@ -43,12 +43,20 @@ module.exports.createStaff = function* (req, send) {
 
 var userResponseMapper = (user) => ({
     role: user.role,
+    firstName: user.firstname,
+    lastName: user.lastname,
     teacherId: (user.role === "teacher") ? user.teacherId : undefined,
     email: user.email
 });
 
+module.exports.getStaffByRole = function* () {
+    var users = yield userHelper.getStaffBySchoolAndRole(this.params.institutionCode, this.params.schoolCode, this.params.role);
+    this.body = users.map(user => user.toJSON()).map(userResponseMapper);
+    this.status = 200;
+}
+
 module.exports.getStaff = function* () {
-    var users = yield userHelper.getStaff(this.params.institutionCode, this.params.schoolCode, this.params.role);
+    var users = yield userHelper.getStaffBySchool(this.params.institutionCode, this.params.schoolCode);
     this.body = users.map(user => user.toJSON()).map(userResponseMapper);
     this.status = 200;
 }
@@ -83,7 +91,7 @@ module.exports.registerParent = function* createUser(req, send) {
     console.log("registerParent");
     var requestBody = this.request.body;
     validateRegisterParentRequestBody(requestBody);
-    if (this.state.user.email === requestBody.email) {
+    if (requestBody.email && this.state.user.email && requestBody.email.length > 0 && requestBody.email.indexOf(this.state.user.email) > -1) {
         try {
             var requestId = yield smsHelper.verifyOTP(requestBody.contact.verification.requestId, requestBody.contact.verification.code);
         } catch (err) {

@@ -1,4 +1,6 @@
 var Nexmo = require('nexmo');
+var HttpError = require("./errors").HttpError;
+
 var nexmo = new Nexmo(
     {
         apiKey: process.env.NEXMO_KEY,
@@ -22,7 +24,12 @@ module.exports.sendOTP = function (number) {
                 resolve(response.request_id);
             } else {
                 console.info("Verification OTP response ", response);
-                reject(response.error_text);
+                if (response.status === '10') {
+                    reject(new HttpError(400, response.error_text, "ConcurrentContactVerifications"));
+                } else {
+                    reject(response.error_text);
+                }
+
             }
         });
     });

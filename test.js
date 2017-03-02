@@ -1,8 +1,13 @@
 process.env.AWS_ACCESS_KEY_ID = "AKIAJPCJUTYCLYKYMLYA";
 process.env.AWS_SECRET_ACCESS_KEY = "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";
 process.env.IS_LOCAL = true;
+
 process.env.SERVERLESS_STAGE = "dev";
 process.env.JWT_SECRET = "12345678";
+
+// process.env.SERVERLESS_STAGE = "stage";
+// process.env.JWT_SECRET = "s1e1c2u3r5e8s13l21i34ce";
+
 process.env.SENDGRIDKEY = "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"
 
 var bcrypt = require("co-bcryptjs");
@@ -47,8 +52,8 @@ function* createAdmin() {
 function* createInstitution() {
     yield institution.createInstitution({
         name: "New Institution",
-        shortCode: "USC",
-        adminemail: "tanmay@secureslice.com",
+        shortCode: "USCC",
+        adminemail: "tanmay+admin@secureslice.com",
         addressline1: "UNKNOWN",
         city: "New York",
         state: "California",

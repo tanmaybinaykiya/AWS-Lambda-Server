@@ -64,8 +64,12 @@ module.exports.getUser = function* (email) {
     return yield userDAO.getUser(email);
 }
 
-module.exports.getStaff = function* (institutionCode, schoolCode, role) {
+module.exports.getStaffBySchoolAndRole = function* (institutionCode, schoolCode, role) {
     return yield userDAO.getUsersByInstitutionSchoolCodeRole(getInstitutionSchoolCodeCompositeKey(institutionCode, schoolCode), role);
+}
+
+module.exports.getStaffBySchool = function* (institutionCode, schoolCode) {
+    return yield userDAO.getUsersByInstitutionSchoolCode(getInstitutionSchoolCodeCompositeKey(institutionCode, schoolCode));
 }
 
 module.exports.getProfileManager = function* (familyCustomerId) {
