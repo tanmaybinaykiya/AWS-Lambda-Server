@@ -1,5 +1,5 @@
-var dynogels = require ("./dynogelsConfig");
-var models = require ("../models");
+var dynogels = require("./dynogelsConfig");
+var models = require("../models");
 
 module.exports.getUser = function (email) {
     return new Promise(function (resolve, reject) {
@@ -14,6 +14,24 @@ module.exports.getUser = function (email) {
         });
     });
 }
+
+module.exports.getUsersByInstitutionSchoolCodeRole = function (institutionSchoolCode, role) {
+    return new Promise(function (resolve, reject) {
+        console.log("institutionSchoolCode, role: ", institutionSchoolCode, role);
+        models.Users.query(institutionSchoolCode)
+            .usingIndex('UsersInstitutionSchoolCodeRoleIndex')
+            .where("role").eq(role)
+            .exec((err, users) => {
+                if (err) {
+                    console.log("err, users :: ", err, users);
+                    reject(err);
+                } else {
+                    resolve(users.Items);
+                }
+            });
+    });
+}
+
 
 module.exports.getUsers = function (emails) {
     return new Promise(function (resolve, reject) {

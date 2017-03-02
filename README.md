@@ -51,8 +51,10 @@ AWS Lambda provides aws-sdk as an npm module once deployed, so it need not be ch
 ### To deploy/update
 
 ```sh
+$ rm -rf functions
 $ npm run prepareForDeploy
-$ npm run deployToAws -- --stage rd --profile PROFILE_NAME_GOES_HERE --region AWS_REGION_GOES_HERE deploy
+$ cd functions
+$ AWS_CLIENT_TIMEOUT=1200000 SLS_DEBUG="asd" sls deploy --verbose --stage stage --profile secs --region us-east-1
 ```
 
 This task packages your code into a zip and publishes it along with the cloudformation template to AWS.

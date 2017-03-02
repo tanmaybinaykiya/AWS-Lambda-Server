@@ -1,6 +1,12 @@
 var bcrypt = require("co-bcryptjs");
+var uuid = require("node-uuid");
+
 var userDAO = require("./dao/user");
 var HttpError = require("./errors").HttpError;
+
+function getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode) {
+    return [institutionShortCode, schoolCode].join(":");
+}
 
 module.exports.validateAndGetUser = function* (email, password) {
     var user = yield userDAO.getUser(email);
@@ -35,8 +41,31 @@ module.exports.addUser = function* (user) {
     return user;
 }
 
+module.exports.addStaff = function* (user) {
+    var existingUser = yield userDAO.getUser(user.email);
+    if (existingUser) {
+        throw new HttpError(400, "User with email already exist", "UserAlreadyExists");
+    }
+    
+    if(user.role==="teacher"){
+        user.teacherId=uuid.v1();
+    }
+
+    var user = yield userDAO.createUser(user);
+
+    if (!user) {
+        console.log("Something went wrong here...");
+        throw new HttpError(400, "Bad request");
+    }
+    return user;
+}
+
 module.exports.getUser = function* (email) {
     return yield userDAO.getUser(email);
+}
+
+module.exports.getStaff = function* (institutionCode, schoolCode, role) {
+    return yield userDAO.getUsersByInstitutionSchoolCodeRole(getInstitutionSchoolCodeCompositeKey(institutionCode, schoolCode), role);
 }
 
 module.exports.getProfileManager = function* (familyCustomerId) {
@@ -79,15 +108,13 @@ module.exports.createTeacher = function* (user, institutionShortCode, schoolCode
     user.role = "teacher";
     user.institutionShortCode = institutionShortCode;
     user.schoolCode = schoolCode;
-    user.familyCustomerId = "teacher";
-    yield addUser(admin);
+    yield addUser(user);
 }
 
 module.exports.createStaff = function* (user, institutionShortCode, schoolCode) {
     user.role = "staff";
     user.institutionShortCode = institutionShortCode;
     user.schoolCode = schoolCode;
-    user.familyCustomerId = "staff";
     yield addUser(admin);
 }
 

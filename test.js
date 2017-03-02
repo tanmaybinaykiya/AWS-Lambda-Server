@@ -1,6 +1,5 @@
-process.env.SERVERLESS_STAGE = "stage";
-process.env.AWS_ACCESS_KEY_ID = "DUMMYAKIAJPCJUTYCLYKYMLYA";
-process.env.AWS_SECRET_ACCESS_KEY = "DUMMYu3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
+process.env.AWS_ACCESS_KEY_ID = "AKIAJPCJUTYCLYKYMLYA";
+process.env.AWS_SECRET_ACCESS_KEY = "u3Jx7g3zyBiKAXPX2e/Atebj7E1Gehh8jcxpJzUF";
 process.env.IS_LOCAL = true;
 process.env.SERVERLESS_STAGE = "dev";
 process.env.JWT_SECRET = "12345678";
@@ -47,9 +46,9 @@ function* createAdmin() {
 
 function* createInstitution() {
     yield institution.createInstitution({
-        name: "University of Southern California",
+        name: "New Institution",
         shortCode: "USC",
-        adminemail: "tanmay+admin@secureslice.com",
+        adminemail: "tanmay@secureslice.com",
         addressline1: "UNKNOWN",
         city: "New York",
         state: "California",
@@ -78,7 +77,7 @@ function genSalt() {
     co(function* () {
         try {
             console.log("genSalt");
-            yield createTables();
+            // yield createTables();
             // yield createSuperAdmin();
             // yield createAdmin();
             yield createInstitution();

@@ -72,11 +72,15 @@ module.exports.Users = dynogels.define('Users', {
         role: Joi.string().required(),
         familyCustomerId: Joi.string(),
         relation: Joi.string(),
-        familyAccess: Joi.string()
+        familyAccess: Joi.string(),
+        teacherId: Joi.string(),
+        institutionSchoolCode: Joi.string(), //composite key of institutionCode and schoolCode
     },
     tableName: getTableName("Users"),
     indexes: [{
         hashKey: 'institutionShortCode', rangeKey: 'role', name: 'UsersInstitutionIndex', type: 'global'
+    }, {
+        hashKey: 'institutionSchoolCode', rangeKey: 'role', name: 'UsersInstitutionSchoolCodeRoleIndex', type: 'global'
     }, {
         hashKey: 'schoolCode', rangeKey: 'role', name: 'UsersSchoolRoleIndex', type: 'global'
     }, {

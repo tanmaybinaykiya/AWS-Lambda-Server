@@ -6,34 +6,59 @@ var userHelper = require("../../common/lib/user");
 var emailHelper = require("../../common/lib/emailhelper");
 var institutionHelper = require("../../common/lib/institution");
 var schoolHelper = require("../../common/lib/school");
-var smsHelper = require("../../common/lib/smsHelper");
+var smsHelper = require("../../common/lib/smshelper");
 var constants = require("../../common/lib/constants");
 
-module.exports.createUser = function* createUser(req, send) {
-    console.log("createUser: ", "this.state: ", this.state, "req: ", req, "send: ", send);
+function getInstitutionSchoolCodeCompositeKey(institutionShortCode, schoolCode) {
+    return [institutionShortCode, schoolCode].join(":");
+}
+
+module.exports.createStaff = function* (req, send) {
+    console.log("createStaff: ", "this.state: ", this.state, "req: ", req, "send: ", send);
     var requestBody = this.request.body;
+    validateCreateUserRequestBody(requestBody);
     if (this.params.role === "staff" || this.params.role === "teacher") {
         var newUser = {
             "email": requestBody.email,
-            "institutionShortCode": this.params.user.institutionCode,
+            "institutionShortCode": this.params.institutionCode,
+            "institutionSchoolCode": getInstitutionSchoolCodeCompositeKey(this.params.institutionCode, this.params.schoolCode),
+            "schoolCode": this.params.schoolCode,
             "role": this.params.role,
-            "mobile": requestBody.mobile,
-            "firstname": requestBody.firstname,
-            "lastname": requestBody.lastname,
+            "mobile": requestBody.contact,
+            "firstname": requestBody.firstName,
+            "lastname": requestBody.lastName,
             "street": requestBody.street,
             "city": requestBody.city,
             "state": requestBody.state,
             "zip": requestBody.zip,
-            "password": requestBody.password,
         };
-        var userObj = yield userHelper.addUser(newUser);
+        var user = yield userHelper.addStaff(newUser);
         this.body = { status: "ok" };
-        this.status = 200;
+        this.status = 201;
     } else {
         console.log("Invalid role: ", this.params.role);
         this.status = 400;
     }
 };
+
+var userResponseMapper = (user) => ({
+    role: user.role,
+    teacherId: (user.role === "teacher") ? user.teacherId : undefined,
+    email: user.email
+});
+
+module.exports.getStaff = function* () {
+    var users = yield userHelper.getStaff(this.params.institutionCode, this.params.schoolCode, this.params.role);
+    this.body = users.map(user => user.toJSON()).map(userResponseMapper);
+    this.status = 200;
+}
+
+function validateCreateUserRequestBody(requestBody) {
+    if (!requestBody.email) throw new HttpError(400, "Invalid Request Body", "InvalidEmail");
+    if (!requestBody.firstName) throw new HttpError(400, "Invalid Request Body", "InvalidFirstName");
+    if (!requestBody.lastName) throw new HttpError(400, "Invalid Request Body", "InvalidLastName");
+    if (!requestBody.contact) throw new HttpError(400, "Invalid Request Body", "InvalidContact");
+}
 
 function validateRegisterAdminRequestBody(requestBody) {
     console.log("validateRegisterAdminRequestBody");
@@ -84,7 +109,7 @@ module.exports.registerParent = function* createUser(req, send) {
             };
             var userObj = yield userHelper.addUser(newUser);
             this.body = { status: "ok" };
-            this.status = 200;
+            this.status = 201;
         } else {
             throw new HttpError(400, "Invalid Request Body", "InvalidSchoolCode");
         }
@@ -136,7 +161,7 @@ module.exports.registerAdmin = function* createUser(req, send) {
             };
             var userObj = yield userHelper.addUser(newUser);
             this.body = { status: "ok" };
-            this.status = 200;
+            this.status = 201;
         } else {
             throw new HttpError(400, "Invalid Request Body", "InvalidSchoolCode");
         }
@@ -194,7 +219,7 @@ module.exports.inviteParent = function* () {
     var requestBody = this.request.body;
     var institutionCode = this.params.institutionCode;
     var schoolCode = this.params.schoolCode;
-    if (requestBody.email && requestBody.email.length>0 && institutionCode && schoolCode) {
+    if (requestBody.email && requestBody.email.length > 0 && institutionCode && schoolCode) {
         var school = yield schoolHelper.getSchoolByInstitutionCodeAndSchoolCode(institutionCode, schoolCode);
         if (school) {
             yield emailHelper.sendParentInvite(requestBody.email, school.toJSON());

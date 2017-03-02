@@ -6,6 +6,9 @@ cors:
     - "*"
 currentRegion: "${opt:region}"
 currentStage: "${opt:stage, self:provider.stage}"
+sendGridKey: "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"
+nexmoKey: "35cbb6ea"
+nexmoSecret: "8a7a9564f30906a9"
 dev: 
   ignoreSSLValidation: true
   secret: secureslice
@@ -33,6 +36,9 @@ writeEnvVars:
   SERVERLESS_REGION: "${self:custom.currentRegion}"
   SERVERLESS_SERVICE_NAME: "${self:service}"
   SERVERLESS_STAGE: "${self:custom.currentStage}"
+  SENDGRIDKEY: "${self:custom.sendGridKey}"
+  NEXMO_KEY: "${self:custom.nexmoKey}"
+  NEXMO_SECRET: "${self:custom.nexmoSecret}"
 # envVars: 
 #   JWT_SECRET: abcdefghijkl
 #   NODE_TLS_REJECT_UNAUTHORIZED: false

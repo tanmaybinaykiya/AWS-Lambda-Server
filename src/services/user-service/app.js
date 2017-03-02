@@ -18,7 +18,8 @@ var serverz = function () {
 
     self.routes = function (app, superz) {
         // TODO authz -> super admin invites admin
-        router.post("/institution/:institutionCode/user/:role", superz.roleBasedAuth(["admin"]), service.createUser);
+        router.post("/institution/:institutionCode/school/:schoolCode/:role", superz.roleBasedAuth(["admin"]), service.createStaff);
+        router.get("/institution/:institutionCode/school/:schoolCode/:role", superz.roleBasedAuth(["admin"]), service.getStaff);
 
         //TODO validate iss code
         router.post("/admin/register", superz.roleBasedAuth(["registerAdmin"]), service.registerAdmin);
